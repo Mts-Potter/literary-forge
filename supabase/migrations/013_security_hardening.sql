@@ -61,6 +61,9 @@ COMMENT ON FUNCTION is_admin IS 'Helper function - checks if a user has admin ri
 -- Drop the temporary policy that allows unrestricted INSERT
 DROP POLICY IF EXISTS "authenticated_can_insert_texts" ON source_texts;
 
+-- Drop existing admin policy if it exists (for idempotency)
+DROP POLICY IF EXISTS "admins_can_insert_texts" ON source_texts;
+
 -- Create admin-only INSERT policy (checks admin_users table)
 CREATE POLICY "admins_can_insert_texts" ON source_texts
   FOR INSERT TO authenticated
@@ -106,6 +109,10 @@ COMMENT ON FUNCTION is_book_safe_for_region IS
 -- RLS is enabled but no policies exist (Supabase warning)
 -- ip_quotas is used by the check_and_consume_quota function with SECURITY DEFINER
 -- Therefore, normal users should NOT have direct access
+
+-- Drop existing policies if they exist (for idempotency)
+DROP POLICY IF EXISTS "service_role_can_read_ip_quotas" ON ip_quotas;
+DROP POLICY IF EXISTS "service_role_can_manage_ip_quotas" ON ip_quotas;
 
 -- Policy 1: Only service_role can directly read ip_quotas
 CREATE POLICY "service_role_can_read_ip_quotas" ON ip_quotas

@@ -40,7 +40,8 @@ export function progressToCard(progress: any): Card {
       reps: 0,
       lapses: 0,
       state: State.New,
-      last_review: undefined
+      last_review: undefined,
+      learning_steps: []
     }
   }
 
@@ -53,7 +54,8 @@ export function progressToCard(progress: any): Card {
     reps: progress.reps || 0,
     lapses: progress.lapses || 0,
     state: progress.state || State.New,
-    last_review: progress.last_review_date ? new Date(progress.last_review_date) : undefined
+    last_review: progress.last_review_date ? new Date(progress.last_review_date) : undefined,
+    learning_steps: progress.learning_steps || []
   }
 }
 

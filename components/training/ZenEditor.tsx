@@ -62,19 +62,19 @@ export function ZenEditor({
   const charCount = text.length
 
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : ''} flex flex-col bg-[#0a0a0a] min-h-screen`}>
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50 flex flex-col' : 'max-w-5xl mx-auto'} bg-[#0a0a0a]`}>
       {/* Compact Header */}
-      <div className="bg-[#171717] border-b border-[#262626] px-4 py-2 flex-shrink-0">
-        <div className="flex justify-between items-center gap-3">
+      <div className="bg-[#171717] border-b border-[#262626] px-3 py-1.5 flex-shrink-0">
+        <div className="flex justify-between items-center gap-2">
           <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-semibold text-white truncate">
+            <h2 className="text-xs font-semibold text-white truncate">
               Stylistic Imitation Exercise
             </h2>
-            <p className="text-xs text-gray-400 truncate">{prompt}</p>
+            <p className="text-xs text-gray-500 truncate">{prompt}</p>
           </div>
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="px-2 py-1 text-xs text-gray-400 hover:text-white hover:bg-[#262626] rounded transition-colors flex-shrink-0"
+            className="px-1.5 py-0.5 text-xs text-gray-500 hover:text-white hover:bg-[#262626] rounded transition-colors flex-shrink-0"
             title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
           >
             {isFullscreen ? '⊗' : '⊕'}
@@ -83,20 +83,20 @@ export function ZenEditor({
       </div>
 
       {/* Scene Description */}
-      <div className="bg-[#171717] border-b border-[#262626] px-4 py-2 flex-shrink-0">
+      <div className="bg-[#171717] border-b border-[#262626] px-3 py-1.5 flex-shrink-0">
         <div className="flex items-start gap-2">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 flex-shrink-0">
             Scene:
           </h3>
-          <p className="text-xs leading-snug text-gray-300 flex-1">
+          <p className="text-xs leading-tight text-gray-400 flex-1">
             {sceneDescription}
           </p>
         </div>
       </div>
 
       {/* Main Editor Area */}
-      <div className="flex-1 overflow-hidden p-3">
-        <div className="w-full h-full max-w-4xl mx-auto">
+      <div className="p-2">
+        <div className="w-full max-w-4xl mx-auto">
           <textarea
             ref={textareaRef}
             value={text}
@@ -104,11 +104,12 @@ export function ZenEditor({
             onKeyDown={handleKeyDown}
             disabled={isSubmitting}
             placeholder="Begin writing in the style described above..."
-            className="w-full h-full p-4 text-base leading-relaxed
+            rows={12}
+            className="w-full p-3 text-sm leading-relaxed
                        bg-[#171717] text-gray-100 placeholder:text-gray-500
                        border border-[#262626] rounded
                        focus:border-white focus:outline-none
-                       resize-none font-serif
+                       resize-y font-serif
                        disabled:opacity-50 disabled:cursor-not-allowed
                        transition-colors"
             spellCheck={false}
@@ -118,8 +119,8 @@ export function ZenEditor({
       </div>
 
       {/* Footer */}
-      <div className="bg-[#171717] border-t border-[#262626] px-4 py-2 flex justify-between items-center flex-shrink-0">
-        <div className="flex items-center gap-3 text-xs text-gray-400">
+      <div className="bg-[#171717] border-t border-[#262626] px-3 py-1.5 flex justify-between items-center flex-shrink-0">
+        <div className="flex items-center gap-2 text-xs text-gray-500">
           <span className="font-medium text-white">{wordCount}</span>
           <span className="text-gray-600">words</span>
           <span className="text-gray-600">•</span>
@@ -127,18 +128,18 @@ export function ZenEditor({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 hidden sm:inline">
-            ⌘+Enter to submit
+          <span className="text-xs text-gray-600 hidden sm:inline">
+            ⌘+Enter
           </span>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !text.trim()}
-            className="px-4 py-1.5 bg-white text-black text-sm font-semibold rounded
+            className="px-3 py-1 bg-white text-black text-xs font-semibold rounded
                        hover:bg-gray-200 disabled:bg-[#262626] disabled:text-gray-600 disabled:cursor-not-allowed
                        transition-colors"
           >
             {isSubmitting ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-1.5">
                 <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />

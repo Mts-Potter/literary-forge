@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
       content,
       language,
       cefrLevel,
-      tags,
       chunkSize
     } = await request.json()
 
@@ -79,6 +78,20 @@ export async function POST(request: NextRequest) {
       finalAuthorId = newAuthor.id
     }
 
+    // Get author name for tag generation
+    let authorName = newAuthorName
+    if (!authorName && finalAuthorId) {
+      const { data: authorData } = await supabase
+        .from('authors')
+        .select('name')
+        .eq('id', finalAuthorId)
+        .single()
+      authorName = authorData?.name || 'Unbekannt'
+    }
+
+    // Generate automatic tags
+    const autoTags = generateTags(language, cefrLevel, authorName || '')
+
     // Split content into chunks
     const chunks = splitIntoChunks(content, chunkSize || 500)
 
@@ -101,7 +114,7 @@ export async function POST(request: NextRequest) {
         content: chunkText,
         language: language || 'de',
         cefr_level: cefrLevel || null,
-        tags: tags || [],
+        tags: autoTags,
         is_pd_us: false,
         is_pd_eu: false,
         metadata: {
@@ -167,4 +180,45 @@ function splitIntoChunks(text: string, targetSize: number): string[] {
   }
   
   return chunks.filter(chunk => chunk.length >= 50)
+}
+
+function generateTags(language: string, cefrLevel: string | null, authorName: string): string[] {
+  const tags: string[] = []
+
+  // Language tag
+  if (language === 'de') {
+    tags.push('deutsch')
+  } else if (language === 'en') {
+    tags.push('englisch')
+  }
+
+  // CEFR level tag
+  if (cefrLevel) {
+    tags.push(cefrLevel.toUpperCase())
+  }
+
+  // Author-based tags (optional genre inference)
+  const authorLower = authorName.toLowerCase()
+
+  // German authors
+  if (authorLower.includes('kafka')) {
+    tags.push('Moderne', 'Existentialismus')
+  } else if (authorLower.includes('goethe')) {
+    tags.push('Klassik', 'Weimarer Klassik')
+  } else if (authorLower.includes('schiller')) {
+    tags.push('Klassik', 'Drama')
+  } else if (authorLower.includes('brecht')) {
+    tags.push('Moderne', 'Episches Theater')
+  } else if (authorLower.includes('hesse')) {
+    tags.push('Moderne', 'Bildungsroman')
+  } else if (authorLower.includes('mann')) {
+    tags.push('Moderne', 'Literaturnobelpreis')
+  }
+
+  // If no specific tags, add generic "Literatur"
+  if (tags.length === 0 || (tags.length === 1 && (tags[0] === 'deutsch' || tags[0] === 'englisch'))) {
+    tags.push('Literatur')
+  }
+
+  return tags
 }

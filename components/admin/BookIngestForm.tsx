@@ -26,8 +26,33 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
   const [content, setContent] = useState('')
   const [language, setLanguage] = useState('de')
   const [cefrLevel, setCefrLevel] = useState('')
-  const [tags, setTags] = useState('')
   const [chunkSize, setChunkSize] = useState(500)
+  const [fileName, setFileName] = useState('')
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.name.endsWith('.txt')) {
+      setError('Bitte nur .txt Dateien hochladen')
+      return
+    }
+
+    setFileName(file.name)
+    setError('')
+
+    // Read file content
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const text = event.target?.result as string
+      setContent(text)
+    }
+    reader.onerror = () => {
+      setError('Fehler beim Lesen der Datei')
+    }
+    reader.readAsText(file, 'UTF-8')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,7 +96,6 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
           content: content.trim(),
           language,
           cefrLevel: cefrLevel || null,
-          tags: tags.split(',').map(t => t.trim()).filter(t => t.length > 0),
           chunkSize
         })
       })
@@ -83,14 +107,14 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
       }
 
       setSuccess(`✅ Erfolgreich importiert! ${data.chunksCreated} Chunks erstellt.`)
-      
+
       // Reset form
       setTitle('')
       setAuthorId('')
       setNewAuthorName('')
       setContent('')
       setCefrLevel('')
-      setTags('')
+      setFileName('')
       
       // Refresh page to update authors list if new author was created
       if (newAuthorName) {
@@ -216,22 +240,6 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
         </div>
       </div>
 
-      {/* Tags */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">
-          Tags (kommagetrennt, optional)
-        </label>
-        <input
-          type="text"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          placeholder="z.B. Klassiker, Expressionismus, Novelle"
-          className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                     text-white placeholder:text-gray-500
-                     focus:border-gray-400 focus:outline-none"
-        />
-      </div>
-
       {/* Chunk Size */}
       <div>
         <label className="block text-sm font-semibold text-gray-300 mb-2">
@@ -251,24 +259,37 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
         </p>
       </div>
 
-      {/* Content */}
+      {/* File Upload */}
       <div>
         <label className="block text-sm font-semibold text-gray-300 mb-2">
-          Textinhalt *
+          Textdatei hochladen *
         </label>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
-          rows={15}
-          placeholder="Füge hier den vollständigen Text ein..."
-          className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                     text-white placeholder:text-gray-500
-                     focus:border-gray-400 focus:outline-none font-mono text-sm"
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          {content.length} Zeichen
-        </p>
+        <div className="relative">
+          <input
+            type="file"
+            accept=".txt"
+            onChange={handleFileUpload}
+            required={!content}
+            className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
+                       text-white file:mr-4 file:py-2 file:px-4
+                       file:rounded-lg file:border-0
+                       file:text-sm file:font-semibold
+                       file:bg-white file:text-black
+                       hover:file:bg-gray-200
+                       file:cursor-pointer
+                       focus:border-gray-400 focus:outline-none"
+          />
+        </div>
+        {fileName && (
+          <p className="text-xs text-green-400 mt-2">
+            ✓ Geladen: {fileName} ({content.length.toLocaleString()} Zeichen)
+          </p>
+        )}
+        {!fileName && (
+          <p className="text-xs text-gray-500 mt-1">
+            Nur .txt Dateien werden unterstützt
+          </p>
+        )}
       </div>
 
       {/* Submit Button */}

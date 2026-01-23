@@ -53,11 +53,16 @@ export default function SettingsPage() {
 
       const { error } = await supabase
         .from('user_settings')
-        .upsert({
-          user_id: user.id,
-          enable_srs: enabled,
-          updated_at: new Date().toISOString()
-        })
+        .upsert(
+          {
+            user_id: user.id,
+            enable_srs: enabled,
+            updated_at: new Date().toISOString()
+          },
+          {
+            onConflict: 'user_id'
+          }
+        )
 
       if (error) {
         console.error('Failed to save settings:', error)

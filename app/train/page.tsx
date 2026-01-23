@@ -78,15 +78,15 @@ export default async function TrainPage({
     return (
       <>
         {bookFilter && (
-          <div className="bg-blue-600/20 border border-blue-600/40 rounded-lg p-4 mx-4 mt-4">
-            <p className="text-blue-300 text-sm">
-              📚 Gefiltertes Training: <span className="font-semibold">{bookFilter}</span>
+          <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
+            <p className="text-gray-300 text-sm">
+              📚 Gefiltertes Training: <span className="font-semibold text-white">{bookFilter}</span>
               {' '}—{' '}
-              <a href="/train" className="underline hover:text-blue-200">
+              <a href="/train" className="underline hover:text-white">
                 Filter entfernen
               </a>
               {' '}|{' '}
-              <a href="/books" className="underline hover:text-blue-200">
+              <a href="/books" className="underline hover:text-white">
                 Anderes Buch wählen
               </a>
             </p>
@@ -155,15 +155,15 @@ export default async function TrainPage({
     return (
       <>
         {bookFilter && (
-          <div className="bg-blue-600/20 border border-blue-600/40 rounded-lg p-4 mx-4 mt-4">
-            <p className="text-blue-300 text-sm">
-              📚 Gefiltertes Training: <span className="font-semibold">{bookFilter}</span>
+          <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
+            <p className="text-gray-300 text-sm">
+              📚 Gefiltertes Training: <span className="font-semibold text-white">{bookFilter}</span>
               {' '}—{' '}
-              <a href="/train" className="underline hover:text-blue-200">
+              <a href="/train" className="underline hover:text-white">
                 Filter entfernen
               </a>
               {' '}|{' '}
-              <a href="/books" className="underline hover:text-blue-200">
+              <a href="/books" className="underline hover:text-white">
                 Anderes Buch wählen
               </a>
             </p>
@@ -276,15 +276,15 @@ export default async function TrainPage({
     return (
       <>
         {bookFilter && (
-          <div className="bg-blue-600/20 border border-blue-600/40 rounded-lg p-4 mx-4 mt-4">
-            <p className="text-blue-300 text-sm">
-              📚 Gefiltertes Training: <span className="font-semibold">{bookFilter}</span>
+          <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
+            <p className="text-gray-300 text-sm">
+              📚 Gefiltertes Training: <span className="font-semibold text-white">{bookFilter}</span>
               {' '}—{' '}
-              <a href="/train" className="underline hover:text-blue-200">
+              <a href="/train" className="underline hover:text-white">
                 Filter entfernen
               </a>
               {' '}|{' '}
-              <a href="/books" className="underline hover:text-blue-200">
+              <a href="/books" className="underline hover:text-white">
                 Anderes Buch wählen
               </a>
             </p>

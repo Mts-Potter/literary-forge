@@ -138,7 +138,7 @@ export default async function DashboardPage() {
                 href="/books"
                 className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
               >
-                Alle durchstöbern →
+                📚 Alle durchstöbern
               </Link>
             )}
           </div>
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {books.slice(0, 6).map((book, idx) => (
+              {books.map((book, idx) => (
                 <Link
                   key={idx}
                   href={`/train?book=${encodeURIComponent(book.title)}`}

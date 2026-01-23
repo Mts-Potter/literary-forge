@@ -131,17 +131,7 @@ export default async function DashboardPage() {
 
         {/* Available Books */}
         <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-white">Available Books</h2>
-            {books.length > 0 && (
-              <Link
-                href="/books"
-                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                📚 Browse All
-              </Link>
-            )}
-          </div>
+          <h2 className="text-xl font-semibold text-white mb-4">Available Books</h2>
 
           {books.length === 0 ? (
             <div className="text-center py-8 text-gray-400">
@@ -155,39 +145,71 @@ export default async function DashboardPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {books.map((book, idx) => (
-                <Link
+                <div
                   key={idx}
-                  href={`/train?book=${encodeURIComponent(book.title)}`}
-                  className="border-2 border-[#262626] rounded-lg p-4 hover:border-gray-400
-                             hover:bg-[#1f1f1f] transition-colors cursor-pointer"
+                  className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-6 hover:border-[#3a3a3a] transition-colors"
                 >
-                  <h3 className="font-semibold text-white mb-1">{book.title}</h3>
-                  <p className="text-sm text-gray-400 mb-2">{book.author}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-1 bg-[#262626] rounded">
-                      {book.chunkCount} Chunks
-                    </span>
-                    {book.cefr_level && (
-                      <span className="px-2 py-1 bg-[#262626] text-gray-300 rounded">
-                        {book.cefr_level}
+                  {/* Book Title */}
+                  <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                    {book.title}
+                  </h3>
+
+                  {/* Author */}
+                  <p className="text-gray-400 mb-4">{book.author}</p>
+
+                  {/* Metadata */}
+                  <div className="space-y-2 mb-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500">Language:</span>
+                      <span className="text-white">
+                        {book.language === 'de' ? '🇩🇪 German' : '🇬🇧 English'}
                       </span>
+                    </div>
+
+                    {book.cefr_level && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500">CEFR:</span>
+                        <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 rounded text-xs font-semibold">
+                          {book.cefr_level}
+                        </span>
+                      </div>
                     )}
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500">Chunks:</span>
+                      <span className="text-white">{book.chunkCount}</span>
+                    </div>
                   </div>
+
+                  {/* Tags */}
                   {book.tags && book.tags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {book.tags.slice(0, 3).map((tag: string, i: number) => (
                         <span
                           key={i}
-                          className="text-xs px-2 py-1 bg-[#262626] text-gray-300 rounded"
+                          className="px-2 py-1 bg-[#262626] text-gray-300 rounded text-xs"
                         >
                           {tag}
                         </span>
                       ))}
+                      {book.tags.length > 3 && (
+                        <span className="px-2 py-1 text-gray-500 text-xs">
+                          +{book.tags.length - 3} more
+                        </span>
+                      )}
                     </div>
                   )}
-                </Link>
+
+                  {/* Action Button */}
+                  <Link
+                    href={`/train?book=${encodeURIComponent(book.title)}`}
+                    className="block w-full px-4 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors text-center"
+                  >
+                    Practice with this Book
+                  </Link>
+                </div>
               ))}
             </div>
           )}

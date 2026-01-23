@@ -23,25 +23,32 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 w-full max-w-4xl">
           <Link
             href="/train"
             className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold
-                       hover:bg-blue-700 transition-colors shadow-lg"
+                       hover:bg-blue-700 transition-colors shadow-lg text-center"
           >
             Training starten
           </Link>
           <Link
             href="/dashboard"
             className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold
-                       hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                       hover:border-gray-400 hover:bg-gray-50 transition-colors text-center"
           >
             Dashboard
           </Link>
           <Link
+            href="/settings"
+            className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold
+                       hover:border-gray-400 hover:bg-gray-50 transition-colors text-center"
+          >
+            ⚙️ Einstellungen
+          </Link>
+          <Link
             href="/admin/ingest"
             className="px-8 py-4 border-2 border-purple-300 text-purple-700 rounded-lg font-semibold
-                       hover:border-purple-400 hover:bg-purple-50 transition-colors"
+                       hover:border-purple-400 hover:bg-purple-50 transition-colors text-center"
           >
             📚 Admin Import
           </Link>

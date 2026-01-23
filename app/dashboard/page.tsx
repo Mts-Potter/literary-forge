@@ -109,17 +109,24 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Schnellstart</h2>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link
               href="/train"
-              className="flex-1 px-6 py-4 bg-blue-600 text-white rounded-lg font-semibold
+              className="px-6 py-4 bg-blue-600 text-white rounded-lg font-semibold
                          hover:bg-blue-700 transition-colors text-center shadow-sm"
             >
               {dueToday > 0 ? `${dueToday} Reviews starten` : 'Neue Chunks lernen'}
             </Link>
             <Link
+              href="/settings"
+              className="px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold
+                         hover:border-gray-400 hover:bg-gray-50 transition-colors text-center"
+            >
+              ⚙️ Einstellungen
+            </Link>
+            <Link
               href="/admin/ingest"
-              className="flex-1 px-6 py-4 border-2 border-purple-300 text-purple-700 rounded-lg font-semibold
+              className="px-6 py-4 border-2 border-purple-300 text-purple-700 rounded-lg font-semibold
                          hover:border-purple-400 hover:bg-purple-50 transition-colors text-center"
             >
               📚 Bücher importieren

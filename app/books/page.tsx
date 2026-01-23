@@ -12,22 +12,67 @@ export default async function BooksPage() {
     redirect('/login')
   }
 
-  // Fetch all books with aggregated data
-  const { data: chunks, error } = await supabase
-    .from('source_texts')
-    .select(`
-      id,
-      title,
-      author:authors(name),
-      cefr_level,
-      tags,
-      language
-    `)
-    .order('title')
-    .limit(10000)  // Explicit high limit to ensure all books are fetched
+  // Fetch all books using database-side grouping to avoid 1000-row limit
+  let books: GroupedBook[] = []
 
-  if (error) {
-    console.error('Failed to fetch books:', error)
+  try {
+    const { data: groupedBooks, error: rpcError } = await supabase
+      .rpc('get_grouped_books')
+
+    if (rpcError) {
+      console.log('RPC function not available, falling back to client-side grouping')
+
+      // Fallback: Fetch all chunks in batches
+      const allChunks: any[] = []
+      const batchSize = 1000
+      let offset = 0
+      let hasMore = true
+
+      while (hasMore) {
+        const { data: batch, error: batchError } = await supabase
+          .from('source_texts')
+          .select(`
+            id,
+            title,
+            author:authors(name),
+            cefr_level,
+            tags,
+            language
+          `)
+          .order('title')
+          .range(offset, offset + batchSize - 1)
+
+        if (batchError) {
+          console.error('Failed to fetch books batch:', batchError)
+          break
+        }
+
+        if (batch && batch.length > 0) {
+          allChunks.push(...batch)
+          offset += batchSize
+          hasMore = batch.length === batchSize
+        } else {
+          hasMore = false
+        }
+      }
+
+      // Group chunks by base title
+      books = groupBooksByTitle(allChunks).sort((a, b) =>
+        a.title.localeCompare(b.title)
+      )
+    } else {
+      // Use RPC result (already grouped)
+      books = (groupedBooks || []).map((book: any): GroupedBook => ({
+        title: book.title,
+        author: book.author,
+        cefr_level: book.cefr_level,
+        tags: book.tags || [],
+        language: book.language,
+        chunkCount: Number(book.chunk_count)
+      })).sort((a: GroupedBook, b: GroupedBook) => a.title.localeCompare(b.title))
+    }
+  } catch (error) {
+    console.error('Error fetching books:', error)
     return (
       <div className="container mx-auto p-8">
         <h1 className="text-2xl font-bold text-red-600">Fehler beim Laden der Bücher</h1>
@@ -35,11 +80,6 @@ export default async function BooksPage() {
       </div>
     )
   }
-
-  // Group chunks by book (title without "Teil X")
-  const books = groupBooksByTitle(chunks || []).sort((a, b) =>
-    a.title.localeCompare(b.title)
-  )
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">

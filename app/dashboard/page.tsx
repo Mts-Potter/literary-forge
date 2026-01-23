@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { groupBooksByTitle } from '@/lib/utils/books'
+import { groupBooksByTitle, type GroupedBook } from '@/lib/utils/books'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -27,26 +27,67 @@ export default async function DashboardPage() {
     ? Math.round(progressData.reduce((sum, p) => sum + p.reps, 0) / progressData.length)
     : 0
 
-  // Fetch available books grouped by title
-  const { data: allChunks, error: booksError } = await supabase
-    .from('source_texts')
-    .select(`
-      id,
-      title,
-      author:authors(name),
-      cefr_level,
-      tags,
-      language
-    `)
-    .order('title')
-    .limit(10000)  // Explicit high limit to ensure all books are fetched
+  // Fetch available books using database-side grouping to avoid 1000-row limit
+  // Try RPC function first, fall back to client-side grouping if not available
+  let books: GroupedBook[] = []
 
-  if (booksError) {
-    console.error('Failed to fetch books:', booksError)
+  try {
+    const { data: groupedBooks, error: rpcError } = await supabase
+      .rpc('get_grouped_books')
+
+    if (rpcError) {
+      console.log('RPC function not available, falling back to client-side grouping')
+
+      // Fallback: Fetch all chunks in batches
+      const allChunks: any[] = []
+      const batchSize = 1000
+      let offset = 0
+      let hasMore = true
+
+      while (hasMore) {
+        const { data: batch, error: batchError } = await supabase
+          .from('source_texts')
+          .select(`
+            id,
+            title,
+            author:authors(name),
+            cefr_level,
+            tags,
+            language
+          `)
+          .order('title')
+          .range(offset, offset + batchSize - 1)
+
+        if (batchError) {
+          console.error('Failed to fetch books batch:', batchError)
+          break
+        }
+
+        if (batch && batch.length > 0) {
+          allChunks.push(...batch)
+          offset += batchSize
+          hasMore = batch.length === batchSize
+        } else {
+          hasMore = false
+        }
+      }
+
+      // Group chunks by base title
+      books = groupBooksByTitle(allChunks)
+    } else {
+      // Use RPC result (already grouped)
+      books = (groupedBooks || []).map((book: any): GroupedBook => ({
+        title: book.title,
+        author: book.author,
+        cefr_level: book.cefr_level,
+        tags: book.tags || [],
+        language: book.language,
+        chunkCount: Number(book.chunk_count)
+      }))
+    }
+  } catch (error) {
+    console.error('Error fetching books:', error)
   }
-
-  // Group chunks by base title
-  const books = groupBooksByTitle(allChunks || [])
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">

@@ -53,38 +53,6 @@ export default function Home() {
             📚 Admin Import
           </Link>
         </div>
-
-        <div className="mt-12 p-6 bg-white rounded-lg shadow-md max-w-2xl">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900">Setup-Status</h2>
-          <div className="space-y-2 text-left text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>Next.js Projekt initialisiert</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>Dependencies installiert</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>Supabase konfiguriert</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>AWS Bedrock konfiguriert</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>Datenbank-Migration abgeschlossen</span>
-            </div>
-          </div>
-          <div className="mt-4 p-4 bg-green-50 rounded text-sm text-left">
-            <p className="font-semibold text-green-900 mb-2">System bereit!</p>
-            <p className="text-green-800">
-              Alle Konfigurationen sind abgeschlossen. Du kannst jetzt mit dem Training beginnen.
-            </p>
-          </div>
-        </div>
       </main>
     </div>
   )

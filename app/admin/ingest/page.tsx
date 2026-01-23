@@ -1,40 +1,71 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { BookIngestionUI } from '@/components/admin/BookIngestionUI'
+import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
+import BookIngestForm from '@/components/admin/BookIngestForm'
 
-/**
- * Admin-Route für Book Ingestion
- *
- * Sicherheit:
- * - Nur für authentifizierte User
- * - Nur für Admin-User (definiert in Environment Variable)
- *
- * Setup: Füge ADMIN_USER_IDS zur .env.local hinzu:
- * ADMIN_USER_IDS=uuid1,uuid2,uuid3
- */
 export default async function AdminIngestPage() {
   const supabase = await createClient()
 
-  // Auth Check
-  const { data: { user } } = await supabase.auth.getUser()
+  // Auth check
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-  if (!user) {
-    // Nicht eingeloggt → redirect zu Login
+  if (authError || !user) {
     redirect('/login')
   }
 
-  // Admin-Check: Nur User in ADMIN_USER_IDS erlaubt
-  const adminUserIds = process.env.ADMIN_USER_IDS?.split(',') || []
-  const isAdmin = adminUserIds.includes(user.id)
+  // Admin check - verify user is in admin_users table
+  const { data: adminCheck, error: adminError } = await supabase
+    .from('admin_users')
+    .select('user_id')
+    .eq('user_id', user.id)
+    .single()
 
-  if (!isAdmin) {
-    // Nicht autorisiert → redirect zur Startseite
-    redirect('/')
+  if (adminError || !adminCheck) {
+    // Not an admin - redirect to dashboard
+    redirect('/dashboard')
   }
 
+  // Fetch existing authors for dropdown
+  const { data: authors } = await supabase
+    .from('authors')
+    .select('id, name')
+    .order('name')
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
-      <BookIngestionUI />
+    <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">
+            📚 Bücher importieren
+          </h1>
+          <p className="text-gray-400">
+            Importiere neue literarische Texte für das Training.
+          </p>
+        </div>
+
+        {/* Admin Badge */}
+        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-blue-900/20 border border-blue-700 rounded-lg">
+          <span className="text-blue-400 text-sm font-semibold">
+            🔐 Admin-Bereich
+          </span>
+        </div>
+
+        {/* Import Form */}
+        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-8">
+          <BookIngestForm authors={authors || []} userId={user.id} />
+        </div>
+
+        {/* Back to Dashboard */}
+        <div className="text-center">
+          <Link
+            href="/dashboard"
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            ← Zurück zum Dashboard
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }

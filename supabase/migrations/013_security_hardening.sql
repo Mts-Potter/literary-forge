@@ -194,6 +194,11 @@ GRANT EXECUTE ON FUNCTION is_book_safe_for_region TO authenticated, anon;
 -- VALUES ('a1b2c3d4-e5f6-4789-a012-b3c4d5e6f789')
 -- ON CONFLICT (user_id) DO NOTHING;
 
+-- Add initial admin user
+INSERT INTO admin_users (user_id)
+VALUES ('a6b06a4f-b91d-4b56-a365-fdf8df72c62c')
+ON CONFLICT (user_id) DO NOTHING;
+
 -- ============================================================================
 -- MIGRATION COMPLETE
 -- ============================================================================

@@ -6,18 +6,15 @@ import { useLocalStorage } from '@/hooks/use-local-storage'
 export function ZenEditor({
   prompt,
   sceneDescription,
-  originalText,
   onSubmit,
   isSubmitting = false
 }: {
   prompt: string
   sceneDescription: string
-  originalText: string
   onSubmit: (text: string) => void
   isSubmitting?: boolean
 }) {
   const [text, setText] = useLocalStorage('zen-editor-draft', '')
-  const [showOriginal, setShowOriginal] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Typewriter scrolling: Keep cursor vertically centered
@@ -83,31 +80,6 @@ export function ZenEditor({
             {sceneDescription}
           </p>
         </div>
-      </div>
-
-      {/* Original Text (Collapsible) */}
-      <div className="bg-[#171717] border border-[#262626] rounded-lg mb-4">
-        <button
-          onClick={() => setShowOriginal(!showOriginal)}
-          className="w-full p-5 flex items-center justify-between text-left hover:bg-[#1f1f1f] transition-colors"
-        >
-          <h3 className="text-lg font-semibold text-white">
-            📖 {showOriginal ? 'Hide' : 'Show'} Original Text
-          </h3>
-          <span className="text-2xl text-white transform transition-transform" style={{ transform: showOriginal ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-            ▼
-          </span>
-        </button>
-
-        {showOriginal && (
-          <div className="px-5 pb-5">
-            <div className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 max-h-96 overflow-y-auto">
-              <p className="text-lg text-white leading-relaxed font-serif whitespace-pre-wrap">
-                {originalText}
-              </p>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Main Editor Area */}

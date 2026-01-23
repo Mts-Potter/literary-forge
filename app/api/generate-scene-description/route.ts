@@ -80,8 +80,11 @@ Output ONLY the summary of the story content. Even if incomplete, describe what 
       /does not contain/i,
       /appears to be a fragment/i,
       /without more context/i,
-      /insufficient information/i,
-      /unable to/i
+      /insufficient/i,  // Catches "insufficient narrative context", "insufficient information", etc.
+      /unable to/i,
+      /there is insufficient/i,
+      /lacks a clear/i,
+      /based on the provided text fragment/i  // Common meta-commentary
     ]
 
     const isErrorResponse = errorPatterns.some(pattern => pattern.test(description))

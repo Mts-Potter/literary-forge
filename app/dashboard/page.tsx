@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     : 0
 
   // Fetch available books grouped by title
-  const { data: allChunks } = await supabase
+  const { data: allChunks, error: booksError } = await supabase
     .from('source_texts')
     .select(`
       id,
@@ -39,6 +39,11 @@ export default async function DashboardPage() {
       language
     `)
     .order('title')
+    .limit(10000)  // Explicit high limit to ensure all books are fetched
+
+  if (booksError) {
+    console.error('Failed to fetch books:', booksError)
+  }
 
   // Group chunks by base title
   const books = groupBooksByTitle(allChunks || [])

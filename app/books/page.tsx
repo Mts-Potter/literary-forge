@@ -24,6 +24,7 @@ export default async function BooksPage() {
       language
     `)
     .order('title')
+    .limit(10000)  // Explicit high limit to ensure all books are fetched
 
   if (error) {
     console.error('Failed to fetch books:', error)

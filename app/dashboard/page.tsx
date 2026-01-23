@@ -68,7 +68,7 @@ export default async function DashboardPage() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white mb-1">Dashboard</h1>
           <p className="text-gray-400 text-sm">
-            Willkommen zurück! Hier ist deine Lernübersicht.
+            Welcome back! Here's your learning overview.
           </p>
         </div>
 
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Chunks Gelernt</p>
+                <p className="text-sm text-gray-400 mb-1">Chunks Studied</p>
                 <p className="text-3xl font-bold text-white">{totalStudied}</p>
               </div>
               <div className="text-4xl">📚</div>
@@ -89,7 +89,7 @@ export default async function DashboardPage() {
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Fällig Heute</p>
+                <p className="text-sm text-gray-400 mb-1">Due Today</p>
                 <p className="text-3xl font-bold text-white">{dueToday}</p>
               </div>
               <div className="text-4xl">⏰</div>
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Ø Wiederholungen</p>
+                <p className="text-sm text-gray-400 mb-1">Avg. Repetitions</p>
                 <p className="text-3xl font-bold text-white">{avgReps}</p>
               </div>
               <div className="text-4xl">🔄</div>
@@ -110,21 +110,21 @@ export default async function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Schnellstart</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">Quick Start</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link
               href="/train"
               className="px-6 py-4 bg-white text-black rounded-lg font-semibold
                          hover:bg-gray-200 transition-colors text-center"
             >
-              {dueToday > 0 ? `${dueToday} Reviews starten` : 'Neue Chunks lernen'}
+              {dueToday > 0 ? `Start ${dueToday} Reviews` : 'Learn New Chunks'}
             </Link>
             <Link
               href="/admin/ingest"
               className="px-6 py-4 border-2 border-[#262626] text-gray-300 rounded-lg font-semibold
                          hover:border-gray-400 hover:bg-[#1f1f1f] transition-colors text-center"
             >
-              📚 Bücher importieren
+              📚 Import Books
             </Link>
           </div>
         </div>
@@ -132,26 +132,26 @@ export default async function DashboardPage() {
         {/* Available Books */}
         <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-white">Verfügbare Bücher</h2>
+            <h2 className="text-xl font-semibold text-white">Available Books</h2>
             {books.length > 0 && (
               <Link
                 href="/books"
                 className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
               >
-                📚 Alle durchstöbern
+                📚 Browse All
               </Link>
             )}
           </div>
 
           {books.length === 0 ? (
             <div className="text-center py-8 text-gray-400">
-              <p className="mb-4">Noch keine Bücher importiert.</p>
+              <p className="mb-4">No books imported yet.</p>
               <Link
                 href="/admin/ingest"
                 className="inline-block px-6 py-3 bg-white text-black rounded-lg font-semibold
                            hover:bg-gray-200 transition-colors"
               >
-                Erstes Buch importieren
+                Import First Book
               </Link>
             </div>
           ) : (
@@ -199,7 +199,7 @@ export default async function DashboardPage() {
             href="/"
             className="text-gray-400 hover:text-white transition-colors"
           >
-            ← Zurück zur Startseite
+            ← Back to Home
           </Link>
         </div>
       </div>

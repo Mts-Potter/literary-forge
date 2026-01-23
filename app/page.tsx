@@ -11,19 +11,19 @@ export default function Home() {
             Literary Forge
           </h1>
           <p className="text-2xl text-gray-300 font-medium">
-            KI-gestütztes Training für stilistische Mimesis
+            AI-Powered Training for Literary Style Imitation
           </p>
         </div>
 
         {/* Value Proposition */}
         <div className="max-w-2xl space-y-6 text-lg text-gray-400 leading-relaxed">
           <p>
-            Lerne, die Stile großer Autoren zu imitieren durch eine einzigartige Kombination
-            aus <strong className="text-white">Spaced Repetition</strong>, <strong className="text-white">linguistischer Analyse</strong> und <strong className="text-white">KI-Feedback</strong>.
+            Learn to imitate the styles of great authors through a unique combination
+            of <strong className="text-white">Spaced Repetition</strong>, <strong className="text-white">linguistic analysis</strong>, and <strong className="text-white">AI feedback</strong>.
           </p>
           <p className="text-base">
-            Trainiere mit Textpassagen von Kafka, Rilke, Tucholsky und anderen Meistern der deutschen Literatur.
-            Erhalte präzises Feedback zu Satzbau, Rhythmus, Wortschatz und Ton.
+            Train with passages from Kafka, Austen, Fitzgerald, and other masters of literature.
+            Receive precise feedback on sentence structure, rhythm, vocabulary, and tone.
           </p>
         </div>
 
@@ -34,7 +34,7 @@ export default function Home() {
             className="px-12 py-5 bg-white text-black text-xl font-bold rounded-xl
                        hover:bg-gray-200 hover:scale-105 transition-all shadow-2xl"
           >
-            Training starten
+            Start Training
           </Link>
 
           <Link
@@ -42,7 +42,7 @@ export default function Home() {
             className="px-8 py-3 bg-[#262626] text-white text-base font-semibold rounded-lg
                        hover:bg-[#1f1f1f] transition-colors border border-[#3a3a3a]"
           >
-            📚 Bücher durchstöbern
+            📚 Browse Books
           </Link>
         </div>
 
@@ -52,23 +52,23 @@ export default function Home() {
             <div className="text-4xl mb-3">🔄</div>
             <h3 className="font-semibold text-white mb-2">Spaced Repetition</h3>
             <p className="text-sm text-gray-400">
-              Anki-ähnlicher Algorithmus für optimales Langzeitlernen
+              Anki-like algorithm for optimal long-term retention
             </p>
           </div>
 
           <div className="p-6 bg-[#171717] border border-[#262626] rounded-lg hover:bg-[#1f1f1f] transition-colors">
             <div className="text-4xl mb-3">📊</div>
-            <h3 className="font-semibold text-white mb-2">Stilometrische Analyse</h3>
+            <h3 className="font-semibold text-white mb-2">Stylometric Analysis</h3>
             <p className="text-sm text-gray-400">
-              Präzise Metriken für Satzbau, Rhythmus und Komplexität
+              Precise metrics for sentence structure, rhythm, and complexity
             </p>
           </div>
 
           <div className="p-6 bg-[#171717] border border-[#262626] rounded-lg hover:bg-[#1f1f1f] transition-colors">
             <div className="text-4xl mb-3">🤖</div>
-            <h3 className="font-semibold text-white mb-2">KI-Feedback</h3>
+            <h3 className="font-semibold text-white mb-2">AI Feedback</h3>
             <p className="text-sm text-gray-400">
-              Detaillierte Bewertung von Claude 3.5 Haiku
+              Detailed evaluation from Claude 3.5 Haiku
             </p>
           </div>
         </div>

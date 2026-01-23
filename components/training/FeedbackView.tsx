@@ -38,8 +38,8 @@ export function FeedbackView({
               <div>
                 <p className="font-semibold text-white text-base mb-1">{schedule.message}</p>
                 <p className="text-base text-gray-400">
-                  Grade: {schedule.grade}/4 • Next: {new Date(schedule.next_review).toLocaleDateString('de-DE')}
-                  {schedule.interval_days > 0 && ` (in ${schedule.interval_days} ${schedule.interval_days === 1 ? 'Tag' : 'Tagen'})`}
+                  Grade: {schedule.grade}/4 • Next: {new Date(schedule.next_review).toLocaleDateString('en-US')}
+                  {schedule.interval_days > 0 && ` (in ${schedule.interval_days} ${schedule.interval_days === 1 ? 'day' : 'days'})`}
                 </p>
               </div>
             </div>

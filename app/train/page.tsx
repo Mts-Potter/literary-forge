@@ -80,14 +80,14 @@ export default async function TrainPage({
         {bookFilter && (
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
             <p className="text-gray-300 text-sm">
-              📚 Gefiltertes Training: <span className="font-semibold text-white">{bookFilter}</span>
+              📚 Filtered Training: <span className="font-semibold text-white">{bookFilter}</span>
               {' '}—{' '}
               <a href="/train" className="underline hover:text-white">
-                Filter entfernen
+                Remove Filter
               </a>
               {' '}|{' '}
               <a href="/books" className="underline hover:text-white">
-                Anderes Buch wählen
+                Choose Different Book
               </a>
             </p>
           </div>
@@ -157,14 +157,14 @@ export default async function TrainPage({
         {bookFilter && (
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
             <p className="text-gray-300 text-sm">
-              📚 Gefiltertes Training: <span className="font-semibold text-white">{bookFilter}</span>
+              📚 Filtered Training: <span className="font-semibold text-white">{bookFilter}</span>
               {' '}—{' '}
               <a href="/train" className="underline hover:text-white">
-                Filter entfernen
+                Remove Filter
               </a>
               {' '}|{' '}
               <a href="/books" className="underline hover:text-white">
-                Anderes Buch wählen
+                Choose Different Book
               </a>
             </p>
           </div>
@@ -187,8 +187,8 @@ export default async function TrainPage({
             Come back later or add more books to practice.
           </p>
           <p className="text-sm text-gray-500 mb-8">
-            💡 Tipp: Du kannst auch den <strong className="text-white">Linearen Modus</strong> in den Einstellungen
-            aktivieren, um alle Texte ohne Scheduling durchzugehen.
+            💡 Tip: You can also enable <strong className="text-white">Linear Mode</strong> in settings
+            to go through all texts without scheduling.
           </p>
           <div className="flex flex-col gap-3">
             <a
@@ -196,21 +196,21 @@ export default async function TrainPage({
               className="px-6 py-3 bg-white text-black font-semibold rounded-lg
                          hover:bg-gray-200 transition-colors"
             >
-              📚 Bücher durchstöbern
+              📚 Browse Books
             </a>
             <a
               href="/settings"
               className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
                          hover:bg-[#1f1f1f] transition-colors"
             >
-              Zu den Einstellungen
+              Go to Settings
             </a>
             <a
               href="/admin/ingest"
               className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
                          hover:bg-[#1f1f1f] transition-colors"
             >
-              Mehr Bücher hinzufügen
+              Add More Books
             </a>
           </div>
         </div>
@@ -278,14 +278,14 @@ export default async function TrainPage({
         {bookFilter && (
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
             <p className="text-gray-300 text-sm">
-              📚 Gefiltertes Training: <span className="font-semibold text-white">{bookFilter}</span>
+              📚 Filtered Training: <span className="font-semibold text-white">{bookFilter}</span>
               {' '}—{' '}
               <a href="/train" className="underline hover:text-white">
-                Filter entfernen
+                Remove Filter
               </a>
               {' '}|{' '}
               <a href="/books" className="underline hover:text-white">
-                Anderes Buch wählen
+                Choose Different Book
               </a>
             </p>
           </div>
@@ -301,14 +301,14 @@ export default async function TrainPage({
       <div className="text-center max-w-md px-4">
         <div className="text-6xl mb-6">✅</div>
         <h1 className="text-3xl font-bold text-white mb-4">
-          Alle Texte durchgearbeitet!
+          All Texts Completed!
         </h1>
         <p className="text-gray-400 mb-4">
-          Du hast alle verfügbaren Texte im linearen Modus gesehen.
+          You've seen all available texts in linear mode.
         </p>
         <p className="text-sm text-gray-500 mb-8">
-          💡 Tipp: Aktiviere <strong className="text-white">Spaced Repetition</strong> in den Einstellungen,
-          um Texte basierend auf deinem Lernerfolg zu wiederholen und langfristig zu festigen.
+          💡 Tip: Enable <strong className="text-white">Spaced Repetition</strong> in settings
+          to review texts based on your learning progress for long-term retention.
         </p>
         <div className="flex flex-col gap-3">
           <a
@@ -316,21 +316,21 @@ export default async function TrainPage({
             className="px-6 py-3 bg-white text-black font-semibold rounded-lg
                        hover:bg-gray-200 transition-colors"
           >
-            📚 Bücher durchstöbern
+            📚 Browse Books
           </a>
           <a
             href="/settings"
             className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
                        hover:bg-[#1f1f1f] transition-colors"
           >
-            Zu den Einstellungen
+            Go to Settings
           </a>
           <a
             href="/admin/ingest"
             className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
                        hover:bg-[#1f1f1f] transition-colors"
           >
-            Mehr Bücher hinzufügen
+            Add More Books
           </a>
         </div>
       </div>

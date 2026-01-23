@@ -75,13 +75,13 @@ export default async function BooksPage() {
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Verfügbare Bücher</h1>
+          <h1 className="text-4xl font-bold mb-2">Available Books</h1>
           <p className="text-gray-400">
-            Wähle ein Buch aus, um gezielt damit zu üben, oder gehe zu{' '}
+            Select a book to practice with it specifically, or go to{' '}
             <Link href="/train" className="text-blue-400 hover:underline">
               /train
             </Link>{' '}
-            für eine zufällige Auswahl.
+            for a random selection.
           </p>
         </div>
 
@@ -90,16 +90,16 @@ export default async function BooksPage() {
           <div className="text-center py-16">
             <div className="text-6xl mb-4">📚</div>
             <h2 className="text-2xl font-semibold text-gray-400 mb-4">
-              Keine Bücher verfügbar
+              No Books Available
             </h2>
             <p className="text-gray-500 mb-6">
-              Füge Bücher über die Admin-Oberfläche hinzu.
+              Add books through the admin interface.
             </p>
             <Link
               href="/admin/ingest"
               className="inline-block px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors"
             >
-              Bücher hinzufügen
+              Add Books
             </Link>
           </div>
         ) : (
@@ -120,9 +120,9 @@ export default async function BooksPage() {
                 {/* Metadata */}
                 <div className="space-y-2 mb-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Sprache:</span>
+                    <span className="text-gray-500">Language:</span>
                     <span className="text-white">
-                      {book.language === 'de' ? '🇩🇪 Deutsch' : '🇬🇧 English'}
+                      {book.language === 'de' ? '🇩🇪 German' : '🇬🇧 English'}
                     </span>
                   </div>
 
@@ -154,7 +154,7 @@ export default async function BooksPage() {
                     ))}
                     {book.tags.length > 3 && (
                       <span className="px-2 py-1 text-gray-500 text-xs">
-                        +{book.tags.length - 3} mehr
+                        +{book.tags.length - 3} more
                       </span>
                     )}
                   </div>
@@ -166,7 +166,7 @@ export default async function BooksPage() {
                     href={`/train?book=${encodeURIComponent(book.title)}`}
                     className="flex-1 px-4 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors text-center"
                   >
-                    Mit diesem Buch üben
+                    Practice with this Book
                   </Link>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default async function BooksPage() {
             href="/train"
             className="inline-block px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg hover:bg-[#1f1f1f] transition-colors"
           >
-            ← Zurück zum Training (Zufällig)
+            ← Back to Training (Random)
           </Link>
         </div>
       </div>

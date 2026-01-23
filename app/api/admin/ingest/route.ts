@@ -92,6 +92,42 @@ export async function POST(request: NextRequest) {
     // Generate automatic tags
     const autoTags = generateTags(language, cefrLevel, authorName || '')
 
+    // Check if book already exists (same title base + author)
+    // If yes, delete old chunks before inserting new ones
+    const { data: existingChunks, error: checkError } = await supabase
+      .from('source_texts')
+      .select('id, title')
+      .eq('author_id', finalAuthorId)
+      .or(`title.eq.${title},title.like.${title} (Teil %)`)
+
+    if (checkError) {
+      console.error('Failed to check existing chunks:', checkError)
+      // Continue anyway - non-critical error
+    }
+
+    let deletedCount = 0
+    if (existingChunks && existingChunks.length > 0) {
+      console.log(`Found ${existingChunks.length} existing chunks for "${title}" by ${authorName}`)
+
+      // Delete old chunks (cascades to user_progress, review_history via foreign keys)
+      const { error: deleteError } = await supabase
+        .from('source_texts')
+        .delete()
+        .eq('author_id', finalAuthorId)
+        .or(`title.eq.${title},title.like.${title} (Teil %)`)
+
+      if (deleteError) {
+        console.error('Failed to delete old chunks:', deleteError)
+        return NextResponse.json(
+          { error: 'Failed to delete existing chunks. Please try again.' },
+          { status: 500 }
+        )
+      }
+
+      deletedCount = existingChunks.length
+      console.log(`Successfully deleted ${deletedCount} old chunks`)
+    }
+
     // Split content into chunks
     const chunks = splitIntoChunks(content, chunkSize || 500)
 
@@ -140,11 +176,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Build success message
+    let message = `Erfolgreich importiert: "${title}"`
+    if (deletedCount > 0) {
+      message += ` (${deletedCount} alte Chunks ersetzt)`
+    }
+    message += ` - ${insertedChunks?.length || 0} neue Chunks erstellt`
+
     return NextResponse.json({
       success: true,
       chunksCreated: insertedChunks?.length || 0,
+      chunksDeleted: deletedCount,
       authorId: finalAuthorId,
-      message: 'Successfully imported "' + title + '" in ' + (insertedChunks?.length || 0) + ' chunks'
+      replaced: deletedCount > 0,
+      message
     })
 
   } catch (error: any) {

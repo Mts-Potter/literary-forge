@@ -106,7 +106,12 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
         throw new Error(data.error || 'Import fehlgeschlagen')
       }
 
-      setSuccess(`✅ Erfolgreich importiert! ${data.chunksCreated} Chunks erstellt.`)
+      // Show success message with replacement info if applicable
+      let successMsg = '✅ ' + data.message
+      if (data.replaced) {
+        successMsg += ' ⚠️ Alte Version wurde überschrieben.'
+      }
+      setSuccess(successMsg)
 
       // Reset form
       setTitle('')
@@ -115,7 +120,7 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
       setContent('')
       setCefrLevel('')
       setFileName('')
-      
+
       // Refresh page to update authors list if new author was created
       if (newAuthorName) {
         router.refresh()

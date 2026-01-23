@@ -179,24 +179,6 @@ export default function SettingsPage() {
             </p>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        <div className="mt-6 flex gap-3">
-          <Link
-            href="/train"
-            className="flex-1 px-6 py-3 bg-white text-black font-semibold rounded-lg
-                       hover:bg-gray-200 transition-colors text-center"
-          >
-            Zum Training
-          </Link>
-          <Link
-            href="/dashboard"
-            className="flex-1 px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
-                       hover:bg-[#1f1f1f] transition-colors text-center"
-          >
-            Dashboard
-          </Link>
-        </div>
       </div>
     </div>
   )

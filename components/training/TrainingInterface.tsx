@@ -122,6 +122,7 @@ ${initialChunk.source_texts.cefr_level ? `\nDifficulty: ${initialChunk.source_te
       <ZenEditor
         prompt={prompt}
         sceneDescription={sceneDescription}
+        originalText={initialChunk.source_texts.content}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
       />

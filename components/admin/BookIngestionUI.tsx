@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { processBook, saveChunksToSupabase, updateExistingBook, BookChunk } from '@/lib/ingest/book-processor'
-import type { SourceText } from '@/lib/supabase/types'
 import { useDarkMode } from '@/hooks/use-dark-mode'
 
 export function BookIngestionUI() {

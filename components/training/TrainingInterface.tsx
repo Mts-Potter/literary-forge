@@ -14,6 +14,11 @@ export function TrainingInterface({ initialChunk, userId }: any) {
   const [sceneDescription, setSceneDescription] = useState<string>('')
   const [isLoadingDescription, setIsLoadingDescription] = useState(true)
 
+  // Clear draft text on mount (start with clean slate)
+  useEffect(() => {
+    localStorage.removeItem('zen-editor-draft')
+  }, [])
+
   // Load or generate scene description on mount
   useEffect(() => {
     async function loadSceneDescription() {

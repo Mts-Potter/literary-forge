@@ -128,126 +128,119 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        {/* Settings Card */}
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 space-y-5">
-
-          {/* SRS Toggle */}
-          <div>
-            <div className="flex items-start justify-between gap-4 mb-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-base font-semibold text-white">
-                    🔄 Spaced Repetition System (SRS)
-                  </h3>
-                  {saving && (
-                    <span className="text-xs text-gray-500 italic">
-                      Speichert...
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  Anki-ähnlicher Algorithmus für optimales Langzeitlernen.
-                </p>
+        {/* SRS Settings Card */}
+        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
+          <div className="flex items-start justify-between gap-4 mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-base font-semibold text-white">
+                  🔄 Spaced Repetition System (SRS)
+                </h3>
+                {saving && (
+                  <span className="text-xs text-gray-500 italic">
+                    Speichert...
+                  </span>
+                )}
               </div>
-              <button
-                onClick={() => toggleSRS(!enableSRS)}
-                disabled={saving}
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Anki-ähnlicher Algorithmus für optimales Langzeitlernen.
+              </p>
+            </div>
+            <button
+              onClick={() => toggleSRS(!enableSRS)}
+              disabled={saving}
+              className={`
+                relative inline-flex h-6 w-11 items-center rounded-full
+                transition-colors focus:outline-none
+                ${enableSRS ? 'bg-white' : 'bg-[#262626]'}
+                ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+              aria-label="Toggle Spaced Repetition"
+            >
+              <span
                 className={`
-                  relative inline-flex h-6 w-11 items-center rounded-full
-                  transition-colors focus:outline-none
-                  ${enableSRS ? 'bg-white' : 'bg-[#262626]'}
-                  ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                  inline-block h-4 w-4 transform rounded-full
+                  transition-transform
+                  ${enableSRS ? 'translate-x-6 bg-black' : 'translate-x-1 bg-gray-600'}
                 `}
-                aria-label="Toggle Spaced Repetition"
-              >
-                <span
-                  className={`
-                    inline-block h-4 w-4 transform rounded-full
-                    transition-transform
-                    ${enableSRS ? 'translate-x-6 bg-black' : 'translate-x-1 bg-gray-600'}
-                  `}
-                />
-              </button>
-            </div>
-
-            {/* Mode Description */}
-            <div className="text-xs text-gray-400 bg-[#0a0a0a] border-l-2 border-white p-3 rounded">
-              {enableSRS ? (
-                <div>
-                  <p className="font-semibold text-white mb-1">✅ SRS Modus aktiv</p>
-                  <p className="text-gray-400">
-                    Texte erscheinen basierend auf Lernintervallen (10 Min → 6h → 1 Tag → 4 Tage...).
-                    Optimiert für langfristige Retention.
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <p className="font-semibold text-white mb-1">📚 Linearer Modus aktiv</p>
-                  <p className="text-gray-400">
-                    Texte werden der Reihe nach durchgegangen. Ideal zum "Durchpowern" neuer Bücher.
-                  </p>
-                </div>
-              )}
-            </div>
+              />
+            </button>
           </div>
 
-          {/* Divider */}
-          <div className="border-t border-[#262626]"></div>
+          {/* Mode Description */}
+          <div className="text-xs text-gray-400 bg-[#0a0a0a] border-l-2 border-white p-3 rounded">
+            {enableSRS ? (
+              <div>
+                <p className="font-semibold text-white mb-1">✅ SRS Modus aktiv</p>
+                <p className="text-gray-400">
+                  Texte erscheinen basierend auf Lernintervallen (10 Min → 6h → 1 Tag → 4 Tage...).
+                  Optimiert für langfristige Retention.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="font-semibold text-white mb-1">📚 Linearer Modus aktiv</p>
+                <p className="text-gray-400">
+                  Texte werden der Reihe nach durchgegangen. Ideal zum "Durchpowern" neuer Bücher.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
 
-          {/* Account Section */}
-          <div>
-            <h3 className="text-base font-semibold text-white mb-3">
-              👤 Konto
-            </h3>
+        {/* Account Settings Card */}
+        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5">
+          <h3 className="text-base font-semibold text-white mb-3">
+            👤 Konto
+          </h3>
 
-            <div className="space-y-3">
-              {/* Email */}
+          <div className="space-y-3">
+            {/* Email */}
+            <div>
+              <label className="text-xs text-gray-400 block mb-1">
+                Email-Adresse
+              </label>
+              <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-sm text-white">
+                {userEmail}
+              </div>
+            </div>
+
+            {/* User ID */}
+            <div>
+              <label className="text-xs text-gray-400 block mb-1">
+                Benutzer-ID
+              </label>
+              <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-xs text-gray-500 font-mono">
+                {userId}
+              </div>
+            </div>
+
+            {/* Account created */}
+            {createdAt && (
               <div>
                 <label className="text-xs text-gray-400 block mb-1">
-                  Email-Adresse
+                  Konto erstellt am
                 </label>
                 <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-sm text-white">
-                  {userEmail}
+                  {new Date(createdAt).toLocaleDateString('de-DE', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
                 </div>
               </div>
+            )}
 
-              {/* User ID */}
-              <div>
-                <label className="text-xs text-gray-400 block mb-1">
-                  Benutzer-ID
-                </label>
-                <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-xs text-gray-500 font-mono">
-                  {userId}
-                </div>
-              </div>
-
-              {/* Account created */}
-              {createdAt && (
-                <div>
-                  <label className="text-xs text-gray-400 block mb-1">
-                    Konto erstellt am
-                  </label>
-                  <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-sm text-white">
-                    {new Date(createdAt).toLocaleDateString('de-DE', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Sign Out Button */}
-              <button
-                onClick={handleSignOut}
-                disabled={signingOut}
-                className="w-full mt-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold
-                           hover:bg-red-700 transition-colors
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {signingOut ? 'Wird abgemeldet...' : 'Abmelden'}
-              </button>
-            </div>
+            {/* Sign Out Button */}
+            <button
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="w-full mt-2 px-4 py-2 bg-[#262626] text-white rounded-lg text-sm font-semibold
+                         hover:bg-[#1f1f1f] transition-colors
+                         disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {signingOut ? 'Wird abgemeldet...' : 'Abmelden'}
+            </button>
           </div>
         </div>
       </div>

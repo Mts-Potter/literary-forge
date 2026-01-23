@@ -34,7 +34,8 @@ export default async function DashboardPage() {
       title,
       author:authors(name),
       cefr_level,
-      tags
+      tags,
+      language
     `)
     .order('title')
 
@@ -53,6 +54,7 @@ export default async function DashboardPage() {
         author: authorName,
         cefr_level: chunk.cefr_level,
         tags: chunk.tags,
+        language: chunk.language,
         chunkCount: 1
       })
     } else {

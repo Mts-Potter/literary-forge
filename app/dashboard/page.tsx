@@ -109,20 +109,13 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">Schnellstart</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link
               href="/train"
               className="px-6 py-4 bg-white text-black rounded-lg font-semibold
                          hover:bg-gray-200 transition-colors text-center"
             >
               {dueToday > 0 ? `${dueToday} Reviews starten` : 'Neue Chunks lernen'}
-            </Link>
-            <Link
-              href="/settings"
-              className="px-6 py-4 border-2 border-[#262626] text-gray-300 rounded-lg font-semibold
-                         hover:border-gray-400 hover:bg-[#1f1f1f] transition-colors text-center"
-            >
-              ⚙️ Einstellungen
             </Link>
             <Link
               href="/admin/ingest"

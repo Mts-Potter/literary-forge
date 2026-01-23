@@ -91,8 +91,9 @@ export function TrainingInterface({ initialChunk, userId }: any) {
     // Clear the draft text from localStorage before reloading
     localStorage.removeItem('zen-editor-draft')
 
-    // Reload page to fetch next chunk
-    window.location.reload()
+    // Pass the completed text_id as URL parameter to exclude it from next query
+    const currentTextId = initialChunk.source_texts.id
+    window.location.href = `/train?exclude=${currentTextId}`
   }
 
   // Generate prompt with original text context
@@ -103,10 +104,10 @@ ${initialChunk.source_texts.cefr_level ? `\nDifficulty: ${initialChunk.source_te
     // Show loading state while scene description is being fetched/generated
     if (isLoadingDescription) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading scene description...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading scene description...</p>
           </div>
         </div>
       )

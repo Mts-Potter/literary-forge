@@ -2,8 +2,16 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { TrainingInterface } from '@/components/training/TrainingInterface'
 
-export default async function TrainPage() {
+export default async function TrainPage({
+  searchParams
+}: {
+  searchParams: Promise<{ exclude?: string }>
+}) {
   const supabase = await createClient()
+
+  // Get search params (Next.js 15 async pattern)
+  const params = await searchParams
+  const excludeTextId = params.exclude
 
   // Auth check
   const { data: { user } } = await supabase.auth.getUser()
@@ -23,7 +31,8 @@ export default async function TrainPage() {
   // === SRS MODE: Anki-style scheduling ===
   if (enableSRS) {
     // 1. Fetch next due text chunk from SRS queue (existing reviews)
-  const { data: dueChunks } = await supabase
+    // IMPORTANT: Skip the last completed text_id to prevent immediate repetition
+  let dueChunkQuery = supabase
     .from('user_progress')
     .select(`
       text_id,
@@ -44,11 +53,18 @@ export default async function TrainPage() {
     .eq('user_id', user.id)
     .lte('next_review', new Date().toISOString())
     .order('next_review', { ascending: true })
-    .limit(1)
+    .limit(2)  // Fetch 2 to have fallback if first is excluded
 
-  // If found a due review, return it immediately (prioritize reviews over new cards)
-  if (dueChunks && dueChunks.length > 0) {
-    const chunk = dueChunks[0]
+  const { data: dueChunks } = await dueChunkQuery
+
+  // Filter out the excluded text_id
+  const filteredDueChunks = dueChunks?.filter(chunk =>
+    chunk.text_id !== excludeTextId
+  ) || []
+
+  // If found a due review (that's not the excluded one), return it
+  if (filteredDueChunks.length > 0) {
+    const chunk = filteredDueChunks[0]
     return <TrainingInterface initialChunk={chunk} userId={user.id} />
   }
 
@@ -60,6 +76,11 @@ export default async function TrainPage() {
     .eq('user_id', user.id)
 
   const attemptedTextIds = attemptedIds?.map(p => p.text_id) || []
+
+  // Add excluded text_id to the attempted list to prevent it from appearing
+  if (excludeTextId && !attemptedTextIds.includes(excludeTextId)) {
+    attemptedTextIds.push(excludeTextId)
+  }
 
   // Fetch a NEW chunk NOT in user_progress
   let newChunkQuery = supabase
@@ -142,6 +163,11 @@ export default async function TrainPage() {
     .eq('user_id', user.id)
 
   const attemptedTextIds = attemptedIds?.map(p => p.text_id) || []
+
+  // Add excluded text_id to prevent immediate repetition
+  if (excludeTextId && !attemptedTextIds.includes(excludeTextId)) {
+    attemptedTextIds.push(excludeTextId)
+  }
 
   // Fetch next text NOT in attempted list (linear order)
   let nextTextQuery = supabase

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useLocalStorage } from '@/hooks/use-local-storage'
-import { useDarkMode } from '@/hooks/use-dark-mode'
 
 export function ZenEditor({
   prompt,
@@ -18,7 +17,6 @@ export function ZenEditor({
   const [text, setText] = useLocalStorage('zen-editor-draft', '')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useDarkMode()
 
   // Typewriter scrolling: Keep cursor vertically centered
   useEffect(() => {
@@ -64,66 +62,42 @@ export function ZenEditor({
   const wordCount = text.split(/\s+/).filter(Boolean).length
   const charCount = text.length
 
-  // Theme classes
-  const bgClass = isDarkMode ? 'bg-gray-900' : 'bg-gray-50'
-  const headerBgClass = isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-  const textClass = isDarkMode ? 'text-gray-100' : 'text-gray-900'
-  const textSecondaryClass = isDarkMode ? 'text-gray-400' : 'text-gray-600'
-  const editorBgClass = isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'
-  const editorTextClass = isDarkMode ? 'text-gray-100 placeholder:text-gray-500' : 'text-gray-900 placeholder:text-gray-400'
-  const sceneBoxBgClass = isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-blue-50 border-blue-200'
-
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : ''} flex flex-col ${bgClass} min-h-screen`}>
-      {/* Header with prompt, scene description, and controls */}
-      <div className={`${headerBgClass} border-b px-8 py-4`}>
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex-1">
-            <h2 className={`text-lg font-semibold ${textClass}`}>Stylistic Imitation Exercise</h2>
-            <p className={`text-sm ${textSecondaryClass} mt-1`}>{prompt}</p>
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : ''} flex flex-col bg-[#0a0a0a] min-h-screen`}>
+      {/* Compact Header - Fixed at top */}
+      <div className="bg-[#171717] border-b border-[#262626] px-6 py-3 flex-shrink-0">
+        <div className="flex justify-between items-center gap-4">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base font-semibold text-white truncate">
+              Stylistic Imitation Exercise
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5 truncate">{prompt}</p>
           </div>
-          <div className="flex items-center gap-2 ml-4">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`px-3 py-2 text-sm rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-gray-400 hover:text-gray-100 hover:bg-gray-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
-              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {isDarkMode ? '☀️ Light' : '🌙 Dark'}
-            </button>
-            {/* Fullscreen Toggle */}
-            <button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className={`px-3 py-2 text-sm rounded-md transition-colors ${
-                isDarkMode
-                  ? 'text-gray-400 hover:text-gray-100 hover:bg-gray-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
-              title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            >
-              {isFullscreen ? '⊗ Exit' : '⊕ Fullscreen'}
-            </button>
-          </div>
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-[#262626] rounded-md transition-colors flex-shrink-0"
+            title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+          >
+            {isFullscreen ? '⊗ Exit' : '⊕ Fullscreen'}
+          </button>
         </div>
+      </div>
 
-        {/* Scene Description Box */}
-        <div className={`${sceneBoxBgClass} border-2 rounded-lg p-4`}>
-          <h3 className={`text-xs font-semibold uppercase tracking-wide ${textSecondaryClass} mb-2`}>
-            Scene to Recreate
+      {/* Scene Description - Compact */}
+      <div className="bg-[#171717] border-b border-[#262626] px-6 py-3 flex-shrink-0">
+        <div className="flex items-start gap-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 flex-shrink-0 pt-1">
+            Scene:
           </h3>
-          <p className={`text-sm leading-relaxed ${textClass}`}>
+          <p className="text-sm leading-relaxed text-gray-300 flex-1">
             {sceneDescription}
           </p>
         </div>
       </div>
 
-      {/* Main Content Area - Single Full-Width Editor */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-4xl h-full flex flex-col">
+      {/* Main Content Area - Scrollable Editor */}
+      <div className="flex-1 overflow-hidden p-6">
+        <div className="w-full h-full max-w-4xl mx-auto">
           <textarea
             ref={textareaRef}
             value={text}
@@ -131,27 +105,29 @@ export function ZenEditor({
             onKeyDown={handleKeyDown}
             disabled={isSubmitting}
             placeholder="Begin writing in the style described above..."
-            className={`flex-1 p-8 text-lg leading-relaxed
-                       ${editorBgClass} ${editorTextClass} border-2 rounded-lg
-                       focus:border-blue-500 focus:outline-none
+            className="w-full h-full p-6 text-lg leading-relaxed
+                       bg-[#171717] text-gray-100 placeholder:text-gray-500
+                       border-2 border-[#262626] rounded-lg
+                       focus:border-white focus:outline-none
                        resize-none font-serif
                        disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-colors`}
+                       transition-colors"
             spellCheck={false}
             autoFocus
           />
         </div>
       </div>
 
-      {/* Footer with stats and submit button */}
-      <div className={`${headerBgClass} border-t px-8 py-4 flex justify-between items-center`}>
-        <div className={`flex items-center gap-4 text-sm ${textSecondaryClass}`}>
-          <span className="font-medium">{wordCount} words</span>
-          <span className="text-gray-400">•</span>
-          <span>{charCount} characters</span>
-          <span className="text-gray-400">•</span>
-          <span className="text-green-600 flex items-center gap-1">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+      {/* Footer - Fixed at bottom */}
+      <div className="bg-[#171717] border-t border-[#262626] px-6 py-3 flex justify-between items-center flex-shrink-0">
+        <div className="flex items-center gap-4 text-sm text-gray-400">
+          <span className="font-medium text-white">{wordCount}</span>
+          <span className="text-gray-600">words</span>
+          <span className="text-gray-600">•</span>
+          <span className="text-gray-400">{charCount} chars</span>
+          <span className="text-gray-600">•</span>
+          <span className="text-gray-400 flex items-center gap-1">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
             Auto-saved
@@ -159,15 +135,15 @@ export function ZenEditor({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className={`text-xs ${textSecondaryClass}`}>
+          <span className="text-xs text-gray-500">
             Press ⌘+Enter (Mac) or Ctrl+Enter (Windows) to submit
           </span>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !text.trim()}
-            className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg
-                       hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
-                       transition-colors shadow-sm"
+            className="px-6 py-2 bg-white text-black font-semibold rounded-lg
+                       hover:bg-gray-200 disabled:bg-[#262626] disabled:text-gray-600 disabled:cursor-not-allowed
+                       transition-colors"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">

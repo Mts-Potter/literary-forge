@@ -59,12 +59,12 @@ export function Navbar() {
   ]
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-[#171717] border-b border-[#262626] sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <span className="text-xl font-bold text-blue-600">
+            <span className="text-xl font-bold text-white">
               Literary Forge
             </span>
           </Link>
@@ -78,8 +78,8 @@ export function Navbar() {
                 title={link.label}
                 className={`px-4 py-2 text-2xl rounded-md transition-all ${
                   pathname === link.href
-                    ? 'bg-blue-600 text-white scale-110'
-                    : 'text-gray-600 hover:bg-gray-100 hover:scale-105'
+                    ? 'bg-white text-black scale-110'
+                    : 'text-gray-400 hover:bg-[#262626] hover:text-white hover:scale-105'
                 }`}
                 aria-label={link.label}
               >
@@ -91,7 +91,7 @@ export function Navbar() {
           {/* Mobile Hamburger Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-md"
+            className="md:hidden flex items-center p-2 text-gray-400 hover:bg-[#262626] hover:text-white rounded-md"
             aria-label="Toggle menu"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,8 +114,8 @@ export function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-md font-medium transition-colors ${
                   pathname === link.href
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-white text-black'
+                    : 'text-gray-400 hover:bg-[#262626] hover:text-white'
                 }`}
               >
                 <span className="text-xl">{link.icon}</span>

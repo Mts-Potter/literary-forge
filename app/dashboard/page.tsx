@@ -60,12 +60,12 @@ export default async function DashboardPage() {
   const books = Array.from(booksMap.values())
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <p className="text-gray-600">
+          <h1 className="text-4xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-gray-400">
             Willkommen zurück! Hier ist deine Lernübersicht.
           </p>
         </div>
@@ -73,33 +73,33 @@ export default async function DashboardPage() {
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Total Studied */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Chunks Gelernt</p>
-                <p className="text-3xl font-bold text-blue-600">{totalStudied}</p>
+                <p className="text-sm text-gray-400 mb-1">Chunks Gelernt</p>
+                <p className="text-3xl font-bold text-white">{totalStudied}</p>
               </div>
               <div className="text-4xl">📚</div>
             </div>
           </div>
 
           {/* Due Today */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Fällig Heute</p>
-                <p className="text-3xl font-bold text-orange-600">{dueToday}</p>
+                <p className="text-sm text-gray-400 mb-1">Fällig Heute</p>
+                <p className="text-3xl font-bold text-white">{dueToday}</p>
               </div>
               <div className="text-4xl">⏰</div>
             </div>
           </div>
 
           {/* Average Reps */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Ø Wiederholungen</p>
-                <p className="text-3xl font-bold text-green-600">{avgReps}</p>
+                <p className="text-sm text-gray-400 mb-1">Ø Wiederholungen</p>
+                <p className="text-3xl font-bold text-white">{avgReps}</p>
               </div>
               <div className="text-4xl">🔄</div>
             </div>
@@ -107,27 +107,27 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Schnellstart</h2>
+        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">Schnellstart</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link
               href="/train"
-              className="px-6 py-4 bg-blue-600 text-white rounded-lg font-semibold
-                         hover:bg-blue-700 transition-colors text-center shadow-sm"
+              className="px-6 py-4 bg-white text-black rounded-lg font-semibold
+                         hover:bg-gray-200 transition-colors text-center"
             >
               {dueToday > 0 ? `${dueToday} Reviews starten` : 'Neue Chunks lernen'}
             </Link>
             <Link
               href="/settings"
-              className="px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold
-                         hover:border-gray-400 hover:bg-gray-50 transition-colors text-center"
+              className="px-6 py-4 border-2 border-[#262626] text-gray-300 rounded-lg font-semibold
+                         hover:border-gray-400 hover:bg-[#1f1f1f] transition-colors text-center"
             >
               ⚙️ Einstellungen
             </Link>
             <Link
               href="/admin/ingest"
-              className="px-6 py-4 border-2 border-purple-300 text-purple-700 rounded-lg font-semibold
-                         hover:border-purple-400 hover:bg-purple-50 transition-colors text-center"
+              className="px-6 py-4 border-2 border-[#262626] text-gray-300 rounded-lg font-semibold
+                         hover:border-gray-400 hover:bg-[#1f1f1f] transition-colors text-center"
             >
               📚 Bücher importieren
             </Link>
@@ -135,16 +135,16 @@ export default async function DashboardPage() {
         </div>
 
         {/* Available Books */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Verfügbare Bücher</h2>
+        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Verfügbare Bücher</h2>
 
           {books.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-400">
               <p className="mb-4">Noch keine Bücher importiert.</p>
               <Link
                 href="/admin/ingest"
-                className="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold
-                           hover:bg-purple-700 transition-colors"
+                className="inline-block px-6 py-3 bg-white text-black rounded-lg font-semibold
+                           hover:bg-gray-200 transition-colors"
               >
                 Erstes Buch importieren
               </Link>
@@ -154,17 +154,17 @@ export default async function DashboardPage() {
               {books.map((book, idx) => (
                 <div
                   key={idx}
-                  className="border-2 border-gray-200 rounded-lg p-4 hover:border-blue-300
-                             hover:bg-blue-50 transition-colors"
+                  className="border-2 border-[#262626] rounded-lg p-4 hover:border-gray-400
+                             hover:bg-[#1f1f1f] transition-colors"
                 >
-                  <h3 className="font-semibold text-gray-900 mb-1">{book.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{book.author}</p>
+                  <h3 className="font-semibold text-white mb-1">{book.title}</h3>
+                  <p className="text-sm text-gray-400 mb-2">{book.author}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-1 bg-gray-100 rounded">
+                    <span className="px-2 py-1 bg-[#262626] rounded">
                       {book.chunkCount} Chunks
                     </span>
                     {book.cefr_level && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                      <span className="px-2 py-1 bg-[#262626] text-gray-300 rounded">
                         {book.cefr_level}
                       </span>
                     )}
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
                       {book.tags.slice(0, 3).map((tag: string, i: number) => (
                         <span
                           key={i}
-                          className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded"
+                          className="text-xs px-2 py-1 bg-[#262626] text-gray-300 rounded"
                         >
                           {tag}
                         </span>
@@ -191,7 +191,7 @@ export default async function DashboardPage() {
         <div className="mt-8 text-center">
           <Link
             href="/"
-            className="text-blue-600 hover:text-blue-800 transition-colors"
+            className="text-gray-400 hover:text-white transition-colors"
           >
             ← Zurück zur Startseite
           </Link>

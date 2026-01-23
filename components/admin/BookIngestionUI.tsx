@@ -3,11 +3,8 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { processBook, saveChunksToSupabase, updateExistingBook, BookChunk } from '@/lib/ingest/book-processor'
-import { useDarkMode } from '@/hooks/use-dark-mode'
 
 export function BookIngestionUI() {
-  const [isDarkMode] = useDarkMode()
-
   // File and basic form state
   const [file, setFile] = useState<File | null>(null)
   const [title, setTitle] = useState('')
@@ -24,17 +21,6 @@ export function BookIngestionUI() {
   const [mode, setMode] = useState<'create' | 'update'>('create')
   const [existingBooks, setExistingBooks] = useState<any[]>([])
   const [selectedBookId, setSelectedBookId] = useState<string>('')
-
-  // Theme classes
-  const bgClass = isDarkMode ? 'bg-gray-900' : 'bg-white'
-  const cardBgClass = isDarkMode ? 'bg-gray-800' : 'bg-white'
-  const borderClass = isDarkMode ? 'border-gray-700' : 'border-gray-300'
-  const textClass = isDarkMode ? 'text-gray-100' : 'text-gray-900'
-  const textSecondaryClass = isDarkMode ? 'text-gray-400' : 'text-gray-600'
-  const inputBgClass = isDarkMode ? 'bg-gray-700' : 'bg-white'
-  const inputTextClass = isDarkMode ? 'text-gray-100' : 'text-gray-900'
-  const progressBgClass = isDarkMode ? 'bg-gray-700' : 'bg-blue-50'
-  const progressBarBgClass = isDarkMode ? 'bg-gray-600' : 'bg-gray-200'
 
   // Load existing books on mount
   useEffect(() => {
@@ -230,11 +216,11 @@ export function BookIngestionUI() {
 
   return (
     <div className="max-w-4xl mx-auto p-8">
-      <div className="bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold mb-2 text-gray-900">
+      <div className="bg-[#171717] border border-[#262626] rounded-lg p-8">
+        <h1 className="text-3xl font-bold mb-2 text-white">
           📚 Book Ingestion System
         </h1>
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-sm text-gray-400 mb-6">
           Importiert .txt Dateien mit wissenschaftlich konsistenten Metriken (UDPipe + Transformers.js)
         </p>
 
@@ -245,8 +231,8 @@ export function BookIngestionUI() {
             disabled={isProcessing}
             className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
               mode === 'create'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-white text-black'
+                : 'bg-[#262626] text-gray-300 hover:bg-[#1f1f1f]'
             } disabled:opacity-50`}
           >
             Create New
@@ -256,8 +242,8 @@ export function BookIngestionUI() {
             disabled={isProcessing}
             className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
               mode === 'update'
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-white text-black'
+                : 'bg-[#262626] text-gray-300 hover:bg-[#1f1f1f]'
             } disabled:opacity-50`}
           >
             Update Existing
@@ -267,16 +253,16 @@ export function BookIngestionUI() {
         {/* Book Selection (Update Mode) */}
         {mode === 'update' && (
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-white mb-2">
               Buch wählen
             </label>
             <select
               value={selectedBookId}
               onChange={(e) => setSelectedBookId(e.target.value)}
               disabled={isProcessing}
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg
-                         focus:border-purple-500 focus:outline-none
-                         disabled:bg-gray-100"
+              className="w-full px-4 py-2 bg-[#0a0a0a] border-2 border-[#262626] rounded-lg
+                         text-white focus:border-gray-400 focus:outline-none
+                         disabled:opacity-50"
             >
               <option value="">-- Buch wählen --</option>
               {existingBooks.map(book => (
@@ -288,26 +274,26 @@ export function BookIngestionUI() {
 
             {/* Metadata Preview Card */}
             {selectedBook && (
-              <div className="mt-4 p-6 bg-purple-50 border-2 border-purple-200 rounded-lg">
-                <h3 className="text-xl font-bold text-purple-900 mb-3">
+              <div className="mt-4 p-6 bg-[#0a0a0a] border-2 border-[#262626] rounded-lg">
+                <h3 className="text-xl font-bold text-white mb-3">
                   📋 Metadaten-Vorschau
                 </h3>
 
                 {/* Title & Author */}
                 <div className="mb-4">
-                  <p className="text-2xl font-bold text-gray-900">{selectedBook.title}</p>
-                  <p className="text-gray-600">{selectedBook.author?.name || 'Unbekannter Autor'}</p>
+                  <p className="text-2xl font-bold text-white">{selectedBook.title}</p>
+                  <p className="text-gray-400">{selectedBook.author?.name || 'Unbekannter Autor'}</p>
                 </div>
 
                 {/* Compliance Badges */}
                 <div className="flex gap-2 mb-4">
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    selectedBook.is_pd_us ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    selectedBook.is_pd_us ? 'bg-[#262626] text-white' : 'bg-[#0a0a0a] text-gray-500'
                   }`}>
                     {selectedBook.is_pd_us ? '✓' : '✗'} USA
                   </span>
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    selectedBook.is_pd_eu ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    selectedBook.is_pd_eu ? 'bg-[#262626] text-white' : 'bg-[#0a0a0a] text-gray-500'
                   }`}>
                     {selectedBook.is_pd_eu ? '✓' : '✗'} EU
                   </span>
@@ -316,12 +302,12 @@ export function BookIngestionUI() {
                 {/* CEFR & Publication Year */}
                 <div className="flex gap-4 mb-4 text-sm">
                   {selectedBook.cefr_level && (
-                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded font-mono">
+                    <span className="px-2 py-1 bg-[#262626] text-white rounded font-mono">
                       {selectedBook.cefr_level}
                     </span>
                   )}
                   {selectedBook.publication_year && (
-                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded">
+                    <span className="px-2 py-1 bg-[#262626] text-white rounded">
                       {selectedBook.publication_year}
                     </span>
                   )}
@@ -331,7 +317,7 @@ export function BookIngestionUI() {
                 {selectedBook.tags && selectedBook.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
                     {selectedBook.tags.map((tag: string) => (
-                      <span key={tag} className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">
+                      <span key={tag} className="px-2 py-1 bg-[#262626] text-gray-300 rounded-full text-xs">
                         #{tag}
                       </span>
                     ))}
@@ -340,7 +326,7 @@ export function BookIngestionUI() {
 
                 {/* Placeholder Warning */}
                 {selectedBook.content && selectedBook.content.startsWith('[PLACEHOLDER') && (
-                  <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+                  <div className="flex items-center gap-2 p-3 bg-[#1f1f1f] border border-[#262626] rounded-lg text-gray-300 text-sm">
                     <span>⚠️</span>
                     <span>Inhalt fehlt noch. Bitte Text hochladen.</span>
                   </div>
@@ -353,7 +339,7 @@ export function BookIngestionUI() {
         {/* Input Form */}
         <div className="space-y-4 mb-8">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-white mb-2">
               Textdatei (.txt)
             </label>
             <input
@@ -361,12 +347,12 @@ export function BookIngestionUI() {
               accept=".txt"
               onChange={handleFileSelect}
               disabled={isProcessing}
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg
-                         focus:border-blue-500 focus:outline-none
-                         disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 bg-[#0a0a0a] border-2 border-[#262626] rounded-lg
+                         text-white focus:border-gray-400 focus:outline-none
+                         disabled:opacity-50 disabled:cursor-not-allowed"
             />
             {file && (
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-gray-400">
                 📄 {file.name} ({(file.size / 1024).toFixed(1)} KB)
               </p>
             )}
@@ -376,7 +362,7 @@ export function BookIngestionUI() {
           {mode === 'create' && (
             <>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Titel
                 </label>
                 <input
@@ -385,14 +371,14 @@ export function BookIngestionUI() {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="z.B. Der Prozess"
                   disabled={isProcessing}
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg
-                             focus:border-blue-500 focus:outline-none
-                             disabled:bg-gray-100"
+                  className="w-full px-4 py-2 bg-[#0a0a0a] border-2 border-[#262626] rounded-lg
+                             text-white placeholder-gray-500 focus:border-gray-400 focus:outline-none
+                             disabled:opacity-50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Autor
                 </label>
                 <input
@@ -401,9 +387,9 @@ export function BookIngestionUI() {
                   onChange={(e) => setAuthor(e.target.value)}
                   placeholder="z.B. Franz Kafka"
                   disabled={isProcessing}
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg
-                             focus:border-blue-500 focus:outline-none
-                             disabled:bg-gray-100"
+                  className="w-full px-4 py-2 bg-[#0a0a0a] border-2 border-[#262626] rounded-lg
+                             text-white placeholder-gray-500 focus:border-gray-400 focus:outline-none
+                             disabled:opacity-50"
                 />
               </div>
             </>
@@ -421,13 +407,9 @@ export function BookIngestionUI() {
                 (mode === 'create' && (!title || !author)) ||
                 (mode === 'update' && !selectedBookId)
               }
-              className={`flex-1 px-6 py-3 text-white font-semibold rounded-lg
-                         disabled:bg-gray-300 disabled:cursor-not-allowed
-                         transition-colors ${
-                           mode === 'update'
-                             ? 'bg-purple-600 hover:bg-purple-700'
-                             : 'bg-blue-600 hover:bg-blue-700'
-                         }`}
+              className="flex-1 px-6 py-3 bg-white text-black font-semibold rounded-lg
+                         disabled:bg-[#262626] disabled:text-gray-500 disabled:cursor-not-allowed
+                         hover:bg-gray-200 transition-colors"
             >
               {isProcessing ? '⏳ Verarbeite...' : '🔍 Text Analysieren'}
             </button>
@@ -436,13 +418,9 @@ export function BookIngestionUI() {
               <button
                 onClick={handleImport}
                 disabled={isProcessing || importResult !== null}
-                className={`flex-1 px-6 py-3 text-white font-semibold rounded-lg
-                           disabled:bg-gray-300 disabled:cursor-not-allowed
-                           transition-colors ${
-                             mode === 'update'
-                               ? 'bg-purple-600 hover:bg-purple-700'
-                               : 'bg-green-600 hover:bg-green-700'
-                           }`}
+                className="flex-1 px-6 py-3 bg-white text-black font-semibold rounded-lg
+                           disabled:bg-[#262626] disabled:text-gray-500 disabled:cursor-not-allowed
+                           hover:bg-gray-200 transition-colors"
               >
                 {isProcessing
                   ? '⏳ Importiere...'
@@ -453,8 +431,8 @@ export function BookIngestionUI() {
               <button
                 onClick={handleReset}
                 disabled={isProcessing}
-                className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg
-                           hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50
+                className="px-6 py-3 border-2 border-[#262626] text-gray-300 font-semibold rounded-lg
+                           hover:border-gray-400 hover:bg-[#1f1f1f] disabled:opacity-50
                            transition-colors"
               >
                 🔄 Neu Starten
@@ -466,22 +444,22 @@ export function BookIngestionUI() {
         {/* Progress Bar */}
         {isProcessing && (
           <div className="mb-8">
-            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+            <div className="w-full bg-[#262626] rounded-full h-4 overflow-hidden">
               <div
-                className="bg-blue-600 h-4 transition-all duration-300"
+                className="bg-white h-4 transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="mt-2 text-sm text-gray-700 text-center">{statusMessage}</p>
+            <p className="mt-2 text-sm text-gray-300 text-center">{statusMessage}</p>
           </div>
         )}
 
         {/* Status Message */}
         {!isProcessing && statusMessage && (
           <div className={`p-4 rounded-lg mb-8 ${
-            statusMessage.startsWith('✅') ? 'bg-green-50 text-green-800' :
-            statusMessage.startsWith('❌') ? 'bg-red-50 text-red-800' :
-            'bg-blue-50 text-blue-800'
+            statusMessage.startsWith('✅') ? 'bg-[#1f1f1f] border border-[#262626] text-white' :
+            statusMessage.startsWith('❌') ? 'bg-[#1f1f1f] border border-[#262626] text-gray-300' :
+            'bg-[#1f1f1f] border border-[#262626] text-gray-300'
           }`}>
             {statusMessage}
           </div>
@@ -489,20 +467,20 @@ export function BookIngestionUI() {
 
         {/* Chunks Preview */}
         {processedChunks.length > 0 && !importResult && (
-          <div className="border-2 border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+          <div className="border-2 border-[#262626] rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4 text-white">
               📊 Verarbeitete Chunks ({processedChunks.length})
             </h2>
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {processedChunks.slice(0, 5).map((chunk, idx) => (
-                <div key={idx} className="bg-gray-50 p-4 rounded-lg text-sm">
-                  <div className="font-semibold text-gray-900 mb-2">
+                <div key={idx} className="bg-[#0a0a0a] border border-[#262626] p-4 rounded-lg text-sm">
+                  <div className="font-semibold text-white mb-2">
                     {chunk.title} • Level {chunk.difficulty_level}/5
                   </div>
-                  <div className="text-gray-700 mb-2 line-clamp-3">
+                  <div className="text-gray-300 mb-2 line-clamp-3">
                     {chunk.content}
                   </div>
-                  <div className="flex gap-4 text-xs text-gray-600">
+                  <div className="flex gap-4 text-xs text-gray-500">
                     <span>DD: {chunk.metrics.dependencyDistance.toFixed(2)}</span>
                     <span>A/V: {chunk.metrics.adjVerbRatio.toFixed(2)}</span>
                     <span>σ: {chunk.metrics.sentenceLengthVariance.toFixed(2)}</span>
@@ -510,7 +488,7 @@ export function BookIngestionUI() {
                 </div>
               ))}
               {processedChunks.length > 5 && (
-                <p className="text-sm text-gray-600 text-center">
+                <p className="text-sm text-gray-400 text-center">
                   ... und {processedChunks.length - 5} weitere Chunks
                 </p>
               )}
@@ -520,16 +498,16 @@ export function BookIngestionUI() {
 
         {/* Import Result */}
         {importResult && (
-          <div className="border-2 border-green-500 bg-green-50 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4 text-green-900">
+          <div className="border-2 border-white bg-[#171717] rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4 text-white">
               ✅ Import Abgeschlossen
             </h2>
-            <div className="space-y-2 text-green-800">
+            <div className="space-y-2 text-gray-300">
               <p className="text-lg">
-                <strong>{importResult.success}</strong> Chunks erfolgreich importiert
+                <strong className="text-white">{importResult.success}</strong> Chunks erfolgreich importiert
               </p>
               {importResult.failed > 0 && (
-                <p className="text-orange-700">
+                <p className="text-gray-400">
                   <strong>{importResult.failed}</strong> Chunks fehlgeschlagen
                 </p>
               )}
@@ -539,16 +517,16 @@ export function BookIngestionUI() {
       </div>
 
       {/* Technical Info */}
-      <div className="mt-8 p-6 bg-gray-800 text-gray-300 rounded-lg text-sm">
+      <div className="mt-8 p-6 bg-[#171717] border border-[#262626] text-gray-300 rounded-lg text-sm">
         <h3 className="font-semibold mb-2 text-white">🔬 Technische Details</h3>
-        <ul className="space-y-1 list-disc list-inside">
+        <ul className="space-y-1 list-disc list-inside text-gray-400">
           <li>Parser: UDPipe (WASM) für syntaktische Analyse</li>
           <li>Embeddings: Transformers.js (Xenova/all-MiniLM-L6-v2, ONNX)</li>
           <li>Metriken: Dependency Distance, Adj/Verb Ratio, Sentence Variance</li>
           <li>Chunking: 2-5 Sätze pro Lerneinheit (~50-125 Wörter)</li>
           <li>Schwierigkeitsgrad: Automatisch berechnet (1-5)</li>
         </ul>
-        <p className="mt-4 text-yellow-400 text-xs">
+        <p className="mt-4 text-gray-400 text-xs">
           ⚠️ Die Verarbeitung läuft komplett im Browser. Bei großen Büchern kann dies einige Minuten dauern.
         </p>
       </div>

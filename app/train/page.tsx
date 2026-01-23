@@ -99,32 +99,32 @@ export default async function TrainPage() {
 
     // 3. No due reviews AND no new chunks - user is truly caught up!
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+        <div className="text-center max-w-md px-4">
           <div className="text-6xl mb-6">🎉</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl font-bold text-white mb-4">
             All Caught Up!
           </h1>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-400 mb-4">
             No reviews due right now. Great job staying on top of your training!
             Come back later or add more books to practice.
           </p>
           <p className="text-sm text-gray-500 mb-8">
-            💡 Tipp: Du kannst auch den <strong>Linearen Modus</strong> in den Einstellungen
+            💡 Tipp: Du kannst auch den <strong className="text-white">Linearen Modus</strong> in den Einstellungen
             aktivieren, um alle Texte ohne Scheduling durchzugehen.
           </p>
           <div className="flex flex-col gap-3">
             <a
               href="/settings"
-              className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg
-                         hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 bg-white text-black font-semibold rounded-lg
+                         hover:bg-gray-200 transition-colors"
             >
               Zu den Einstellungen
             </a>
             <a
               href="/admin/ingest"
-              className="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg
-                         hover:bg-gray-300 transition-colors"
+              className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
+                         hover:bg-[#1f1f1f] transition-colors"
             >
               Mehr Bücher hinzufügen
             </a>
@@ -181,31 +181,31 @@ export default async function TrainPage() {
 
   // All texts completed in linear mode
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+      <div className="text-center max-w-md px-4">
         <div className="text-6xl mb-6">✅</div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <h1 className="text-3xl font-bold text-white mb-4">
           Alle Texte durchgearbeitet!
         </h1>
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-400 mb-4">
           Du hast alle verfügbaren Texte im linearen Modus gesehen.
         </p>
         <p className="text-sm text-gray-500 mb-8">
-          💡 Tipp: Aktiviere <strong>Spaced Repetition</strong> in den Einstellungen,
+          💡 Tipp: Aktiviere <strong className="text-white">Spaced Repetition</strong> in den Einstellungen,
           um Texte basierend auf deinem Lernerfolg zu wiederholen und langfristig zu festigen.
         </p>
         <div className="flex flex-col gap-3">
           <a
             href="/settings"
-            className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg
-                       hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-white text-black font-semibold rounded-lg
+                       hover:bg-gray-200 transition-colors"
           >
             Zu den Einstellungen
           </a>
           <a
             href="/admin/ingest"
-            className="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg
-                       hover:bg-gray-300 transition-colors"
+            className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
+                       hover:bg-[#1f1f1f] transition-colors"
           >
             Mehr Bücher hinzufügen
           </a>

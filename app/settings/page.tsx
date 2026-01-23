@@ -76,36 +76,36 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-600">Lädt Einstellungen...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+        <div className="text-lg text-gray-400">Lädt Einstellungen...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#0a0a0a] py-8">
       <div className="container mx-auto px-4 max-w-2xl">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/"
-            className="text-blue-600 hover:text-blue-800 transition-colors text-sm mb-4 inline-block"
+            className="text-gray-400 hover:text-white transition-colors text-sm mb-4 inline-block"
           >
             ← Zurück zur Startseite
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Einstellungen</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-white">Einstellungen</h1>
+          <p className="text-gray-400 mt-2">
             Passe dein Lernerlebnis an deine Bedürfnisse an
           </p>
         </div>
 
         {/* Settings Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 space-y-6">
           {/* SRS Toggle */}
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-white">
                   🔄 Spaced Repetition System (SRS)
                 </h3>
                 {saving && (
@@ -114,7 +114,7 @@ export default function SettingsPage() {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed">
                 Anki-ähnlicher Algorithmus für optimales Langzeitlernen.
                 Texte werden basierend auf deiner Performance automatisch wiederholt.
               </p>
@@ -124,30 +124,30 @@ export default function SettingsPage() {
               disabled={saving}
               className={`
                 relative inline-flex h-6 w-11 items-center rounded-full
-                transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                ${enableSRS ? 'bg-blue-600' : 'bg-gray-300'}
+                transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#171717]
+                ${enableSRS ? 'bg-white' : 'bg-[#262626]'}
                 ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
               aria-label="Toggle Spaced Repetition"
             >
               <span
                 className={`
-                  inline-block h-4 w-4 transform rounded-full bg-white
+                  inline-block h-4 w-4 transform rounded-full
                   transition-transform
-                  ${enableSRS ? 'translate-x-6' : 'translate-x-1'}
+                  ${enableSRS ? 'translate-x-6 bg-black' : 'translate-x-1 bg-gray-600'}
                 `}
               />
             </button>
           </div>
 
           {/* Mode Description */}
-          <div className="text-sm text-gray-700 bg-gray-50 border-l-4 border-blue-500 p-4 rounded">
+          <div className="text-sm text-gray-300 bg-[#0a0a0a] border-l-4 border-white p-4 rounded">
             {enableSRS ? (
               <div>
-                <p className="font-semibold text-gray-900 mb-2">
+                <p className="font-semibold text-white mb-2">
                   ✅ SRS Modus aktiv
                 </p>
-                <ul className="space-y-1 text-gray-600">
+                <ul className="space-y-1 text-gray-400">
                   <li>• Texte erscheinen basierend auf Lernintervallen</li>
                   <li>• Anki-ähnliche Zeitabstände: 10 Min → 6h → 1 Tag → 4 Tage...</li>
                   <li>• Automatisches Scheduling basierend auf deinem Score</li>
@@ -156,10 +156,10 @@ export default function SettingsPage() {
               </div>
             ) : (
               <div>
-                <p className="font-semibold text-gray-900 mb-2">
+                <p className="font-semibold text-white mb-2">
                   📚 Linearer Modus aktiv
                 </p>
-                <ul className="space-y-1 text-gray-600">
+                <ul className="space-y-1 text-gray-400">
                   <li>• Texte werden einfach der Reihe nach durchgegangen</li>
                   <li>• Kein Scheduling oder Wiederholungen</li>
                   <li>• Gut für schnellen Überblick über alle Inhalte</li>
@@ -170,9 +170,9 @@ export default function SettingsPage() {
           </div>
 
           {/* Info Box */}
-          <div className="text-xs text-gray-500 bg-blue-50 p-3 rounded border border-blue-200">
-            <p className="font-semibold text-blue-900 mb-1">💡 Tipp:</p>
-            <p className="text-blue-800">
+          <div className="text-xs text-gray-400 bg-[#0a0a0a] p-3 rounded border border-[#262626]">
+            <p className="font-semibold text-white mb-1">💡 Tipp:</p>
+            <p className="text-gray-400">
               Du kannst jederzeit zwischen den Modi wechseln. Dein Fortschritt bleibt
               in beiden Modi erhalten. Im SRS-Modus werden bereits gesehene Texte
               basierend auf deiner Performance wiederholt.
@@ -184,15 +184,15 @@ export default function SettingsPage() {
         <div className="mt-6 flex gap-3">
           <Link
             href="/train"
-            className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg
-                       hover:bg-blue-700 transition-colors text-center"
+            className="flex-1 px-6 py-3 bg-white text-black font-semibold rounded-lg
+                       hover:bg-gray-200 transition-colors text-center"
           >
             Zum Training
           </Link>
           <Link
             href="/dashboard"
-            className="flex-1 px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg
-                       hover:bg-gray-300 transition-colors text-center"
+            className="flex-1 px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
+                       hover:bg-[#1f1f1f] transition-colors text-center"
           >
             Dashboard
           </Link>

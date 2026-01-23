@@ -63,10 +63,10 @@ BEGIN
     v_new_state := 1; -- Learning state
 
     v_interval_days := CASE v_grade
-      WHEN 1 THEN 0  -- Again: Review later today (0 days = same day)
-      WHEN 2 THEN 1  -- Hard: 1 day
-      WHEN 3 THEN 2  -- Good: 2 days
-      ELSE 4         -- Easy: 4 days
+      WHEN 1 THEN 0.007  -- Again: 10 minutes (10/1440 days) - Anki-style short interval
+      WHEN 2 THEN 0.25   -- Hard: 6 hours (0.25 days) - needs more practice
+      WHEN 3 THEN 1      -- Good: 1 day - solid performance
+      ELSE 4             -- Easy: 4 days - mastery level
     END;
 
     v_new_stability := v_interval_days::FLOAT;

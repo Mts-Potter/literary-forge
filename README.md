@@ -8,7 +8,7 @@ Literary Forge ist eine vollständig serverlose Web-Anwendung, die es Nutzern er
 
 - **Spaced Repetition (SM-2 Algorithmus)** für langfristiges Lernen
 - **Clientseitige NLP-Analyse** (UDPipe, Transformers.js)
-- **KI-Feedback** via Claude 4.5 Haiku
+- **KI-Feedback** via Claude 3.5 Haiku
 - **0€ Fixkosten** dank Vercel & Supabase Free Tier
 
 ## 🏗️ Architektur
@@ -16,7 +16,7 @@ Literary Forge ist eine vollständig serverlose Web-Anwendung, die es Nutzern er
 ### Tech Stack
 - **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS
 - **Backend**: Supabase (PostgreSQL + pgvector + Auth)
-- **LLM**: Claude 4.5 Haiku via **AWS Bedrock** (nicht direkte Anthropic API)
+- **LLM**: Claude 3.5 Haiku via **AWS Bedrock** (nicht direkte Anthropic API)
 - **NLP**: Mock-Implementierung (später: UDPipe WASM + Transformers.js)
 - **State Management**: Zustand mit localStorage-Persistenz
 
@@ -68,7 +68,7 @@ Das Schema erstellt:
 
 ⚠️ **Wichtig**: Dieses Projekt nutzt AWS Bedrock statt der direkten Anthropic API!
 
-1. Stelle sicher, dass du AWS Bedrock Zugriff auf Claude 4.5 Haiku hast
+1. Stelle sicher, dass du AWS Bedrock Zugriff auf Claude 3.5 Haiku hast
 2. Besorge deine AWS IAM Credentials (Access Key ID + Secret Access Key)
 3. Wähle die Region (empfohlen: `us-east-1`)
 
@@ -87,8 +87,8 @@ AWS_ACCESS_KEY_ID=AKIA...
 AWS_SECRET_ACCESS_KEY=...
 AWS_REGION=us-east-1
 
-# Bedrock Modell-ID für Claude 4.5 Haiku
-BEDROCK_MODEL_ID=us.anthropic.claude-4-5-haiku-20250110-v1:0
+# Bedrock Modell-ID für Claude 3.5 Haiku
+BEDROCK_MODEL_ID=us.anthropic.claude-3-5-haiku-20241022-v1:0
 
 # Rate Limiting Configuration
 MAX_DAILY_ANALYSES_PER_USER=5
@@ -161,7 +161,7 @@ literary-forge/
 ### Bei 100 aktiven Usern/Tag
 - **Vercel**: 0€ (innerhalb Free Tier)
 - **Supabase**: 0€ (Local-First hält DB klein)
-- **AWS Bedrock**: ~10-15€/Monat (5 Analysen/User × Claude 4.5 Haiku Preise auf Bedrock)
+- **AWS Bedrock**: ~10-15€/Monat (5 Analysen/User × Claude 3.5 Haiku Preise auf Bedrock)
 
 **Skalierung**: Serverkosten wachsen nicht mit Nutzern, da NLP-Arbeit auf Clients läuft!
 
@@ -231,7 +231,7 @@ Noch nicht festgelegt.
 
 ## 🙏 Danksagungen
 
-- AWS Bedrock für Claude 4.5 Haiku Zugang
+- AWS Bedrock für Claude 3.5 Haiku Zugang
 - Anthropic für das Claude-Modell
 - Vercel für generous Free Tier
 - Supabase für PostgreSQL + pgvector

@@ -15,10 +15,8 @@ export function FeedbackView({
 
   // Calculate grade color
   const getGradeColor = (score: number) => {
-    if (score >= 92) return 'text-green-600 bg-green-50'
-    if (score >= 78) return 'text-blue-600 bg-blue-50'
-    if (score >= 55) return 'text-orange-600 bg-orange-50'
-    return 'text-red-600 bg-red-50'
+    // All scores show in white on dark background
+    return 'text-white bg-[#0a0a0a]'
   }
 
   return (
@@ -35,11 +33,11 @@ export function FeedbackView({
 
           {/* FSRS Schedule Info */}
           {schedule && (
-            <div className="flex items-center gap-4 p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+            <div className="flex items-center gap-4 p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
               <div className="text-3xl">📅</div>
               <div>
                 <p className="font-semibold text-white text-sm mb-1">{schedule.message}</p>
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-gray-400">
                   Grade: {schedule.grade}/4 • Next: {new Date(schedule.next_review).toLocaleDateString('de-DE')}
                   {schedule.interval_days > 0 && ` (in ${schedule.interval_days} ${schedule.interval_days === 1 ? 'Tag' : 'Tagen'})`}
                 </p>
@@ -92,7 +90,7 @@ export function FeedbackView({
             {/* User Attempt */}
             <div>
               <h3 className="text-sm font-semibold text-white mb-3">Your Attempt</h3>
-              <div className="p-4 bg-blue-900/10 rounded-lg border border-blue-700">
+              <div className="p-4 bg-[#0a0a0a] rounded-lg border border-[#262626]">
                 <p className="text-white text-sm leading-relaxed font-serif">
                   {user}
                 </p>

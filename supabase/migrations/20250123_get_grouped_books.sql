@@ -20,8 +20,8 @@ AS $$
     a.name AS author,
     st.author_id,
     MAX(st.cefr_level) AS cefr_level,
-    -- Get tags from any chunk (they should be the same for all chunks of a book)
-    (ARRAY_AGG(st.tags) FILTER (WHERE st.tags IS NOT NULL))[1] AS tags,
+    -- Get tags from first chunk (all chunks of a book have the same tags)
+    MAX(st.tags) AS tags,
     MAX(st.language) AS language,
     COUNT(*) AS chunk_count
   FROM source_texts st

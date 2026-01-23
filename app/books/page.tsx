@@ -1,15 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-
-interface Book {
-  title: string
-  author: string
-  cefr_level: string | null
-  tags: string[]
-  chunk_count: number
-  language: string
-}
+import { groupBooksByTitle, type GroupedBook } from '@/lib/utils/books'
 
 export default async function BooksPage() {
   const supabase = await createClient()
@@ -44,29 +36,7 @@ export default async function BooksPage() {
   }
 
   // Group chunks by book (title without "Teil X")
-  const booksMap = new Map<string, Book>()
-
-  chunks?.forEach((chunk: any) => {
-    // Remove " (Teil X)" suffix to get base title
-    const baseTitle = chunk.title.replace(/ \(Teil \d+\)$/, '')
-
-    if (!booksMap.has(baseTitle)) {
-      booksMap.set(baseTitle, {
-        title: baseTitle,
-        author: chunk.author?.name || 'Unbekannt',
-        cefr_level: chunk.cefr_level,
-        tags: chunk.tags || [],
-        chunk_count: 0,
-        language: chunk.language || 'de'
-      })
-    }
-
-    const book = booksMap.get(baseTitle)!
-    book.chunk_count++
-  })
-
-  // Convert to array and sort by title
-  const books = Array.from(booksMap.values()).sort((a, b) =>
+  const books = groupBooksByTitle(chunks || []).sort((a, b) =>
     a.title.localeCompare(b.title)
   )
 
@@ -137,7 +107,7 @@ export default async function BooksPage() {
 
                   <div className="flex items-center gap-2">
                     <span className="text-gray-500">Chunks:</span>
-                    <span className="text-white">{book.chunk_count}</span>
+                    <span className="text-white">{book.chunkCount}</span>
                   </div>
                 </div>
 

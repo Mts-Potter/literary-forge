@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { groupBooksByTitle } from '@/lib/utils/books'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -40,28 +41,7 @@ export default async function DashboardPage() {
     .order('title')
 
   // Group chunks by base title
-  const booksMap = new Map()
-  allChunks?.forEach((chunk: any) => {
-    const baseTitle = chunk.title.replace(/ \(Teil \d+\)$/, '')
-    // Supabase relation query can return either array or object depending on join type
-    const authorName = Array.isArray(chunk.author)
-      ? chunk.author[0]?.name || 'Unbekannt'
-      : chunk.author?.name || 'Unbekannt'
-
-    if (!booksMap.has(baseTitle)) {
-      booksMap.set(baseTitle, {
-        title: baseTitle,
-        author: authorName,
-        cefr_level: chunk.cefr_level,
-        tags: chunk.tags,
-        language: chunk.language,
-        chunkCount: 1
-      })
-    } else {
-      booksMap.get(baseTitle).chunkCount++
-    }
-  })
-  const books = Array.from(booksMap.values())
+  const books = groupBooksByTitle(allChunks || [])
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">

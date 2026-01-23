@@ -49,7 +49,7 @@ ${content}
 Output ONLY the summary of the story content. No meta-commentary, apologies, or explanations. Just the 2-3 sentence summary.`
 
     const input = {
-      modelId: 'us.anthropic.claude-3-5-haiku-20241022-v1:0',  // Fixed: Using available model
+      modelId: process.env.BEDROCK_MODEL_ID || 'us.anthropic.claude-3-5-haiku-20241022-v1:0',
       contentType: 'application/json',
       accept: 'application/json',
       body: JSON.stringify({

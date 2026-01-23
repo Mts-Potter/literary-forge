@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { createClient } from '@/lib/supabase/server'
 
@@ -12,12 +11,6 @@ const bedrockClient = new BedrockRuntimeClient({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
-})
-
-// Anthropic Client mit AWS Bedrock
-const anthropic = new Anthropic({
-  apiKey: process.env.AWS_ACCESS_KEY_ID!, // Bedrock nutzt AWS Credentials
-  baseURL: `https://bedrock-runtime.${process.env.AWS_REGION || 'us-east-1'}.amazonaws.com`,
 })
 
 /**

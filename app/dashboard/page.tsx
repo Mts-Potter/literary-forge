@@ -42,10 +42,8 @@ export default async function DashboardPage() {
   const booksMap = new Map()
   allChunks?.forEach(chunk => {
     const baseTitle = chunk.title.replace(/ \(Teil \d+\)$/, '')
-    // Handle author field - can be object or array depending on Supabase query result
-    const authorName = Array.isArray(chunk.author)
-      ? chunk.author[0]?.name || 'Unbekannt'
-      : chunk.author?.name || 'Unbekannt'
+    // Supabase relation query returns array, so extract first element
+    const authorName = chunk.author?.[0]?.name || 'Unbekannt'
 
     if (!booksMap.has(baseTitle)) {
       booksMap.set(baseTitle, {

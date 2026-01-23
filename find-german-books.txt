@@ -1,0 +1,12 @@
+Suche nach deutschen Originaltexten auf Project Gutenberg:
+
+1. Die Verwandlung (Kafka) - Suche nach "Verwandlung Kafka German"
+2. Buddenbrooks (Thomas Mann) - wir haben schon #10921
+3. Die Leiden des jungen Werther (Goethe) - Suche nach "Werther Goethe German"  
+4. Der Prozess (Kafka) - Suche nach "Prozess Kafka German"
+
+Wir haben bereits:
+- Buddenbrooks #10921 (war in books-config.json)
+- Der Prozess #7849 (war in den Empfehlungen)
+
+Ich prüfe diese URLs direkt.

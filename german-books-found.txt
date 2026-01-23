@@ -1,0 +1,15 @@
+✅ GEFUNDEN (verifiziert):
+1. Die Verwandlung (Kafka) #22367 - https://www.gutenberg.org/ebooks/22367.txt.utf-8 
+2. Die Leiden des jungen Werther (Goethe) #2407 - https://www.gutenberg.org/ebooks/2407.txt.utf-8
+
+❓ NOCH ZU FINDEN:
+3. Buddenbrooks (Thomas Mann) - #10921 war falsch (Anthologie)
+4. Der Prozess (Kafka) - #7849 war englisch
+
+KNOWN GERMAN URLs TO TRY:
+- Thomas Mann: Try #12108 (Tod in Venedig works), maybe nearby numbers?
+- Buddenbrooks published 1901, try early 1900s German literature range
+
+SEARCH STRATEGY:
+- Try Wikipedia article for Buddenbrooks, might list Gutenberg link
+- Try Thomas Mann author page directly on Gutenberg

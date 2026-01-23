@@ -38,7 +38,7 @@ export default function Home() {
           </Link>
 
           <Link
-            href="/books"
+            href="/dashboard"
             className="px-8 py-3 bg-[#262626] text-white text-base font-semibold rounded-lg
                        hover:bg-[#1f1f1f] transition-colors border border-[#3a3a3a]"
           >

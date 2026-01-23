@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation'
 interface Book {
   title: string
   author: string
-  author_id: string
   cefr_level: string | null
   tags: string[]
   chunk_count: number
@@ -25,12 +24,14 @@ export default async function BooksPage() {
   const { data: chunks, error } = await supabase
     .from('source_texts')
     .select(`
+      id,
       title,
-      author:authors(name, id),
+      author:authors(name),
       cefr_level,
       tags,
       language
     `)
+    .order('title')
 
   if (error) {
     console.error('Failed to fetch books:', error)
@@ -53,7 +54,6 @@ export default async function BooksPage() {
       booksMap.set(baseTitle, {
         title: baseTitle,
         author: chunk.author?.name || 'Unbekannt',
-        author_id: chunk.author?.id || '',
         cefr_level: chunk.cefr_level,
         tags: chunk.tags || [],
         chunk_count: 0,

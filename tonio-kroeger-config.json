@@ -1,0 +1,29 @@
+{
+  "books": [
+    {
+      "id": "mann_tonio_kroeger",
+      "title": "Tonio Kröger",
+      "author": {
+        "name": "Mann, Thomas",
+        "death_year": 1955
+      },
+      "language": "de",
+      "publication_year": 1903,
+      "cefr_level": "C1",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/35732",
+        "txt_download_url": "https://www.gutenberg.org/files/35732/35732-0.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1903 (before 1931)",
+        "eu_rationale": "Author died 1955 → PD since Jan 1, 2026"
+      },
+      "tags": ["Moderne", "Literaturnobelpreis", "Novelle", "Künstlerproblematik"],
+      "lexile_score": null
+    }
+  ]
+}

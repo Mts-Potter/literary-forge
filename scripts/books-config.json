@@ -126,28 +126,28 @@
       "lexile_score": 1100
     },
     {
-      "id": "schnitzler_traumnovelle",
-      "title": "Traumnovelle",
+      "id": "storm_schimmelreiter",
+      "title": "Der Schimmelreiter",
       "author": {
-        "name": "Schnitzler, Arthur",
-        "death_year": 1931
+        "name": "Storm, Theodor",
+        "death_year": 1888
       },
       "language": "de",
-      "publication_year": 1926,
+      "publication_year": 1888,
       "cefr_level": "C1",
       "source": {
         "type": "gutenberg",
-        "url": "https://www.gutenberg.org/ebooks/26112",
-        "txt_download_url": "https://www.gutenberg.org/cache/epub/26112/pg26112.txt"
+        "url": "https://www.gutenberg.org/ebooks/74008",
+        "txt_download_url": "https://www.gutenberg.org/ebooks/74008.txt.utf-8"
       },
       "rights": {
         "is_pd_us": true,
         "is_pd_eu": true,
         "verification_date": "2026-01-23",
-        "us_rationale": "Published 1926 (before 1931)",
-        "eu_rationale": "Author died 1931 (before 1956)"
+        "us_rationale": "Published 1888 (before 1931)",
+        "eu_rationale": "Author died 1888 (before 1956)"
       },
-      "tags": ["Wiener Moderne", "Psychologie", "Novelle"],
+      "tags": ["Novelle", "Norddeutschland", "Realismus"],
       "lexile_score": null
     },
     {
@@ -224,31 +224,6 @@
       },
       "tags": ["Detective", "Mystery", "Victorian"],
       "lexile_score": 1000
-    },
-    {
-      "id": "zweig_brief_einer_unbekannten",
-      "title": "Brief einer Unbekannten",
-      "author": {
-        "name": "Zweig, Stefan",
-        "death_year": 1942
-      },
-      "language": "de",
-      "publication_year": 1922,
-      "cefr_level": "B2",
-      "source": {
-        "type": "gutenberg",
-        "url": "https://www.gutenberg.org/ebooks/27036",
-        "txt_download_url": "https://www.gutenberg.org/files/27036/27036-0.txt"
-      },
-      "rights": {
-        "is_pd_us": true,
-        "is_pd_eu": true,
-        "verification_date": "2026-01-23",
-        "us_rationale": "Published 1922 (before 1931)",
-        "eu_rationale": "Author died 1942 (before 1956)"
-      },
-      "tags": ["Moderne", "Novelle", "Psychologie"],
-      "lexile_score": null
     }
   ]
 }

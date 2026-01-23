@@ -4,7 +4,7 @@
 
 ### Summary
 - **Total Books Imported:** 15
-- **Total Chunks:** 13,097
+- **Total Chunks:** 12,076
 - **Languages:** German (6), English (9)
 
 ### Books Imported
@@ -14,39 +14,52 @@
 2. **Die Verwandlung** (Franz Kafka, 1915) - 249 chunks, B2, German
 3. **The Picture of Dorian Gray** (Oscar Wilde, 1890) - 911 chunks, C1, English
 4. **Buddenbrooks** (Thomas Mann, 1901) - 1213 chunks, C1, German
-5. **Pride and Prejudice** (Jane Austen, 1813) - 1552 chunks, B2, English
-6. **Traumnovelle** (Arthur Schnitzler, 1926) - 733 chunks, C1, German
-7. **Frankenstein** (Mary Shelley, 1818) - 901 chunks, B2, English
-8. **Der Tod in Venedig** (Thomas Mann, 1912) - 363 chunks, C1, German
-9. **A Study in Scarlet** (Arthur Conan Doyle, 1887) - 510 chunks, B2, English
+5. **Pride and Prejudice** (Jane Austen, 1813) - 1453 chunks, B2, English *(cleaned: 99 preface chunks removed)*
+6. **Frankenstein** (Mary Shelley, 1818) - 901 chunks, B2, English
+7. **Der Tod in Venedig** (Thomas Mann, 1912) - 363 chunks, C1, German
+8. **A Study in Scarlet** (Arthur Conan Doyle, 1887) - 510 chunks, B2, English
 
 #### Deleted Due to Data Corruption
 - **Brief einer Unbekannten** (Stefan Zweig) - 449 corrupted chunks deleted
   - Issue: Project Gutenberg #27036 mislabeled - contained French text
   - See: [ZWEIG_IMPORT_ISSUE.md](ZWEIG_IMPORT_ISSUE.md)
+- **Traumnovelle** (Arthur Schnitzler) - 733 corrupted chunks deleted
+  - Issue: Project Gutenberg #26112 mislabeled - contained "A Tar-Heel Baron" by Mabell Shippie Clarke Pelton (English)
+  - Replaced with: **Der Schimmelreiter** (see below)
+- **Tonio Kröger** (Thomas Mann) - 1716 corrupted chunks deleted
+  - Issue: Project Gutenberg #35732 mislabeled - contained French literary criticism about Tasso
+  - Replaced with: **Der Schimmelreiter** (see below)
 
 #### Newly Imported (2026-01-23)
-10. **Die Leiden des jungen Werther** (Goethe, 1774) - 499 chunks, C1, German
-11. **Der Prozess** (Franz Kafka, 1925) - 944 chunks, C1, German
-12. **The Last Man** (Mary Shelley, 1826) - 2110 chunks, B2, English
-13. **Dracula** (Bram Stoker, 1897) - 1802 chunks, B2, English
-14. **The Strange Case of Dr. Jekyll and Mr. Hyde** (Stevenson, 1886) - 294 chunks, B2, English
-15. **A Christmas Carol** (Charles Dickens, 1843) - 337 chunks, B2, English
+9. **Die Leiden des jungen Werther** (Goethe, 1774) - 499 chunks, C1, German
+10. **Der Prozess** (Franz Kafka, 1925) - 944 chunks, C1, German
+11. **The Last Man** (Mary Shelley, 1826) - 2110 chunks, B2, English
+12. **Dracula** (Bram Stoker, 1897) - 1802 chunks, B2, English
+13. **The Strange Case of Dr. Jekyll and Mr. Hyde** (Stevenson, 1886) - 294 chunks, B2, English
+14. **A Christmas Carol** (Charles Dickens, 1843) - 337 chunks, B2, English
+15. **Der Schimmelreiter** (Theodor Storm, 1888) - 423 chunks, C1, German ✅ *NEW*
+   - **Source:** Project Gutenberg #74008
+   - **Status:** Verified correct German text (norddeutsche Novelle)
 
 ### Import Statistics
 
 #### By Language
-- **German:** 6 books (3,501 chunks)
-- **English:** 9 books (9,596 chunks)
+- **German:** 6 books (3,691 chunks)
+  - Die Verwandlung, Buddenbrooks, Der Tod in Venedig, Werther, Der Prozess, Der Schimmelreiter
+- **English:** 9 books (8,385 chunks)
+  - Great Gatsby, Dorian Gray, Pride and Prejudice, Frankenstein, Study in Scarlet, Last Man, Dracula, Jekyll & Hyde, Christmas Carol
 
 #### By CEFR Level
-- **B2:** 10 books (9,333 chunks)
-- **C1:** 5 books (3,764 chunks)
+- **B2:** 9 books (7,885 chunks)
+  - Great Gatsby, Verwandlung, Pride & Prejudice, Frankenstein, Study in Scarlet, Last Man, Dracula, Jekyll & Hyde, Christmas Carol
+- **C1:** 6 books (4,191 chunks)
+  - Dorian Gray, Buddenbrooks, Tod in Venedig, Werther, Der Prozess, Schimmelreiter
 
 #### By Author
 - **Mary Shelley:** 2 books (3,011 chunks)
 - **Thomas Mann:** 2 books (1,576 chunks)
 - **Franz Kafka:** 2 books (1,193 chunks)
+- **Theodor Storm:** 1 book (423 chunks) ✅ *NEW*
 - Others: 1 book each
 
 ### Public Domain Verification

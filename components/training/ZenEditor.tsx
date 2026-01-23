@@ -16,7 +16,6 @@ export function ZenEditor({
 }) {
   const [text, setText] = useLocalStorage('zen-editor-draft', '')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
 
   // Typewriter scrolling: Keep cursor vertically centered
   useEffect(() => {
@@ -62,31 +61,22 @@ export function ZenEditor({
   const charCount = text.length
 
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50 flex flex-col' : 'max-w-5xl mx-auto p-6'} bg-[#0a0a0a]`}>
+    <div className="max-w-5xl mx-auto p-6 bg-[#0a0a0a]">
       {/* Header */}
       <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
-        <div className="flex justify-between items-start gap-4 mb-3">
-          <div className="flex-1">
-            <h2 className="text-base font-semibold text-white mb-1">
-              Stylistic Imitation Exercise
-            </h2>
-            <p className="text-sm text-gray-400">{prompt}</p>
-          </div>
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="px-3 py-1 text-sm text-white bg-[#262626] hover:bg-[#1f1f1f] rounded transition-colors flex-shrink-0"
-            title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-          >
-            {isFullscreen ? '⊗ Exit' : '⊕ Fullscreen'}
-          </button>
+        <div className="mb-3">
+          <h2 className="text-xl font-semibold text-white mb-2">
+            Stylistic Imitation Exercise
+          </h2>
+          <p className="text-base text-white leading-relaxed">{prompt}</p>
         </div>
 
         {/* Scene Description */}
-        <div className="bg-[#0a0a0a] border-l-2 border-white p-3 rounded">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">
+        <div className="bg-[#0a0a0a] border-l-2 border-white p-4 rounded">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-white mb-2">
             Scene:
           </h3>
-          <p className="text-sm text-white leading-relaxed">
+          <p className="text-base text-white leading-relaxed">
             {sceneDescription}
           </p>
         </div>
@@ -101,8 +91,8 @@ export function ZenEditor({
           onKeyDown={handleKeyDown}
           disabled={isSubmitting}
           placeholder="Begin writing in the style described above..."
-          rows={14}
-          className="w-full p-4 text-sm leading-relaxed
+          rows={16}
+          className="w-full p-4 text-base leading-relaxed
                      bg-[#0a0a0a] text-white placeholder:text-gray-500
                      border border-[#262626] rounded-lg
                      focus:border-white focus:outline-none
@@ -115,28 +105,28 @@ export function ZenEditor({
       </div>
 
       {/* Footer */}
-      <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 flex justify-between items-center">
-        <div className="flex items-center gap-3 text-sm">
+      <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 flex justify-between items-center">
+        <div className="flex items-center gap-3 text-base">
           <span className="font-semibold text-white">{wordCount}</span>
-          <span className="text-gray-400">words</span>
-          <span className="text-gray-600">•</span>
-          <span className="text-gray-400">{charCount} chars</span>
+          <span className="text-white">words</span>
+          <span className="text-white">•</span>
+          <span className="text-white">{charCount} chars</span>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500 hidden sm:inline">
+          <span className="text-base text-white hidden sm:inline">
             ⌘+Enter to submit
           </span>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !text.trim()}
-            className="px-4 py-2 bg-white text-black text-sm font-semibold rounded-lg
+            className="px-5 py-3 bg-white text-black text-base font-semibold rounded-lg
                        hover:bg-gray-200 disabled:bg-[#262626] disabled:text-gray-600 disabled:cursor-not-allowed
                        transition-colors"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>

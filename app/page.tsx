@@ -27,14 +27,24 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Single Clear CTA */}
-        <Link
-          href="/train"
-          className="px-12 py-5 bg-white text-black text-xl font-bold rounded-xl
-                     hover:bg-gray-200 hover:scale-105 transition-all shadow-2xl"
-        >
-          Training starten
-        </Link>
+        {/* CTAs */}
+        <div className="flex flex-col gap-4 items-center">
+          <Link
+            href="/train"
+            className="px-12 py-5 bg-white text-black text-xl font-bold rounded-xl
+                       hover:bg-gray-200 hover:scale-105 transition-all shadow-2xl"
+          >
+            Training starten
+          </Link>
+
+          <Link
+            href="/books"
+            className="px-8 py-3 bg-[#262626] text-white text-base font-semibold rounded-lg
+                       hover:bg-[#1f1f1f] transition-colors border border-[#3a3a3a]"
+          >
+            📚 Bücher durchstöbern
+          </Link>
+        </div>
 
         {/* Features Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 w-full">

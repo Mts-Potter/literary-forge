@@ -42,8 +42,10 @@ export default async function DashboardPage() {
   const booksMap = new Map()
   allChunks?.forEach(chunk => {
     const baseTitle = chunk.title.replace(/ \(Teil \d+\)$/, '')
-    // Supabase relation query returns array, so extract first element
-    const authorName = chunk.author?.[0]?.name || 'Unbekannt'
+    // Supabase relation query can return either array or object depending on join type
+    const authorName = Array.isArray(chunk.author)
+      ? chunk.author[0]?.name || 'Unbekannt'
+      : chunk.author?.name || 'Unbekannt'
 
     if (!booksMap.has(baseTitle)) {
       booksMap.set(baseTitle, {
@@ -129,7 +131,17 @@ export default async function DashboardPage() {
 
         {/* Available Books */}
         <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Verfügbare Bücher</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-white">Verfügbare Bücher</h2>
+            {books.length > 0 && (
+              <Link
+                href="/books"
+                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Alle durchstöbern →
+              </Link>
+            )}
+          </div>
 
           {books.length === 0 ? (
             <div className="text-center py-8 text-gray-400">
@@ -144,11 +156,12 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {books.map((book, idx) => (
-                <div
+              {books.slice(0, 6).map((book, idx) => (
+                <Link
                   key={idx}
+                  href={`/train?book=${encodeURIComponent(book.title)}`}
                   className="border-2 border-[#262626] rounded-lg p-4 hover:border-gray-400
-                             hover:bg-[#1f1f1f] transition-colors"
+                             hover:bg-[#1f1f1f] transition-colors cursor-pointer"
                 >
                   <h3 className="font-semibold text-white mb-1">{book.title}</h3>
                   <p className="text-sm text-gray-400 mb-2">{book.author}</p>
@@ -174,7 +187,7 @@ export default async function DashboardPage() {
                       ))}
                     </div>
                   )}
-                </div>
+                </Link>
               ))}
             </div>
           )}

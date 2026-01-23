@@ -63,11 +63,20 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-gray-400">
-            Willkommen zurück! Hier ist deine Lernübersicht.
-          </p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Dashboard</h1>
+            <p className="text-gray-400">
+              Willkommen zurück! Hier ist deine Lernübersicht.
+            </p>
+          </div>
+          <Link
+            href="/settings/account"
+            className="px-4 py-2 border-2 border-[#262626] text-gray-300 rounded-lg
+                       hover:border-gray-400 hover:bg-[#1f1f1f] transition-colors"
+          >
+            ⚙️ Konto
+          </Link>
         </div>
 
         {/* Statistics Cards */}

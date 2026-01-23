@@ -1,0 +1,254 @@
+{
+  "books": [
+    {
+      "id": "fitzgerald_great_gatsby",
+      "title": "The Great Gatsby",
+      "author": {
+        "name": "Fitzgerald, F. Scott",
+        "death_year": 1940
+      },
+      "language": "en",
+      "publication_year": 1925,
+      "cefr_level": "B2",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/64317",
+        "txt_download_url": "https://www.gutenberg.org/cache/epub/64317/pg64317.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1925 (before 1931)",
+        "eu_rationale": "Author died 1940 (before 1956)"
+      },
+      "tags": ["American Literature", "Jazz Age", "Modernism"],
+      "lexile_score": 1070
+    },
+    {
+      "id": "kafka_verwandlung",
+      "title": "Die Verwandlung",
+      "author": {
+        "name": "Kafka, Franz",
+        "death_year": 1924
+      },
+      "language": "de",
+      "publication_year": 1915,
+      "cefr_level": "B2",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/5200",
+        "txt_download_url": "https://www.gutenberg.org/files/5200/5200-0.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1915 (before 1931)",
+        "eu_rationale": "Author died 1924 (before 1956)"
+      },
+      "tags": ["Moderne", "Existentialismus", "Novelle"],
+      "lexile_score": null
+    },
+    {
+      "id": "wilde_dorian_gray",
+      "title": "The Picture of Dorian Gray",
+      "author": {
+        "name": "Wilde, Oscar",
+        "death_year": 1900
+      },
+      "language": "en",
+      "publication_year": 1890,
+      "cefr_level": "C1",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/174",
+        "txt_download_url": "https://www.gutenberg.org/cache/epub/174/pg174.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1890 (before 1931)",
+        "eu_rationale": "Author died 1900 (before 1956)"
+      },
+      "tags": ["Gothic", "Victorian", "Aestheticism"],
+      "lexile_score": 1150
+    },
+    {
+      "id": "mann_buddenbrooks",
+      "title": "Buddenbrooks",
+      "author": {
+        "name": "Mann, Thomas",
+        "death_year": 1955
+      },
+      "language": "de",
+      "publication_year": 1901,
+      "cefr_level": "C1",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/10921",
+        "txt_download_url": "https://www.gutenberg.org/files/10921/10921-0.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1901 (before 1931)",
+        "eu_rationale": "Author died 1955 → PD since Jan 1, 2026"
+      },
+      "tags": ["Moderne", "Literaturnobelpreis", "Familienroman"],
+      "lexile_score": null
+    },
+    {
+      "id": "austen_pride_prejudice",
+      "title": "Pride and Prejudice",
+      "author": {
+        "name": "Austen, Jane",
+        "death_year": 1817
+      },
+      "language": "en",
+      "publication_year": 1813,
+      "cefr_level": "B2",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/1342",
+        "txt_download_url": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1813 (before 1831)",
+        "eu_rationale": "Author died 1817 (before 1956)"
+      },
+      "tags": ["Romance", "Victorian", "Social Commentary"],
+      "lexile_score": 1100
+    },
+    {
+      "id": "schnitzler_traumnovelle",
+      "title": "Traumnovelle",
+      "author": {
+        "name": "Schnitzler, Arthur",
+        "death_year": 1931
+      },
+      "language": "de",
+      "publication_year": 1926,
+      "cefr_level": "C1",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/26112",
+        "txt_download_url": "https://www.gutenberg.org/cache/epub/26112/pg26112.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1926 (before 1931)",
+        "eu_rationale": "Author died 1931 (before 1956)"
+      },
+      "tags": ["Wiener Moderne", "Psychologie", "Novelle"],
+      "lexile_score": null
+    },
+    {
+      "id": "shelley_frankenstein",
+      "title": "Frankenstein",
+      "author": {
+        "name": "Shelley, Mary",
+        "death_year": 1851
+      },
+      "language": "en",
+      "publication_year": 1818,
+      "cefr_level": "B2",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/84",
+        "txt_download_url": "https://www.gutenberg.org/cache/epub/84/pg84.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1818 (before 1931)",
+        "eu_rationale": "Author died 1851 (before 1956)"
+      },
+      "tags": ["Gothic", "Science Fiction", "Horror"],
+      "lexile_score": 1080
+    },
+    {
+      "id": "mann_tod_in_venedig",
+      "title": "Der Tod in Venedig",
+      "author": {
+        "name": "Mann, Thomas",
+        "death_year": 1955
+      },
+      "language": "de",
+      "publication_year": 1912,
+      "cefr_level": "C1",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/12108",
+        "txt_download_url": "https://www.gutenberg.org/files/12108/12108-0.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1912 (before 1931)",
+        "eu_rationale": "Author died 1955 → PD since Jan 1, 2026"
+      },
+      "tags": ["Moderne", "Literaturnobelpreis", "Novelle"],
+      "lexile_score": null
+    },
+    {
+      "id": "doyle_study_in_scarlet",
+      "title": "A Study in Scarlet",
+      "author": {
+        "name": "Doyle, Arthur Conan",
+        "death_year": 1930
+      },
+      "language": "en",
+      "publication_year": 1887,
+      "cefr_level": "B2",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/244",
+        "txt_download_url": "https://www.gutenberg.org/cache/epub/244/pg244.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1887 (before 1931)",
+        "eu_rationale": "Author died 1930 (before 1956)"
+      },
+      "tags": ["Detective", "Mystery", "Victorian"],
+      "lexile_score": 1000
+    },
+    {
+      "id": "zweig_brief_einer_unbekannten",
+      "title": "Brief einer Unbekannten",
+      "author": {
+        "name": "Zweig, Stefan",
+        "death_year": 1942
+      },
+      "language": "de",
+      "publication_year": 1922,
+      "cefr_level": "B2",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/27036",
+        "txt_download_url": "https://www.gutenberg.org/files/27036/27036-0.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1922 (before 1931)",
+        "eu_rationale": "Author died 1942 (before 1956)"
+      },
+      "tags": ["Moderne", "Novelle", "Psychologie"],
+      "lexile_score": null
+    }
+  ]
+}

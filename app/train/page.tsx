@@ -5,13 +5,14 @@ import { TrainingInterface } from '@/components/training/TrainingInterface'
 export default async function TrainPage({
   searchParams
 }: {
-  searchParams: Promise<{ exclude?: string }>
+  searchParams: Promise<{ exclude?: string; book?: string }>
 }) {
   const supabase = await createClient()
 
   // Get search params (Next.js 15 async pattern)
   const params = await searchParams
   const excludeTextId = params.exclude
+  const bookFilter = params.book ? decodeURIComponent(params.book) : null
 
   // Auth check
   const { data: { user } } = await supabase.auth.getUser()
@@ -53,19 +54,47 @@ export default async function TrainPage({
     .eq('user_id', user.id)
     .lte('next_review', new Date().toISOString())
     .order('next_review', { ascending: true })
-    .limit(2)  // Fetch 2 to have fallback if first is excluded
+    .limit(10)  // Fetch 10 to allow filtering by book
 
   const { data: dueChunks } = await dueChunkQuery
 
-  // Filter out the excluded text_id
-  const filteredDueChunks = dueChunks?.filter(chunk =>
-    chunk.text_id !== excludeTextId
-  ) || []
+  // Filter out the excluded text_id and apply book filter
+  const filteredDueChunks = dueChunks?.filter(chunk => {
+    if (chunk.text_id === excludeTextId) return false
+
+    // Apply book filter if specified
+    if (bookFilter && chunk.source_texts) {
+      const title = (chunk.source_texts as any).title
+      // Match exact title or title with " (Teil X)" suffix
+      return title === bookFilter || title.startsWith(`${bookFilter} (Teil `)
+    }
+
+    return true
+  }) || []
 
   // If found a due review (that's not the excluded one), return it
   if (filteredDueChunks.length > 0) {
     const chunk = filteredDueChunks[0]
-    return <TrainingInterface initialChunk={chunk} userId={user.id} />
+    return (
+      <>
+        {bookFilter && (
+          <div className="bg-blue-600/20 border border-blue-600/40 rounded-lg p-4 mx-4 mt-4">
+            <p className="text-blue-300 text-sm">
+              📚 Gefiltertes Training: <span className="font-semibold">{bookFilter}</span>
+              {' '}—{' '}
+              <a href="/train" className="underline hover:text-blue-200">
+                Filter entfernen
+              </a>
+              {' '}|{' '}
+              <a href="/books" className="underline hover:text-blue-200">
+                Anderes Buch wählen
+              </a>
+            </p>
+          </div>
+        )}
+        <TrainingInterface initialChunk={chunk} userId={user.id} />
+      </>
+    )
   }
 
   // 2. No due reviews - try to fetch a NEW unstudied chunk
@@ -82,7 +111,7 @@ export default async function TrainPage({
     attemptedTextIds.push(excludeTextId)
   }
 
-  // Fetch a NEW chunk NOT in user_progress
+  // Fetch NEW chunks NOT in user_progress (random selection)
   let newChunkQuery = supabase
     .from('source_texts')
     .select(`
@@ -94,8 +123,12 @@ export default async function TrainPage({
       cefr_level,
       tags
     `)
-    .order('created_at', { ascending: true }) // FIFO: oldest first
-    .limit(1)
+    .limit(20)  // Fetch 20 candidates for random selection
+
+  // Filter by book if specified
+  if (bookFilter) {
+    newChunkQuery = newChunkQuery.or(`title.eq.${bookFilter},title.like.${bookFilter} (Teil %)`)
+  }
 
   // Exclude already attempted chunks (if any)
   if (attemptedTextIds.length > 0) {
@@ -105,17 +138,40 @@ export default async function TrainPage({
   const { data: newChunks } = await newChunkQuery
 
   if (newChunks && newChunks.length > 0) {
+    // Select a random chunk from the candidates
+    const randomIndex = Math.floor(Math.random() * newChunks.length)
+    const selectedChunk = newChunks[randomIndex]
+
     // Transform to match expected shape (simulate a "new card" in user_progress format)
     const chunk = {
-      text_id: newChunks[0].id,
+      text_id: selectedChunk.id,
       next_review: null, // Not applicable for new cards
       reps: 0,
       difficulty: 5.0, // Default FSRS difficulty
       stability: 0,
-      source_texts: newChunks[0]
+      source_texts: selectedChunk
     }
 
-    return <TrainingInterface initialChunk={chunk} userId={user.id} />
+    return (
+      <>
+        {bookFilter && (
+          <div className="bg-blue-600/20 border border-blue-600/40 rounded-lg p-4 mx-4 mt-4">
+            <p className="text-blue-300 text-sm">
+              📚 Gefiltertes Training: <span className="font-semibold">{bookFilter}</span>
+              {' '}—{' '}
+              <a href="/train" className="underline hover:text-blue-200">
+                Filter entfernen
+              </a>
+              {' '}|{' '}
+              <a href="/books" className="underline hover:text-blue-200">
+                Anderes Buch wählen
+              </a>
+            </p>
+          </div>
+        )}
+        <TrainingInterface initialChunk={chunk} userId={user.id} />
+      </>
+    )
   }
 
     // 3. No due reviews AND no new chunks - user is truly caught up!
@@ -136,9 +192,16 @@ export default async function TrainPage({
           </p>
           <div className="flex flex-col gap-3">
             <a
-              href="/settings"
+              href="/books"
               className="px-6 py-3 bg-white text-black font-semibold rounded-lg
                          hover:bg-gray-200 transition-colors"
+            >
+              📚 Bücher durchstöbern
+            </a>
+            <a
+              href="/settings"
+              className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
+                         hover:bg-[#1f1f1f] transition-colors"
             >
               Zu den Einstellungen
             </a>
@@ -169,7 +232,7 @@ export default async function TrainPage({
     attemptedTextIds.push(excludeTextId)
   }
 
-  // Fetch next text NOT in attempted list (linear order)
+  // Fetch texts NOT in attempted list (random selection)
   let nextTextQuery = supabase
     .from('source_texts')
     .select(`
@@ -181,8 +244,12 @@ export default async function TrainPage({
       cefr_level,
       tags
     `)
-    .order('created_at', { ascending: true })  // Linear order by creation time
-    .limit(1)
+    .limit(20)  // Fetch 20 candidates for random selection
+
+  // Filter by book if specified
+  if (bookFilter) {
+    nextTextQuery = nextTextQuery.or(`title.eq.${bookFilter},title.like.${bookFilter} (Teil %)`)
+  }
 
   // Exclude already attempted texts
   if (attemptedTextIds.length > 0) {
@@ -192,17 +259,40 @@ export default async function TrainPage({
   const { data: nextTexts } = await nextTextQuery
 
   if (nextTexts && nextTexts.length > 0) {
+    // Select a random chunk from the candidates
+    const randomIndex = Math.floor(Math.random() * nextTexts.length)
+    const selectedChunk = nextTexts[randomIndex]
+
     // Transform to match expected shape
     const chunk = {
-      text_id: nextTexts[0].id,
+      text_id: selectedChunk.id,
       next_review: null,  // Not applicable in linear mode
       reps: 0,
       difficulty: 5.0,
       stability: 0,
-      source_texts: nextTexts[0]
+      source_texts: selectedChunk
     }
 
-    return <TrainingInterface initialChunk={chunk} userId={user.id} />
+    return (
+      <>
+        {bookFilter && (
+          <div className="bg-blue-600/20 border border-blue-600/40 rounded-lg p-4 mx-4 mt-4">
+            <p className="text-blue-300 text-sm">
+              📚 Gefiltertes Training: <span className="font-semibold">{bookFilter}</span>
+              {' '}—{' '}
+              <a href="/train" className="underline hover:text-blue-200">
+                Filter entfernen
+              </a>
+              {' '}|{' '}
+              <a href="/books" className="underline hover:text-blue-200">
+                Anderes Buch wählen
+              </a>
+            </p>
+          </div>
+        )}
+        <TrainingInterface initialChunk={chunk} userId={user.id} />
+      </>
+    )
   }
 
   // All texts completed in linear mode
@@ -222,9 +312,16 @@ export default async function TrainPage({
         </p>
         <div className="flex flex-col gap-3">
           <a
-            href="/settings"
+            href="/books"
             className="px-6 py-3 bg-white text-black font-semibold rounded-lg
                        hover:bg-gray-200 transition-colors"
+          >
+            📚 Bücher durchstöbern
+          </a>
+          <a
+            href="/settings"
+            className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
+                       hover:bg-[#1f1f1f] transition-colors"
           >
             Zu den Einstellungen
           </a>

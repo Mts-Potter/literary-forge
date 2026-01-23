@@ -65,18 +65,18 @@ export function ZenEditor({
       {/* Header */}
       <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
         <div className="mb-3">
-          <h2 className="text-xl font-semibold text-white mb-2">
+          <h2 className="text-2xl font-semibold text-white mb-2">
             Stylistic Imitation Exercise
           </h2>
-          <p className="text-base text-white leading-relaxed">{prompt}</p>
+          <p className="text-lg text-white leading-relaxed">{prompt}</p>
         </div>
 
         {/* Scene Description */}
         <div className="bg-[#0a0a0a] border-l-2 border-white p-4 rounded">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-white mb-2">
+          <h3 className="text-base font-semibold uppercase tracking-wide text-white mb-2">
             Scene:
           </h3>
-          <p className="text-base text-white leading-relaxed">
+          <p className="text-lg text-white leading-relaxed">
             {sceneDescription}
           </p>
         </div>
@@ -92,7 +92,7 @@ export function ZenEditor({
           disabled={isSubmitting}
           placeholder="Begin writing in the style described above..."
           rows={16}
-          className="w-full p-4 text-base leading-relaxed
+          className="w-full p-4 text-lg leading-relaxed
                      bg-[#0a0a0a] text-white placeholder:text-gray-500
                      border border-[#262626] rounded-lg
                      focus:border-white focus:outline-none
@@ -106,7 +106,7 @@ export function ZenEditor({
 
       {/* Footer */}
       <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 flex justify-between items-center">
-        <div className="flex items-center gap-3 text-base">
+        <div className="flex items-center gap-3 text-lg">
           <span className="font-semibold text-white">{wordCount}</span>
           <span className="text-white">words</span>
           <span className="text-white">•</span>
@@ -114,13 +114,13 @@ export function ZenEditor({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-base text-white hidden sm:inline">
+          <span className="text-lg text-white hidden sm:inline">
             ⌘+Enter to submit
           </span>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || !text.trim()}
-            className="px-5 py-3 bg-white text-black text-base font-semibold rounded-lg
+            className="px-5 py-3 bg-white text-black text-lg font-semibold rounded-lg
                        hover:bg-gray-200 disabled:bg-[#262626] disabled:text-gray-600 disabled:cursor-not-allowed
                        transition-colors"
           >

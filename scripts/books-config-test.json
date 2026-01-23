@@ -1,0 +1,29 @@
+{
+  "books": [
+    {
+      "id": "kafka_verwandlung",
+      "title": "Die Verwandlung",
+      "author": {
+        "name": "Kafka, Franz",
+        "death_year": 1924
+      },
+      "language": "de",
+      "publication_year": 1915,
+      "cefr_level": "B2",
+      "source": {
+        "type": "gutenberg",
+        "url": "https://www.gutenberg.org/ebooks/5200",
+        "txt_download_url": "https://www.gutenberg.org/files/5200/5200-0.txt"
+      },
+      "rights": {
+        "is_pd_us": true,
+        "is_pd_eu": true,
+        "verification_date": "2026-01-23",
+        "us_rationale": "Published 1915 (before 1931)",
+        "eu_rationale": "Author died 1924 (before 1956)"
+      },
+      "tags": ["Moderne", "Existentialismus", "Novelle"],
+      "lexile_score": null
+    }
+  ]
+}

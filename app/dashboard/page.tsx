@@ -40,7 +40,7 @@ export default async function DashboardPage() {
 
   // Group chunks by base title
   const booksMap = new Map()
-  allChunks?.forEach(chunk => {
+  allChunks?.forEach((chunk: any) => {
     const baseTitle = chunk.title.replace(/ \(Teil \d+\)$/, '')
     // Supabase relation query can return either array or object depending on join type
     const authorName = Array.isArray(chunk.author)

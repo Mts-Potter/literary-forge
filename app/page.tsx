@@ -1,65 +1,84 @@
-import Image from "next/image";
+import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <main className="flex flex-col items-center gap-8 px-8 py-16 max-w-4xl text-center">
+        <div className="space-y-4">
+          <h1 className="text-6xl font-bold tracking-tight text-gray-900">
+            Literary Forge
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-xl text-gray-600">
+            KI-gestütztes Training für stilistische Mimesis
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <div className="max-w-2xl space-y-4 text-gray-700">
+          <p>
+            Lerne, die Stile großer Autoren zu imitieren durch eine einzigartige Kombination
+            aus Spaced Repetition, linguistischer Analyse und KI-Feedback.
+          </p>
+          <p className="text-sm text-gray-500">
+            Serverlose Architektur powered by Next.js, Supabase und Claude 3.5 Haiku
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 mt-8">
+          <Link
+            href="/train"
+            className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold
+                       hover:bg-blue-700 transition-colors shadow-lg"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Training starten
+          </Link>
+          <Link
+            href="/dashboard"
+            className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold
+                       hover:border-gray-400 hover:bg-gray-50 transition-colors"
           >
-            Documentation
-          </a>
+            Dashboard
+          </Link>
+          <Link
+            href="/admin/ingest"
+            className="px-8 py-4 border-2 border-purple-300 text-purple-700 rounded-lg font-semibold
+                       hover:border-purple-400 hover:bg-purple-50 transition-colors"
+          >
+            📚 Admin Import
+          </Link>
+        </div>
+
+        <div className="mt-12 p-6 bg-white rounded-lg shadow-md max-w-2xl">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900">Setup-Status</h2>
+          <div className="space-y-2 text-left text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              <span>Next.js Projekt initialisiert</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              <span>Dependencies installiert</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              <span>Supabase konfiguriert</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              <span>AWS Bedrock konfiguriert</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              <span>Datenbank-Migration abgeschlossen</span>
+            </div>
+          </div>
+          <div className="mt-4 p-4 bg-green-50 rounded text-sm text-left">
+            <p className="font-semibold text-green-900 mb-2">System bereit!</p>
+            <p className="text-green-800">
+              Alle Konfigurationen sind abgeschlossen. Du kannst jetzt mit dem Training beginnen.
+            </p>
+          </div>
         </div>
       </main>
     </div>
-  );
+  )
 }

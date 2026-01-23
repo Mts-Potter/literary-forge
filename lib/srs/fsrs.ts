@@ -1,4 +1,4 @@
-import { FSRS, Card, Grade, Rating, RecordLog, State } from 'ts-fsrs'
+import { FSRS, Card, Grade, Rating, ReviewLog, State } from 'ts-fsrs'
 
 // Initialize FSRS with optimized parameters for stylistic learning
 const fsrs = new FSRS({
@@ -74,7 +74,7 @@ export function calculateNextReview(
   reviewDate: Date = new Date()
 ): {
   card: Card
-  log: RecordLog
+  log: ReviewLog
   nextReview: Date
   grade: Grade
   interval: number

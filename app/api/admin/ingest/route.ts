@@ -3,6 +3,23 @@ import { createClient } from '@/lib/supabase/server'
 import { ingestSchema } from '@/lib/validation/api-schemas'
 import { z } from 'zod'
 
+/**
+ * SECURITY M-8: Audit logging helper for admin operations
+ */
+function logAdminAction(
+  action: string,
+  userId: string,
+  details: Record<string, any>
+) {
+  const timestamp = new Date().toISOString()
+  console.log('[AUDIT]', JSON.stringify({
+    timestamp,
+    action,
+    userId,
+    ...details
+  }))
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -24,6 +41,10 @@ export async function POST(request: NextRequest) {
     if (!adminCheck) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
+
+    // SECURITY M-7: Check for dry-run mode
+    const url = new URL(request.url)
+    const isDryRun = url.searchParams.get('dryRun') === 'true'
 
     // Parse and validate request body
     const body = await request.json()
@@ -55,6 +76,16 @@ export async function POST(request: NextRequest) {
       chunkSize,
       tags
     } = validatedData
+
+    // SECURITY M-8: Log admin action
+    logAdminAction('book_ingest_start', user.id, {
+      title,
+      authorId: authorId || 'new',
+      newAuthorName,
+      language,
+      contentLength: content.length,
+      isDryRun
+    })
 
     // Author validation
     if (!authorId && !newAuthorName) {
@@ -130,6 +161,27 @@ export async function POST(request: NextRequest) {
     if (existingChunks && existingChunks.length > 0) {
       console.log(`Found ${existingChunks.length} existing chunks for "${title}" by ${authorName}`)
 
+      // SECURITY M-7: Dry-run mode - return what would be deleted without deleting
+      if (isDryRun) {
+        logAdminAction('book_ingest_dryrun', user.id, {
+          title,
+          authorName,
+          chunksToDelete: existingChunks.length,
+          chunkIds: existingChunks.map(c => c.id)
+        })
+
+        return NextResponse.json({
+          dryRun: true,
+          message: 'Dry-run mode: No changes made',
+          existingChunks: existingChunks.map(chunk => ({
+            id: chunk.id,
+            title: chunk.title
+          })),
+          wouldDelete: existingChunks.length,
+          wouldCreate: Math.ceil(content.length / (chunkSize || 500)) // Estimate
+        })
+      }
+
       // Delete old chunks by ID (cascades to user_progress, review_history via foreign keys)
       // SECURITY: Use ID-based deletion instead of string interpolation
       const chunkIds = existingChunks.map(chunk => chunk.id)
@@ -148,6 +200,14 @@ export async function POST(request: NextRequest) {
 
       deletedCount = existingChunks.length
       console.log(`Successfully deleted ${deletedCount} old chunks`)
+
+      // SECURITY M-8: Log successful deletion
+      logAdminAction('book_chunks_deleted', user.id, {
+        title,
+        authorName,
+        deletedCount,
+        chunkIds: chunkIds.slice(0, 10) // Log first 10 IDs only
+      })
     }
 
     // Split content into chunks
@@ -204,6 +264,17 @@ export async function POST(request: NextRequest) {
       message += ` (${deletedCount} alte Chunks ersetzt)`
     }
     message += ` - ${insertedChunks?.length || 0} neue Chunks erstellt`
+
+    // SECURITY M-8: Log successful ingestion
+    logAdminAction('book_ingest_success', user.id, {
+      title,
+      authorName,
+      authorId: finalAuthorId,
+      chunksCreated: insertedChunks?.length || 0,
+      chunksDeleted: deletedCount,
+      language,
+      contentLength: content.length
+    })
 
     return NextResponse.json({
       success: true,

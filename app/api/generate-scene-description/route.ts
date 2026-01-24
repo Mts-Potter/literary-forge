@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
+import { sceneDescriptionSchema } from '@/lib/validation/api-schemas'
+import { z } from 'zod'
+import { logError, getSafeErrorMessage } from '@/lib/utils/error-logger'
 
 const bedrockClient = new BedrockRuntimeClient({
   region: process.env.AWS_REGION!,
@@ -20,15 +23,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { text_id, content } = await request.json()
+    // SECURITY M-2: Rate limiting
+    const forwardedFor = request.headers.get('x-forwarded-for')
+    const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1'
 
-    // Validate inputs
-    if (!text_id || !content) {
+    const { data: hasQuota, error: quotaError } = await supabase.rpc('check_and_consume_quota', {
+      p_user_id: user.id,
+      p_ip_address: clientIp
+    })
+
+    if (quotaError || !hasQuota) {
       return NextResponse.json(
-        { error: 'Missing required fields: text_id, content' },
-        { status: 400 }
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
       )
     }
+
+    // SECURITY M-3: Input validation
+    const body = await request.json()
+
+    const requestSchema = z.object({
+      text_id: z.string().uuid('Invalid text ID format'),
+      content: z.string().min(10, 'Content must be at least 10 characters').max(100_000, 'Content too long')
+    })
+
+    let validatedData
+    try {
+      validatedData = requestSchema.parse(body)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          },
+          { status: 400 }
+        )
+      }
+      throw error
+    }
+
+    const { text_id, content } = validatedData
 
     // Call Bedrock to generate scene description
     const prompt = `Summarize the main literary content in this passage in 2-3 sentences. Focus on:
@@ -142,9 +177,10 @@ Output ONLY the summary of the story content. Even if incomplete, describe what 
 
     return NextResponse.json({ description })
   } catch (error: any) {
-    console.error('Scene description generation error:', error)
+    // SECURITY M-5: Secure error handling - log full details server-side, return generic message
+    logError('generate-scene-description', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to generate description' },
+      { error: getSafeErrorMessage(error) },
       { status: 500 }
     )
   }

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { createClient } from '@/lib/supabase/server'
+import { analyzeSchema, bedrockMetadataSchema } from '@/lib/validation/api-schemas'
+import { z } from 'zod'
+import { logError, getSafeErrorMessage } from '@/lib/utils/error-logger'
 
 export const runtime = 'edge'
 
@@ -83,11 +86,52 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Request Body
+    // SECURITY M-1: Validate request body
     const body = await request.json()
-    const { type, text, textId } = body
+
+    // Create validation schema for this endpoint
+    const requestSchema = z.object({
+      type: z.enum(['destyle', 'feedback'], {
+        errorMap: () => ({ message: 'Type must be "destyle" or "feedback"' })
+      }),
+      text: z.string().min(10).max(100_000).optional(),
+      textId: z.string().uuid().optional(),
+      userText: z.string().min(10).max(10_000).optional(),
+      originalText: z.string().min(10).max(10_000).optional(),
+      styleMetrics: z.object({
+        userDD: z.number().min(0).max(100),
+        originalDD: z.number().min(0).max(100),
+        userAVR: z.number().min(0).max(10),
+        originalAVR: z.number().min(0).max(10)
+      }).optional()
+    })
+
+    let validatedData
+    try {
+      validatedData = requestSchema.parse(body)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          },
+          { status: 400 }
+        )
+      }
+      throw error
+    }
+
+    const { type, text, textId, userText, originalText, styleMetrics } = validatedData
 
     if (type === 'destyle') {
+      // Validate required fields for destyle
+      if (!text) {
+        return NextResponse.json(
+          { error: 'Missing required field: text' },
+          { status: 400 }
+        )
+      }
       // Phase 1: De-Styling für Source Text
       const prompt = `Du bist ein Literaturanalyst. Extrahiere aus folgendem Text:
 1. Eine neutrale Inhaltsangabe (Plot) ohne Stilelemente
@@ -129,8 +173,15 @@ Antworte als JSON:
       return NextResponse.json({ metadata })
 
     } else if (type === 'feedback') {
+      // Validate required fields for feedback
+      if (!userText || !originalText || !styleMetrics) {
+        return NextResponse.json(
+          { error: 'Missing required fields: userText, originalText, styleMetrics' },
+          { status: 400 }
+        )
+      }
+
       // Phase 2: Stilfeedback für User-Text
-      const { userText, originalText, styleMetrics } = body
 
       const prompt = `Du bist ein Stilcoach. Der Nutzer versucht, den Stil des Originals zu imitieren.
 
@@ -164,9 +215,10 @@ Antworte auf Deutsch, freundlich aber präzise.`
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
 
   } catch (error: any) {
-    console.error('Analyze API Error:', error)
+    // SECURITY M-4: Secure error handling - log full details server-side, return generic message
+    logError('analyze', error)
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: getSafeErrorMessage(error) },
       { status: 500 }
     )
   }

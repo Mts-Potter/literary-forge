@@ -5,6 +5,30 @@ import { groupBooksByTitle } from '@/lib/utils/books'
 export async function GET() {
   const supabase = await createClient()
 
+  // SECURITY M-6: Admin authentication check
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return NextResponse.json(
+      { error: 'Unauthorized. Please log in.' },
+      { status: 401 }
+    )
+  }
+
+  // Check if user is admin
+  const { data: adminCheck, error: adminError } = await supabase
+    .from('admin_users')
+    .select('user_id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (adminError || !adminCheck) {
+    return NextResponse.json(
+      { error: 'Forbidden. Admin access required.' },
+      { status: 403 }
+    )
+  }
+
   // Fetch all chunks
   const { data: allChunks, error: chunksError, count } = await supabase
     .from('source_texts')

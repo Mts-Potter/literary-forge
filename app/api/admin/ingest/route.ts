@@ -53,17 +53,17 @@ export async function POST(request: NextRequest) {
     let validatedData
     try {
       validatedData = ingestSchema.parse(body)
-    } catch (error) {
-      if (error instanceof z.ZodError) {
+    } catch (err) {
+      if (err instanceof z.ZodError) {
         return NextResponse.json(
           {
             error: 'Validation failed',
-            details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+            details: err.issues.map(e => `${e.path.join('.')}: ${e.message}`)
           },
           { status: 400 }
         )
       }
-      throw error
+      throw err
     }
 
     const {
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate automatic tags
-    const autoTags = generateTags(language, cefrLevel, authorName || '')
+    const autoTags = generateTags(language, cefrLevel ?? null, authorName || '')
 
     // Check if book already exists (same title base + author)
     // If yes, delete old chunks before inserting new ones

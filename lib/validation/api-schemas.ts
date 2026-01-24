@@ -29,12 +29,12 @@ export const ingestSchema = z.object({
     .optional()
     .default(500),
 
-  language: z.enum(['de', 'en', 'fr', 'es', 'it'], {
-    errorMap: () => ({ message: 'Invalid language code' })
+  language: z.enum(['de', 'en', 'fr', 'es', 'it'] as const, {
+    message: 'Invalid language code'
   }),
 
-  cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'], {
-    errorMap: () => ({ message: 'Invalid CEFR level' })
+  cefrLevel: z.enum(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const, {
+    message: 'Invalid CEFR level'
   }).optional(),
 
   newAuthorName: z.string()
@@ -69,8 +69,8 @@ export const submitTrainingSchema = z.object({
  * Used by: /api/analyze
  */
 export const analyzeSchema = z.object({
-  type: z.enum(['destyle', 'style_mimic'], {
-    errorMap: () => ({ message: 'Invalid analysis type' })
+  type: z.enum(['destyle', 'style_mimic'] as const, {
+    message: 'Invalid analysis type'
   }),
 
   userText: z.string()

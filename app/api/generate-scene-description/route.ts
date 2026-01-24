@@ -50,17 +50,17 @@ export async function POST(request: NextRequest) {
     let validatedData
     try {
       validatedData = requestSchema.parse(body)
-    } catch (error) {
-      if (error instanceof z.ZodError) {
+    } catch (err) {
+      if (err instanceof z.ZodError) {
         return NextResponse.json(
           {
             error: 'Validation failed',
-            details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+            details: err.issues.map(e => `${e.path.join('.')}: ${e.message}`)
           },
           { status: 400 }
         )
       }
-      throw error
+      throw err
     }
 
     const { text_id, content } = validatedData

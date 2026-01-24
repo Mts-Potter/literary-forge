@@ -91,8 +91,8 @@ export async function POST(request: NextRequest) {
 
     // Create validation schema for this endpoint
     const requestSchema = z.object({
-      type: z.enum(['destyle', 'feedback'], {
-        errorMap: () => ({ message: 'Type must be "destyle" or "feedback"' })
+      type: z.enum(['destyle', 'feedback'] as const, {
+        message: 'Type must be "destyle" or "feedback"'
       }),
       text: z.string().min(10).max(100_000).optional(),
       textId: z.string().uuid().optional(),
@@ -109,17 +109,17 @@ export async function POST(request: NextRequest) {
     let validatedData
     try {
       validatedData = requestSchema.parse(body)
-    } catch (error) {
-      if (error instanceof z.ZodError) {
+    } catch (err) {
+      if (err instanceof z.ZodError) {
         return NextResponse.json(
           {
             error: 'Validation failed',
-            details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+            details: err.issues.map(e => `${e.path.join('.')}: ${e.message}`)
           },
           { status: 400 }
         )
       }
-      throw error
+      throw err
     }
 
     const { type, text, textId, userText, originalText, styleMetrics } = validatedData

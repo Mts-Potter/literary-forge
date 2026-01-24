@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
+import { submitTrainingSchema, bedrockAnalysisSchema } from '@/lib/validation/api-schemas'
+import { z } from 'zod'
+import { logError, getSafeErrorMessage } from '@/lib/utils/error-logger'
 
 const bedrockClient = new BedrockRuntimeClient({
   region: process.env.AWS_REGION!,
@@ -20,15 +23,59 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { text_id, user_text, original_text, style_metrics } = await request.json()
+    // SECURITY H-3: Add rate limiting
+    const forwardedFor = request.headers.get('x-forwarded-for')
+    const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1'
 
-    // Validate inputs
-    if (!text_id || !user_text || !original_text) {
+    const { data: hasQuota, error: quotaError } = await supabase.rpc('check_and_consume_quota', {
+      p_user_id: user.id,
+      p_ip_address: clientIp
+    })
+
+    if (quotaError || !hasQuota) {
       return NextResponse.json(
-        { error: 'Missing required fields: text_id, user_text, original_text' },
-        { status: 400 }
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
       )
     }
+
+    // Parse and validate inputs
+    const body = await request.json()
+
+    let validatedData
+    try {
+      validatedData = submitTrainingSchema.parse(body)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          },
+          { status: 400 }
+        )
+      }
+      throw error
+    }
+
+    const { text_id, user_text } = validatedData
+
+    // Fetch original text and style metrics from database
+    const { data: originalData, error: fetchError } = await supabase
+      .from('source_texts')
+      .select('content, metrics')
+      .eq('id', text_id)
+      .single()
+
+    if (fetchError || !originalData) {
+      return NextResponse.json(
+        { error: 'Text not found' },
+        { status: 404 }
+      )
+    }
+
+    const original_text = originalData.content
+    const style_metrics = originalData.metrics
 
     // Call Anthropic API to analyze style
     const prompt = `You are a literary critic evaluating a stylistic imitation exercise.
@@ -99,21 +146,22 @@ Output JSON in this exact format:
       throw new Error('Unexpected response type from Bedrock')
     }
 
-    // Parse JSON from response
+    // SECURITY H-2: Parse and validate AI response with schema
     let analysis
     try {
-      analysis = JSON.parse(content.text)
-    } catch (parseError) {
+      const rawAnalysis = JSON.parse(content.text)
+      analysis = bedrockAnalysisSchema.parse(rawAnalysis)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error('AI response validation failed:', error.errors)
+        console.error('Raw response:', content.text)
+        throw new Error('Invalid AI response format')
+      }
       console.error('Failed to parse Bedrock response:', content.text)
       throw new Error('Invalid response format from AI')
     }
 
     const accuracyScore = analysis.overall_accuracy
-
-    // Validate accuracy score
-    if (typeof accuracyScore !== 'number' || accuracyScore < 0 || accuracyScore > 100) {
-      throw new Error(`Invalid accuracy score: ${accuracyScore}`)
-    }
 
     // Submit review via RPC (logs to review_history and updates user_progress)
     const { data: result, error: rpcError } = await supabase.rpc('submit_review', {
@@ -125,8 +173,9 @@ Output JSON in this exact format:
     })
 
     if (rpcError) {
-      console.error('RPC error:', rpcError)
-      throw new Error(`Database error: ${rpcError.message}`)
+      // SECURITY H-4: Log full error server-side, return generic message to client
+      logError('train/submit:rpc', rpcError)
+      throw new Error('Failed to submit review')
     }
 
     // Return combined feedback and schedule info
@@ -135,9 +184,10 @@ Output JSON in this exact format:
       schedule: result
     })
   } catch (error: any) {
-    console.error('Training submit error:', error)
+    // SECURITY H-4: Never expose internal error details to client
+    logError('train/submit', error)
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: getSafeErrorMessage(error) },
       { status: 500 }
     )
   }

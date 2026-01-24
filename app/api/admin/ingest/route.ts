@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { ingestSchema } from '@/lib/validation/api-schemas'
+import { z } from 'zod'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,35 +25,41 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
-    // Parse request body
+    // Parse and validate request body
+    const body = await request.json()
+
+    // SECURITY: Validate all inputs with Zod schema
+    let validatedData
+    try {
+      validatedData = ingestSchema.parse(body)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          {
+            error: 'Validation failed',
+            details: error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          },
+          { status: 400 }
+        )
+      }
+      throw error
+    }
+
     const {
       title,
-      authorId,
+      existingAuthorId: authorId,
       newAuthorName,
       content,
       language,
       cefrLevel,
-      chunkSize
-    } = await request.json()
+      chunkSize,
+      tags
+    } = validatedData
 
-    // Validation
-    if (!title || !content) {
-      return NextResponse.json(
-        { error: 'Title and content are required' },
-        { status: 400 }
-      )
-    }
-
+    // Author validation
     if (!authorId && !newAuthorName) {
       return NextResponse.json(
-        { error: 'Author ID or new author name is required' },
-        { status: 400 }
-      )
-    }
-
-    if (content.length < 100) {
-      return NextResponse.json(
-        { error: 'Content must be at least 100 characters' },
+        { error: 'Either existingAuthorId or newAuthorName is required' },
         { status: 400 }
       )
     }
@@ -94,11 +102,24 @@ export async function POST(request: NextRequest) {
 
     // Check if book already exists (same title base + author)
     // If yes, delete old chunks before inserting new ones
-    const { data: existingChunks, error: checkError } = await supabase
+    // SECURITY: Use separate queries to avoid SQL injection via string interpolation
+    const exactMatch = await supabase
       .from('source_texts')
       .select('id, title')
       .eq('author_id', finalAuthorId)
-      .or(`title.eq.${title},title.like.${title} (Teil %)`)
+      .eq('title', title)
+
+    const partialMatch = await supabase
+      .from('source_texts')
+      .select('id, title')
+      .eq('author_id', finalAuthorId)
+      .like('title', `${title} (Teil %)`)
+
+    const existingChunks = [
+      ...(exactMatch.data || []),
+      ...(partialMatch.data || [])
+    ]
+    const checkError = exactMatch.error || partialMatch.error
 
     if (checkError) {
       console.error('Failed to check existing chunks:', checkError)
@@ -109,12 +130,13 @@ export async function POST(request: NextRequest) {
     if (existingChunks && existingChunks.length > 0) {
       console.log(`Found ${existingChunks.length} existing chunks for "${title}" by ${authorName}`)
 
-      // Delete old chunks (cascades to user_progress, review_history via foreign keys)
+      // Delete old chunks by ID (cascades to user_progress, review_history via foreign keys)
+      // SECURITY: Use ID-based deletion instead of string interpolation
+      const chunkIds = existingChunks.map(chunk => chunk.id)
       const { error: deleteError } = await supabase
         .from('source_texts')
         .delete()
-        .eq('author_id', finalAuthorId)
-        .or(`title.eq.${title},title.like.${title} (Teil %)`)
+        .in('id', chunkIds)
 
       if (deleteError) {
         console.error('Failed to delete old chunks:', deleteError)

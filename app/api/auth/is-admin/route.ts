@@ -18,9 +18,16 @@ export async function GET() {
       return NextResponse.json({ isAdmin: false })
     }
 
-    // Check if user is in admin list
-    const adminUserIds = process.env.ADMIN_USER_IDS?.split(',') || []
-    const isAdmin = adminUserIds.includes(user.id)
+    // SECURITY: Check admin status via database, not environment variable
+    // This ensures single source of truth and allows dynamic admin management
+    const { data: adminCheck, error } = await supabase
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .single()
+
+    // If error or no match found, user is not admin
+    const isAdmin = !error && !!adminCheck
 
     return NextResponse.json({ isAdmin })
   } catch (error) {

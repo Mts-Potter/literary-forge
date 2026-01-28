@@ -27,6 +27,14 @@ export default async function DashboardPage() {
     ? Math.round(progressData.reduce((sum, p) => sum + p.reps, 0) / progressData.length)
     : 0
 
+  // Fetch streak data
+  const { data: streakData } = await supabase.rpc('calculate_user_streaks', {
+    p_user_id: user.id
+  })
+
+  const currentStreak = streakData?.current_streak || 0
+  const longestStreak = streakData?.longest_streak || 0
+
   // Fetch available books using database-side grouping to avoid 1000-row limit
   // Try RPC function first, fall back to client-side grouping if not available
   let books: GroupedBook[] = []
@@ -101,7 +109,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Studied */}
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
             <div className="flex items-center justify-between">
@@ -132,6 +140,29 @@ export default async function DashboardPage() {
                 <p className="text-3xl font-bold text-white">{avgReps}</p>
               </div>
               <div className="text-4xl">🔄</div>
+            </div>
+          </div>
+
+          {/* Current Streak */}
+          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Current Streak</p>
+                <p className="text-3xl font-bold text-white">
+                  {currentStreak}
+                  <span className="text-lg text-gray-400 ml-1">
+                    {currentStreak === 1 ? 'day' : 'days'}
+                  </span>
+                </p>
+                {longestStreak > currentStreak && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Best: {longestStreak} {longestStreak === 1 ? 'day' : 'days'}
+                  </p>
+                )}
+              </div>
+              <div className="text-4xl">
+                {currentStreak === 0 ? '😴' : currentStreak >= 7 ? '🔥' : '⚡'}
+              </div>
             </div>
           </div>
         </div>

@@ -62,6 +62,10 @@ export const submitTrainingSchema = z.object({
   user_text: z.string()
     .min(1, 'User text is required')
     .max(10_000, 'User text must be less than 10,000 characters'),
+
+  idempotency_token: z.string()
+    .uuid('Idempotency token must be a valid UUID')
+    .optional(), // Optional for backward compatibility
 })
 
 /**
@@ -148,6 +152,32 @@ export const bedrockMetadataSchema = z.object({
 }).passthrough()
 
 /**
+ * Submit Review RPC Result Schema
+ * Expected format from submit_review() database function
+ */
+export const submitReviewResultSchema = z.object({
+  success: z.boolean(),
+  grade: z.number()
+    .int('Grade must be an integer')
+    .min(1, 'Grade must be at least 1')
+    .max(4, 'Grade must not exceed 4'),
+  interval_days: z.number()
+    .min(0, 'Interval must be positive'),
+  next_review: z.string(), // ISO timestamp
+  difficulty: z.number()
+    .min(1, 'Difficulty must be at least 1')
+    .max(10, 'Difficulty must not exceed 10'),
+  stability: z.number()
+    .min(0, 'Stability must be positive'),
+  state: z.number()
+    .int('State must be an integer')
+    .min(0, 'State must be at least 0')
+    .max(3, 'State must not exceed 3'),
+  message: z.string()
+    .min(1, 'Message is required')
+})
+
+/**
  * Type exports for TypeScript
  */
 export type IngestInput = z.infer<typeof ingestSchema>
@@ -156,3 +186,4 @@ export type AnalyzeInput = z.infer<typeof analyzeSchema>
 export type SceneDescriptionInput = z.infer<typeof sceneDescriptionSchema>
 export type BedrockAnalysis = z.infer<typeof bedrockAnalysisSchema>
 export type BedrockMetadata = z.infer<typeof bedrockMetadataSchema>
+export type SubmitReviewResult = z.infer<typeof submitReviewResultSchema>

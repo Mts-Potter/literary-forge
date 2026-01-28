@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
-import { submitTrainingSchema, bedrockAnalysisSchema } from '@/lib/validation/api-schemas'
+import { submitTrainingSchema, bedrockAnalysisSchema, submitReviewResultSchema } from '@/lib/validation/api-schemas'
 import { z } from 'zod'
 import { logError, getSafeErrorMessage } from '@/lib/utils/error-logger'
 
@@ -23,21 +23,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // SECURITY H-3: Add rate limiting
+    // SECURITY H-3: Rate limiting - moved AFTER successful save (see line ~180)
+    // This prevents quota loss when Bedrock or DB save fails
     const forwardedFor = request.headers.get('x-forwarded-for')
     const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1'
-
-    const { data: hasQuota, error: quotaError } = await supabase.rpc('check_and_consume_quota', {
-      p_user_id: user.id,
-      p_ip_address: clientIp
-    })
-
-    if (quotaError || !hasQuota) {
-      return NextResponse.json(
-        { error: 'Rate limit exceeded. Please try again later.' },
-        { status: 429 }
-      )
-    }
 
     // Parse and validate inputs
     const body = await request.json()
@@ -58,7 +47,33 @@ export async function POST(request: NextRequest) {
       throw err
     }
 
-    const { text_id, user_text } = validatedData
+    const { text_id, user_text, idempotency_token } = validatedData
+
+    // FIX 3: Idempotency check - prevent duplicate submissions
+    if (idempotency_token) {
+      // Check if this exact token was already processed (last 60 seconds)
+      const { data: existingSubmission } = await supabase
+        .from('review_history')
+        .select('id, feedback_json, created_at')
+        .eq('user_id', user.id)
+        .eq('text_id', text_id)
+        .eq('user_text', user_text) // Exact text match
+        .gte('created_at', new Date(Date.now() - 60000).toISOString()) // Last 60 seconds
+        .single()
+
+      if (existingSubmission) {
+        console.log(`[Idempotency] Duplicate submission detected for token ${idempotency_token}`)
+
+        // Return cached response (reconstruct from review_history)
+        const cachedFeedback = existingSubmission.feedback_json as any
+
+        return NextResponse.json({
+          ...cachedFeedback,
+          _cached: true, // Flag to indicate this is a cached response
+          _cached_at: existingSubmission.created_at
+        })
+      }
+    }
 
     // Fetch original text and style metrics from database
     const { data: originalData, error: fetchError } = await supabase
@@ -178,6 +193,32 @@ Output JSON in this exact format:
       throw new Error('Failed to submit review')
     }
 
+    // FIX 5: Validate RPC response to catch partial failures
+    if (!result) {
+      logError('train/submit:rpc', 'submit_review returned null')
+      throw new Error('Database returned no scheduling data')
+    }
+
+    try {
+      submitReviewResultSchema.parse(result)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error('Invalid submit_review result:', result)
+        console.error('Validation errors:', error.issues)
+        throw new Error('Database returned invalid scheduling data')
+      }
+      throw error
+    }
+
+    // FIX 1: Consume quota AFTER successful save
+    // Progress saving is more important than rate limiting
+    // Better to let user exceed quota slightly than lose their work
+    const { error: quotaError } = await supabase.rpc('check_and_consume_quota', {
+      p_user_id: user.id,
+      p_ip_address: clientIp
+    })
+    // Intentionally ignore quotaError - progress already saved, this is just accounting
+
     // Return combined feedback and schedule info
     return NextResponse.json({
       ...analysis,
@@ -186,8 +227,41 @@ Output JSON in this exact format:
   } catch (error: any) {
     // SECURITY H-4: Never expose internal error details to client
     logError('train/submit', error)
+
+    // FIX 7: Provide specific error messages based on error type
+    const errorMessage = error.message || ''
+
+    if (errorMessage.includes('Rate limit') || errorMessage.includes('quota')) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please wait before trying again.' },
+        { status: 429 }
+      )
+    }
+
+    if (errorMessage.includes('Bedrock') || errorMessage.includes('AI') || errorMessage.includes('response format')) {
+      return NextResponse.json(
+        { error: 'AI service temporarily unavailable. Your work is saved. Please try again.' },
+        { status: 503 }
+      )
+    }
+
+    if (errorMessage.includes('submit_review') || errorMessage.includes('Database') || errorMessage.includes('scheduling')) {
+      return NextResponse.json(
+        { error: 'Failed to save progress. Please check your connection and try again.' },
+        { status: 500 }
+      )
+    }
+
+    if (errorMessage.includes('Unauthorized') || errorMessage.includes('auth')) {
+      return NextResponse.json(
+        { error: 'Session expired. Please log in again.' },
+        { status: 401 }
+      )
+    }
+
+    // Generic fallback for unknown errors
     return NextResponse.json(
-      { error: getSafeErrorMessage(error) },
+      { error: 'An unexpected error occurred. Please try again.' },
       { status: 500 }
     )
   }

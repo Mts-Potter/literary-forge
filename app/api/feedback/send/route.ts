@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { z } from 'zod'
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy initialize Resend to avoid build-time errors
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey || apiKey === 'YOUR_RESEND_API_KEY_HERE') {
+    throw new Error('RESEND_API_KEY not configured')
+  }
+  return new Resend(apiKey)
+}
 
 // Admin email for feedback
 const ADMIN_EMAIL = 'mtsmmiv@gmail.com'
@@ -32,6 +38,18 @@ export async function POST(request: NextRequest) {
 
     // Get category emoji
     const categoryEmoji = category === 'Bug/Problem' ? '🐛' : category === 'Feature-Request' ? '✨' : '💭'
+
+    // Initialize Resend client
+    let resend
+    try {
+      resend = getResendClient()
+    } catch (error) {
+      console.error('Resend not configured:', error)
+      return NextResponse.json(
+        { error: 'Feedback-System ist noch nicht konfiguriert. Bitte kontaktiere den Administrator.' },
+        { status: 503 }
+      )
+    }
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({

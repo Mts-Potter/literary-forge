@@ -9,17 +9,17 @@ export default function ImpressumPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">Angaben gemäß § 5 TMG</h2>
               <div className="text-gray-300">
-                <p className="font-semibold">Literary Forge</p>
-                <p className="mt-2 text-sm text-gray-400">
-                  [Bitte fügen Sie hier Ihre vollständigen Kontaktdaten ein]
-                </p>
+                <p className="font-semibold">Mats Alexander Wollscheid</p>
+                <p className="mt-2">Hegelstraße 51</p>
+                <p>96052 Bamberg</p>
+                <p className="mt-2">Deutschland</p>
               </div>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3">Kontakt</h2>
               <div className="text-gray-300">
-                <p>E-Mail: mtsmmiv@gmail.com</p>
+                <p>E-Mail: <a href="mailto:mtsmmiv@gmail.com" className="text-blue-400 hover:text-blue-300 underline">mtsmmiv@gmail.com</a></p>
               </div>
             </section>
 

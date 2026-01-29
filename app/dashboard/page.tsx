@@ -2,6 +2,16 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { groupBooksByTitle, type GroupedBook } from '@/lib/utils/books'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Dashboard | Literary Forge",
+  description: "Ihr persönliches Schreibtraining Dashboard. Verfolgen Sie Ihren Fortschritt und starten Sie neue Trainingseinheiten.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient()

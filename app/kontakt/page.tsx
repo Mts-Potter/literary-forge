@@ -1,3 +1,25 @@
+import { Metadata } from 'next';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://literary-forge.vercel.app';
+
+export const metadata: Metadata = {
+  title: "Kontakt | Literary Forge",
+  description: "Kontaktieren Sie Literary Forge. Haben Sie Fragen oder Feedback zu unserem KI-gestützten Schreibtraining? Wir freuen uns von Ihnen zu hören.",
+  alternates: {
+    canonical: `${siteUrl}/kontakt`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Kontakt | Literary Forge",
+    description: "Kontaktieren Sie Literary Forge. Fragen, Anregungen oder Feedback - wir freuen uns von Ihnen zu hören.",
+    url: `${siteUrl}/kontakt`,
+    type: "website",
+  },
+};
+
 export default function KontaktPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4">

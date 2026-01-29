@@ -1,3 +1,25 @@
+import { Metadata } from 'next';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://literary-forge.vercel.app';
+
+export const metadata: Metadata = {
+  title: "Impressum | Literary Forge",
+  description: "Impressum und rechtliche Angaben gemäß § 5 TMG für Literary Forge - KI-gestütztes Schreibtraining.",
+  alternates: {
+    canonical: `${siteUrl}/impressum`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Impressum | Literary Forge",
+    description: "Impressum und rechtliche Angaben gemäß § 5 TMG für Literary Forge.",
+    url: `${siteUrl}/impressum`,
+    type: "website",
+  },
+};
+
 export default function ImpressumPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4">

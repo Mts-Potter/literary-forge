@@ -1,3 +1,25 @@
+import { Metadata } from 'next';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://literary-forge.vercel.app';
+
+export const metadata: Metadata = {
+  title: "Urheberrecht | Literary Forge",
+  description: "Urheberrechtliche Hinweise für Literary Forge. Informationen zu Nutzungsrechten und Schutz geistigen Eigentums.",
+  alternates: {
+    canonical: `${siteUrl}/urheberrecht`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Urheberrecht | Literary Forge",
+    description: "Urheberrechtliche Hinweise und Nutzungsrechte für Literary Forge.",
+    url: `${siteUrl}/urheberrecht`,
+    type: "website",
+  },
+};
+
 export default function UrheberrechtPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4">

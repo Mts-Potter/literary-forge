@@ -1,6 +1,16 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { TrainingInterface } from '@/components/training/TrainingInterface'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Training | Literary Forge",
+  description: "Trainieren Sie Ihren literarischen Schreibstil mit KI-gestütztem Feedback.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function TrainPage({
   searchParams

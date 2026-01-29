@@ -1,3 +1,25 @@
+import { Metadata } from 'next';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://literary-forge.vercel.app';
+
+export const metadata: Metadata = {
+  title: "Datenschutzerklärung | Literary Forge",
+  description: "Datenschutzerklärung für Literary Forge. Erfahren Sie, wie wir Ihre personenbezogenen Daten verarbeiten und schützen.",
+  alternates: {
+    canonical: `${siteUrl}/datenschutz`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Datenschutzerklärung | Literary Forge",
+    description: "Datenschutzerklärung für Literary Forge. Informationen zur Datenverarbeitung gemäß DSGVO.",
+    url: `${siteUrl}/datenschutz`,
+    type: "website",
+  },
+};
+
 export default function DatenschutzPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4">

@@ -2,6 +2,16 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { groupBooksByTitle, type GroupedBook } from '@/lib/utils/books'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Bücher | Literary Forge",
+  description: "Durchsuchen Sie Ihre Buchbibliothek und wählen Sie Autoren zum Trainieren.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function BooksPage() {
   const supabase = await createClient()

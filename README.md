@@ -61,8 +61,8 @@ Das Schema erstellt:
 1. Gehe zu: **Settings → API**
 2. Kopiere folgende Werte:
    - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon public** → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **service_role** → `SUPABASE_SERVICE_ROLE_KEY` ⚠️ GEHEIM!
+   - **anon public** → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - **service_role** → `SUPABASE_SECRET_KEY` ⚠️ GEHEIM!
 
 ### 5. AWS Bedrock Credentials (statt direkter Anthropic API)
 
@@ -79,8 +79,8 @@ Das Schema erstellt:
 ```env
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGc...
+SUPABASE_SECRET_KEY=eyJhbGc...
 
 # AWS Bedrock Configuration
 AWS_ACCESS_KEY_ID=AKIA...

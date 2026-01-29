@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 
 export function Navbar() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const supabase = createClient()
@@ -54,6 +56,7 @@ export function Navbar() {
     { href: '/train', icon: '✍️', label: 'Training' },
     { href: '/dashboard', icon: '📊', label: 'Dashboard' },
     { href: '/settings', icon: '⚙️', label: 'Einstellungen' },
+    { href: '/datenschutz', icon: '📜', label: 'Datenschutz' },
     // Admin only for admin users (not just authenticated)
     ...(isAdmin ? [{ href: '/admin/ingest', icon: '🔒', label: 'Admin' }] : [])
   ]
@@ -86,6 +89,16 @@ export function Navbar() {
                 {link.icon}
               </Link>
             ))}
+
+            {/* Feedback Button */}
+            <button
+              onClick={() => setFeedbackModalOpen(true)}
+              title="Feedback senden"
+              className="px-4 py-2 text-2xl rounded-md transition-all text-gray-400 hover:bg-[#262626] hover:text-white hover:scale-105"
+              aria-label="Feedback senden"
+            >
+              💬
+            </button>
           </div>
 
           {/* Mobile Hamburger Button */}
@@ -122,9 +135,27 @@ export function Navbar() {
                 <span>{link.label}</span>
               </Link>
             ))}
+
+            {/* Feedback Button - Mobile */}
+            <button
+              onClick={() => {
+                setFeedbackModalOpen(true)
+                setMobileMenuOpen(false)
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-md font-medium transition-colors text-gray-400 hover:bg-[#262626] hover:text-white"
+            >
+              <span className="text-xl">💬</span>
+              <span>Feedback senden</span>
+            </button>
           </div>
         )}
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={feedbackModalOpen}
+        onClose={() => setFeedbackModalOpen(false)}
+      />
     </nav>
   )
 }

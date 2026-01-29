@@ -19,8 +19,8 @@
 
 #### Supabase
 - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Public/publishable key (safe to expose)
-- `SUPABASE_SERVICE_ROLE_KEY` - **SECRET** - Admin key with full database access
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` - Public/publishable key (safe to expose)
+- `SUPABASE_SECRET_KEY` - **SECRET** - Admin key with full database access
 
 #### AWS Bedrock
 - `AWS_ACCESS_KEY_ID` - **SECRET** - IAM access key

@@ -56,7 +56,6 @@ export function Navbar() {
     { href: '/train', icon: '✍️', label: 'Training' },
     { href: '/dashboard', icon: '📊', label: 'Dashboard' },
     { href: '/settings', icon: '⚙️', label: 'Einstellungen' },
-    { href: '/datenschutz', icon: '📜', label: 'Datenschutz' },
     // Admin only for admin users (not just authenticated)
     ...(isAdmin ? [{ href: '/admin/ingest', icon: '🔒', label: 'Admin' }] : [])
   ]

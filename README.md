@@ -240,3 +240,4 @@ Noch nicht festgelegt.
 ---
 
 **Status**: 🚧 In Entwicklung - Phase 1 abgeschlossen
+# Trigger redeploy with RESEND_API_KEY

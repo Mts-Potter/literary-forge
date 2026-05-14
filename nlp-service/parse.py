@@ -2,8 +2,8 @@
 Literary Forge — NLP Microservice (Phase 2)
 
 Separate Flask-Service auf Render, gerufen vom Next.js-Hauptrepo. Liefert
-20 Stilfeatures pro Text-Input. Modelle: spaCy de_core_news_md +
-en_core_web_md (medium models, ausgewogen Größe/Qualität).
+20 Stilfeatures pro Text-Input. Modelle: spaCy de_core_news_sm +
+en_core_web_sm (medium models, ausgewogen Größe/Qualität).
 
 Endpoints:
   GET  /health              — Liveness probe für Render + Keep-Alive
@@ -26,8 +26,8 @@ from flask_cors import CORS
 # Modelle einmalig laden (Cold-Start). Bei 'free'-Plan dauert ~30-60 s.
 # ----------------------------------------------------------------------
 NLP_MODELS: dict[str, Any] = {
-    "de": spacy.load("de_core_news_md", disable=["ner"]),
-    "en": spacy.load("en_core_web_md", disable=["ner"]),
+    "de": spacy.load("de_core_news_sm", disable=["ner"]),
+    "en": spacy.load("en_core_web_sm", disable=["ner"]),
 }
 
 # Top-50 deutsche Funktionswörter (für Burrows' Delta Anker).

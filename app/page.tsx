@@ -1,8 +1,41 @@
 import Link from 'next/link'
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://literary-forge.vercel.app'
+
+const HOME_JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": `${siteUrl}/#webapp`,
+      name: "The Franklin Method",
+      description:
+        "Schreibstil-Training basierend auf Benjamin Franklins Selbstlern-Methode, mit KI-Feedback und Spaced Repetition",
+      url: siteUrl,
+      applicationCategory: "EducationalApplication",
+      operatingSystem: "Web Browser",
+      browserRequirements: "Requires JavaScript. Requires HTML5.",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+      inLanguage: "de-DE",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "The Franklin Method",
+      description: "Schreibstil-Training basierend auf Benjamin Franklins Selbstlern-Methode",
+      inLanguage: "de-DE",
+    },
+  ],
+}
+
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_JSON_LD) }}
+      />
       <main className="flex flex-col items-center gap-12 px-8 py-16 max-w-3xl text-center">
 
         <div className="space-y-6">

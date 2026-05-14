@@ -1,7 +1,11 @@
 import Link from 'next/link'
 
+// Resolved at build time so server components stay statically renderable.
+// Year will refresh on each deploy (acceptable for a copyright line).
+const COPYRIGHT_YEAR = new Date().getFullYear()
+
 export function Footer() {
-  const currentYear = new Date().getFullYear()
+  const currentYear = COPYRIGHT_YEAR
 
   const footerLinks = [
     { href: '/methode', label: 'Die Methode' },

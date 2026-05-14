@@ -6,8 +6,13 @@ pro Text. Wird vom Hauptrepo (`literary-forge` auf Vercel) per HTTP konsumiert.
 ## Warum separat?
 
 Vercel Functions können nicht im selben Projekt Python und Next.js-App-Router-Routes mischen.
-spaCy `_md`-Modelle sprengen außerdem Vercel Hobby Function-Size-Limit (250 MB).
+spaCy-Modelle sprengen außerdem Vercel Hobby Function-Size-Limit (250 MB).
 Render Free Tier: 750h/Monat, kein CC, Python+spaCy nativ.
+
+**Modell-Wahl:** `_sm` statt `_md` — `_md` lädt ~400 MB RAM (beide Sprachen),
+sprengt das Render-Free-Tier-512MB-Cap. `_sm` braucht ~90 MB, behält
+POS/Dependency/Lemma — alle 21 Stilfeatures bleiben berechenbar. Verloren geht
+nur die Word-Vector-Komponente, die wir nicht nutzen.
 
 ## Deployment auf Render (einmalig)
 

@@ -75,8 +75,31 @@ export function TrainingInterface({
     return <FreeWriting initialChunk={initialChunk as any} userId={userId} />
   }
 
+  const st = initialChunk.source_texts as {
+    title?: string
+    author?: { name: string } | { name: string }[]
+    metrics?: { avg_sentence_length?: number }
+  }
+  const authorName = Array.isArray(st?.author) ? st.author[0]?.name : st?.author?.name
+  const avgLen = st?.metrics?.avg_sentence_length
+
   return (
     <div className="space-y-8 pb-12">
+      {(authorName || avgLen != null || st?.title) && (
+        <div className="max-w-4xl mx-auto px-6 pt-4">
+          <div className="bg-[var(--card)]/50 border border-[var(--border)] rounded-lg p-3 text-sm text-[var(--muted)]">
+            {authorName && (
+              <span className="text-[var(--foreground)] font-semibold">{authorName}</span>
+            )}
+            {st?.title && (
+              <> {authorName ? '·' : ''} <span className="italic">{st.title}</span></>
+            )}
+            {avgLen != null && (
+              <> · ⌀ Satzlänge im Korpus: <span className="text-[var(--foreground)]">{avgLen.toFixed(1)} Wörter</span></>
+            )}
+          </div>
+        </div>
+      )}
       {renderMode()}
       <div className="flex justify-center pt-4 border-t border-[var(--border)]">
         <ModeCycleButton current={mode} onChange={handleModeChange} />

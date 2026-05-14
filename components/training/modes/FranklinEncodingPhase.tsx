@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { StyleMarkerOverlay } from '../shared/StyleMarkerOverlay'
@@ -43,6 +43,25 @@ export function FranklinEncodingPhase({
   const [step, setStep] = useState<'reading' | 'hinting'>('reading')
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [previousHints, setPreviousHints] = useState<{ sentence: string; hint: string }[] | null>(null)
+  const [showPrevious, setShowPrevious] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadPrev() {
+      const { data } = await supabase
+        .from('user_hints')
+        .select('hints')
+        .eq('user_id', userId)
+        .eq('text_id', initialChunk.text_id)
+        .single()
+      if (!cancelled && data?.hints) {
+        setPreviousHints(data.hints as { sentence: string; hint: string }[])
+      }
+    }
+    loadPrev()
+    return () => { cancelled = true }
+  }, [supabase, userId, initialChunk.text_id])
 
   // Hint-length formula: relative to sentence length, not a static 4-8 range.
   // target = clamp(2, floor(sentence_words / 3), 8); min = max(1, target-1); max = target + 2.
@@ -151,6 +170,24 @@ export function FranklinEncodingPhase({
           zum <em>Inhalt</em>, nicht zur Form. Hint-Länge passt sich der Satz-Länge an. Diese Hints
           sind morgen deine einzige Vorlage zum Rekonstruieren — der Stil muss aus deinem Gedächtnis kommen.
         </p>
+
+        {previousHints && previousHints.length > 0 && (
+          <div className="mb-4 p-3 bg-[var(--background)] border border-[var(--border)] rounded-lg">
+            <button
+              onClick={() => setShowPrevious(v => !v)}
+              className="text-sm text-[var(--foreground)] underline"
+            >
+              {showPrevious ? '▼ Alte Hints ausblenden' : '▶ Deine alten Hints zu diesem Chunk anzeigen'}
+            </button>
+            {showPrevious && (
+              <ol className="mt-3 space-y-2 list-decimal list-inside text-sm text-[var(--muted)] font-serif">
+                {previousHints.map((h, idx) => (
+                  <li key={idx}><span className="text-[var(--foreground)]">{h.hint}</span></li>
+                ))}
+              </ol>
+            )}
+          </div>
+        )}
 
         <div className="space-y-4">
           {sentences.map((sentence, idx) => {

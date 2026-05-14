@@ -21,7 +21,7 @@ function hasEnoughWords(content: string | undefined | null): boolean {
 export default async function TrainPage({
   searchParams
 }: {
-  searchParams: Promise<{ exclude?: string; book?: string }>
+  searchParams: Promise<{ exclude?: string; book?: string; mode?: string }>
 }) {
   const supabase = await createClient()
 
@@ -29,6 +29,10 @@ export default async function TrainPage({
   const params = await searchParams
   const excludeTextId = params.exclude
   const bookFilter = params.book ? decodeURIComponent(params.book) : null
+  const modeOverride =
+    params.mode === 'franklin' || params.mode === 'cloze' || params.mode === 'free'
+      ? params.mode
+      : null
 
   // Auth check
   const { data: { user } } = await supabase.auth.getUser()
@@ -114,7 +118,7 @@ export default async function TrainPage({
             </p>
           </div>
         )}
-        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={userDefaultMode} />
+        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={modeOverride ?? userDefaultMode} />
       </>
     )
   }
@@ -192,7 +196,7 @@ export default async function TrainPage({
             </p>
           </div>
         )}
-        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={userDefaultMode} />
+        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={modeOverride ?? userDefaultMode} />
       </>
     )
   }
@@ -313,7 +317,7 @@ export default async function TrainPage({
             </p>
           </div>
         )}
-        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={userDefaultMode} />
+        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={modeOverride ?? userDefaultMode} />
       </>
     )
   }

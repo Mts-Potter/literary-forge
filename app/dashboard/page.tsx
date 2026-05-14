@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { groupBooksByTitle, type GroupedBook } from '@/lib/utils/books'
+import { fetchLast7Days } from '@/lib/dashboard/streak-calendar'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -44,6 +45,34 @@ export default async function DashboardPage() {
 
   const currentStreak = streakData?.current_streak || 0
   const longestStreak = streakData?.longest_streak || 0
+
+  // User-Settings für Default-Mode (wird im Quick-Start hervorgehoben)
+  const { data: userSettings } = await supabase
+    .from('user_settings')
+    .select('default_mode')
+    .eq('user_id', user.id)
+    .single()
+  const userDefaultMode = ((userSettings?.default_mode ?? 'franklin') as 'franklin' | 'cloze' | 'free')
+  const modeLabel = userDefaultMode === 'franklin' ? 'Franklin' : userDefaultMode === 'cloze' ? 'Cloze' : 'Free'
+
+  // 7-Tage-Aktivität aus review_history
+  const last7 = await fetchLast7Days(supabase, user.id)
+  const last7Max = Math.max(...last7.map(d => d.reviews), 1)
+
+  // Trainierte Chunks pro Buch (Base-Title-Aggregation)
+  const { data: progressByChunk } = await supabase
+    .from('user_progress')
+    .select('text_id, source_texts!inner(title)')
+    .eq('user_id', user.id)
+
+  const trainedByTitle = new Map<string, number>()
+  for (const row of progressByChunk ?? []) {
+    const title = (row as { source_texts?: { title?: string } | { title?: string }[] }).source_texts
+    const t = Array.isArray(title) ? title[0]?.title : title?.title
+    if (!t) continue
+    const baseTitle = t.includes(' (Teil ') ? t.split(' (Teil ')[0] : t
+    trainedByTitle.set(baseTitle, (trainedByTitle.get(baseTitle) ?? 0) + 1)
+  }
 
   // Fetch available books using database-side grouping to avoid 1000-row limit
   // Try RPC function first, fall back to client-side grouping if not available
@@ -177,21 +206,62 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* 7-Tage-Streak-Strip */}
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-8">
+          <h2 className="text-base font-semibold text-[var(--foreground)] mb-3">Letzte 7 Tage</h2>
+          <div className="flex items-end gap-2 h-16">
+            {last7.map(d => {
+              const h = (d.reviews / last7Max) * 100
+              const dateObj = new Date(d.date)
+              const labelDay = dateObj.toLocaleDateString('de-DE', { weekday: 'short' })
+              return (
+                <div
+                  key={d.date}
+                  className="flex-1 flex flex-col items-center gap-1"
+                  title={`${labelDay} ${d.date}: ${d.reviews} Reviews`}
+                >
+                  <div
+                    className={`w-full rounded-t ${d.reviews > 0 ? 'bg-[var(--foreground)]' : 'bg-[var(--border)]'}`}
+                    style={{ height: `${Math.max(h, 6)}%` }}
+                  />
+                  <span className="text-xs text-[var(--muted)]">{labelDay[0]}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Quick Actions — 3-Mode Direct-Start */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Schnellstart</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Link
-              href="/train"
-              className="px-6 py-4 bg-[var(--foreground)] text-[var(--background)] rounded-lg font-semibold
-                         hover:opacity-90 transition-colors text-center"
-            >
-              {dueToday > 0 ? `${dueToday} Wiederholung${dueToday === 1 ? '' : 'en'} starten` : 'Neue Chunks lernen'}
-            </Link>
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-1">Schnellstart</h2>
+          <p className="text-sm text-[var(--muted)] mb-4">
+            Direkt in einen Modus starten — dein Standard ist <strong className="text-[var(--foreground)]">{modeLabel}</strong>.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            {(['franklin', 'cloze', 'free'] as const).map(m => {
+              const active = m === userDefaultMode
+              const label = m === 'franklin' ? 'Franklin' : m === 'cloze' ? 'Cloze' : 'Free'
+              return (
+                <Link
+                  key={m}
+                  href={`/train?mode=${m}`}
+                  className={`px-4 py-3 rounded-lg font-semibold text-center transition-colors
+                    ${active
+                      ? 'bg-[var(--foreground)] text-[var(--background)] hover:opacity-90'
+                      : 'border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--card-hover)]'}`}
+                >
+                  {label}
+                </Link>
+              )
+            })}
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-[var(--muted)]">
+              {dueToday > 0 ? `${dueToday} Wiederholung${dueToday === 1 ? '' : 'en'} heute fällig` : 'Keine Wiederholungen fällig'}
+            </span>
             <Link
               href="/admin/ingest"
-              className="px-6 py-4 border-2 border-[var(--border)] text-[var(--foreground)] rounded-lg font-semibold
-                         hover:border-gray-400 hover:bg-[var(--card-hover)] transition-colors text-center"
+              className="text-[var(--muted)] hover:text-[var(--foreground)] underline"
             >
               📚 Bücher importieren
             </Link>
@@ -270,6 +340,28 @@ export default async function DashboardPage() {
                       )}
                     </div>
                   )}
+
+                  {/* Fortschrittsbalken */}
+                  {(() => {
+                    const trained = trainedByTitle.get(book.title) ?? 0
+                    const pct = book.chunkCount > 0
+                      ? Math.min(100, Math.round((trained / book.chunkCount) * 100))
+                      : 0
+                    return (
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs text-[var(--muted)] mb-1">
+                          <span>Fortschritt</span>
+                          <span>{trained}/{book.chunkCount}</span>
+                        </div>
+                        <div className="h-2 bg-[var(--background)] border border-[var(--border)] rounded overflow-hidden">
+                          <div
+                            className="h-full bg-[var(--foreground)]"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })()}
 
                   {/* Action Button */}
                   <Link

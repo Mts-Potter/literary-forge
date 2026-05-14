@@ -39,11 +39,13 @@ export function FeedbackView({
   original,
   user,
   feedback,
+  history,
   onContinue,
 }: {
   original: string
   user: string
   feedback: FeedbackPayload
+  history?: { created_at: string; accuracy_score: number }[]
   onContinue: () => void
 }) {
   const {
@@ -101,6 +103,32 @@ export function FeedbackView({
             </div>
           )}
         </div>
+
+        {/* Verlaufs-Mini-Chart (letzte 5 Versuche) */}
+        {history && history.length > 0 && (
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-4">
+            <h2 className="text-xl font-semibold text-[var(--foreground)] mb-1">Dein Verlauf für diesen Chunk</h2>
+            <p className="text-sm text-[var(--muted)] mb-3">Letzte {Math.min(history.length, 5)} Versuche, ältester links.</p>
+            <div className="flex items-end gap-2 h-20">
+              {history.slice(-5).map((h, idx) => {
+                const score = Math.max(0, Math.min(100, h.accuracy_score))
+                return (
+                  <div
+                    key={idx}
+                    className="flex-1 flex flex-col items-center gap-1"
+                    title={`${score.toFixed(0)}/100 am ${new Date(h.created_at).toLocaleDateString('de-DE')}`}
+                  >
+                    <div
+                      className="w-full bg-[var(--foreground)] rounded-t"
+                      style={{ height: `${Math.max((score / 100) * 100, 6)}%` }}
+                    />
+                    <span className="text-xs text-[var(--muted)]">{score.toFixed(0)}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* LLM Sub-Scores */}
         {scores && (

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
+import { createClient } from '@/lib/supabase/client'
 import { ZenEditor } from '../ZenEditor'
 import { FeedbackView } from '../FeedbackView'
 import { StyleMarkerOverlay } from '../shared/StyleMarkerOverlay'
@@ -30,15 +31,18 @@ interface Chunk {
 }
 
 export function FreeWriting({
-  initialChunk
+  initialChunk,
+  userId
 }: {
   initialChunk: Chunk
   userId: string
 }) {
   const router = useRouter()
+  const supabase = createClient()
   const [phase, setPhase] = useState<Phase>('reading')
   const [userText, setUserText] = useState('')
   const [feedback, setFeedback] = useState<any>(null)
+  const [history, setHistory] = useState<{ created_at: string; accuracy_score: number }[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
@@ -76,6 +80,14 @@ export function FreeWriting({
         throw new Error(err.error || `Submission failed (${res.status})`)
       }
       const result = await res.json()
+      const { data: histRows } = await supabase
+        .from('review_history')
+        .select('created_at, accuracy_score')
+        .eq('user_id', userId)
+        .eq('text_id', initialChunk.source_texts.id)
+        .order('created_at', { ascending: true })
+        .limit(5)
+      setHistory((histRows ?? []) as { created_at: string; accuracy_score: number }[])
       setFeedback(result)
       setPhase('feedback')
     } catch (err: any) {
@@ -151,6 +163,7 @@ export function FreeWriting({
       original={initialChunk.source_texts.content}
       user={userText}
       feedback={feedback}
+      history={history}
       onContinue={handleContinue}
     />
   )

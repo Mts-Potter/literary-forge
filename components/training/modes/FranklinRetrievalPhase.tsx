@@ -44,6 +44,7 @@ export function FranklinRetrievalPhase({
   const [userText, setUserText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [feedback, setFeedback] = useState<any>(null)
+  const [history, setHistory] = useState<{ created_at: string; accuracy_score: number }[]>([])
   const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
@@ -104,6 +105,14 @@ export function FranklinRetrievalPhase({
         throw new Error(err.error || `Submission failed (${res.status})`)
       }
       const result = await res.json()
+      const { data: histRows } = await supabase
+        .from('review_history')
+        .select('created_at, accuracy_score')
+        .eq('user_id', userId)
+        .eq('text_id', initialChunk.text_id)
+        .order('created_at', { ascending: true })
+        .limit(5)
+      setHistory((histRows ?? []) as { created_at: string; accuracy_score: number }[])
       setFeedback(result)
     } catch (err: any) {
       if (err.name !== 'AbortError') {
@@ -143,6 +152,31 @@ export function FranklinRetrievalPhase({
             </p>
           )}
         </div>
+
+        {history.length > 0 && (
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
+            <h2 className="text-xl font-semibold text-[var(--foreground)] mb-1">Dein Verlauf für diesen Chunk</h2>
+            <p className="text-sm text-[var(--muted)] mb-3">Letzte {Math.min(history.length, 5)} Versuche, ältester links.</p>
+            <div className="flex items-end gap-2 h-20">
+              {history.slice(-5).map((h, idx) => {
+                const score = Math.max(0, Math.min(100, h.accuracy_score))
+                return (
+                  <div
+                    key={idx}
+                    className="flex-1 flex flex-col items-center gap-1"
+                    title={`${score.toFixed(0)}/100 am ${new Date(h.created_at).toLocaleDateString('de-DE')}`}
+                  >
+                    <div
+                      className="w-full bg-[var(--foreground)] rounded-t"
+                      style={{ height: `${Math.max((score / 100) * 100, 6)}%` }}
+                    />
+                    <span className="text-xs text-[var(--muted)]">{score.toFixed(0)}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
           <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">Word-Level Diff</h2>

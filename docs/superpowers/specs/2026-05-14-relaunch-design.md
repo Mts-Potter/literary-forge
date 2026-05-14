@@ -15,7 +15,7 @@ This spec covers a single atomic relaunch of `literary-forge.vercel.app` across 
 **Four load-bearing decisions resolved 2026-05-14 after research:**
 
 1. **Brand: "The Franklin Method"** (user-decided despite documented collision risks). Eric Franklin Method® GmbH (Wetzikon CH, 40-year priority, DACH, IC 41) + FranklinWrite.com (direct copywork competitor) + Copywork.app (active incumbent) are real exposure surfaces — the spec acknowledges them explicitly in §3.1 and codifies mitigations (nominative-fair-use copy, long-tail SEO focus, footer-disclaimer for somatic-collision, custom-content upload as wedge against FranklinWrite). Domain stays `literary-forge.vercel.app` as canonical URL (zero migration risk); brand is visual-text-only.
-2. **Mode-Default via Self-Assessment Routing.** Onboarding shows a single self-assessment screen ("Wie würdest du deinen Schreibstil aktuell einschätzen?"): Anfänger → Franklin-Loop default (worked-example effect for novices); Fortgeschritten / Erfahren → Free Writing default. Honors both user-intent (Free for non-novices) and pedagogy research (scaffolding for novices). Detailed in §3.3.
+2. **Three Play-Modes user-switchable on /train, no upfront commitment** (replaces earlier self-assessment routing per user-revised intent 2026-05-15). Onboarding shows a single info card with NO decision required. On `/train`, a 3-option segmented control [Anfänger | Fortgeschritten | Profi] lets the user pick + switch freely. User tests for themselves, no Dunning-Kruger / overconfidence risk. Each play-mode is a tuple of `(format, scoring_strictness, chunk-size-minimum)`. Detailed in §3.3.
 3. **Cloze stays, demoted to Warmup-Chip** (NOT in main top-bar segmented control). Cloze trains lexical-collocational style — the strongest evidence base of any mode (Roediger & Karpicke testing effect, Dunlosky et al. "high utility"). Removal would lose a low-load training signal. Detailed in §3.3.
 4. **Performance fix: Route-scoped CSP.** Perceived slowness root cause is Phase 7.5 nonces forcing every HTML route to `x-vercel-cache: MISS`. Solution: keep nonces on auth/app routes, remove from landing/marketing routes (re-enable CDN HTML cache). Detailed in §3.4.
 
@@ -123,12 +123,25 @@ Confirmed in brainstorm Q1. No further evidence needed. Drives the rest of the s
 | Style operates at clause-and-period level (Beers & Nagy 2009; Crossley et al. 2014). Working-memory limits (Cowan ~4 chunks) mean **reconstruction needs sentence-level minimum (~15-40 words), paragraph max (~200 words).** Beyond that → rote memorization, not stylistic noticing. | **Hard fix: enforce chunk-size constraints.** The "6 words / 4-8 word hints" issue is real and matches research consensus. |
 | Burrows' Delta + MTLD are corpus-attribution statistics, unstable on short text (MTLD wants ≥100 tokens). | Show feature-level breakdown, not single distance. Add LLM-rubric qualitative score alongside. |
 
-**Synthesized mode design (overriding user intent #1 partially):**
+**Synthesized mode design (revised 2026-05-15 per user feedback "drei spielmodi, switchbar auf /train, man testet selbst"):**
 
-- **Onboarding default = Franklin-Loop**, NOT Free Writing. Reasoning: novice users benefit from scaffolding (worked-example effect); the brand narrative IS the Franklin method; the AI-summarized scene-description handles the highest-friction part (hint generation) automatically. Free Writing is too unsupported for true novices.
-- **User self-assessment in onboarding** (single question, "Wie würdest du deinen Schreibstil einschätzen?" with 3 options) routes mode: novice → Franklin-Loop, intermediate → Free Writing, advanced → Free Writing with stricter scoring. This honors the user's "default should be SR + self-write" intent for non-novices.
-- **Mode switcher in /train top bar** (per Bezos-UX research) — 2-option segmented control `[Franklin | Free]`, always visible, switches mid-card preserving state. **Cloze is NOT in the main switcher** (per user-intent + pedagogy that Cloze is a component-trainer not a main mode).
-- **Cloze** stays available but reframed as a 2-minute warmup. Accessible from a secondary affordance on the /train screen: small chip "Warmup vor dem Schreiben? Cloze →" that opens a 1-card Cloze drill, then returns to the main exercise.
+The earlier self-assessment + skill-routing design (still defensible per worked-example research) is replaced by a more user-empowering design: **three named play-modes on `/train`, switchable any time, no upfront decision**. User explores all three and self-selects what works — empirically validates their own skill instead of guessing on a Likert-style self-assessment (which has documented Dunning-Kruger biases).
+
+The three play-modes are 3-tuples of (format, scoring_strictness, chunk_size_min):
+
+| Play-Mode (user-facing) | Format | Scoring | Min chunk words | Style-marker overlay | Notes |
+|---|---|---|---|---|---|
+| **Anfänger** | Franklin-Reconstruction (read → AI-hints → incubation → reconstruct with hints visible → diff) | lenient (gentler score curve: `score = max(0, 100 - distance × 18)` instead of × 25) | 30 | yes | Worked-example scaffolding for novices |
+| **Fortgeschritten** | Free Writing (read with markers → write → diff + score) | standard (`score = max(0, 100 - distance × 25)`) | 60 | yes | The "original Literary Forge" loop |
+| **Profi** | Free Writing | strict (`score = max(0, 100 - distance × 32)`) | 100 | no | No style hints; harder scoring; longer chunks |
+
+**Cloze stays available but reframed as Warmup-Chip** (NOT in the main 3-segment control): small chip "Warmup vor dem Schreiben? Cloze →" below the chunk. Opens a 1-card Cloze drill, then returns to the main exercise.
+
+**Storage model:** `user_settings` gains `current_play_mode TEXT CHECK (current_play_mode IN ('anfaenger', 'fortgeschritten', 'profi')) DEFAULT 'anfaenger'`. On `/train` the segmented control reads + writes this column on every switch. No skill_level column (replaced by current_play_mode). On `/train` URL also accepts `?mode=anfaenger|fortgeschritten|profi` for deep-link / share-state purposes.
+
+**Why three:** matches the user's mental model and is the magic number for segmented controls (>5 should be a dropdown per NN/g). Allows true progression (Anfänger → Fortgeschritten → Profi) without an explicit "level up" milestone.
+
+**Welcome page** becomes a 1-screen pure-info card: "Willkommen bei The Franklin Method. Die Methode + Hinweise stehen auf /methode. Es gibt drei Modi (Anfänger, Fortgeschritten, Profi) — du wechselst sie jederzeit oben in /train." Single button "Training starten →". No decision needed; reduced friction.
 
 **Chunk-size hard constraints (codified):**
 - Minimum chunk: 1 full sentence (typically 15-40 words for literary prose)
@@ -215,16 +228,16 @@ Confirmed in brainstorm Q1. No further evidence needed. Drives the rest of the s
 
 **Login (`/login`)** — already redesigned in Welle-2, theme-correct. Keep.
 
-**Welcome (`/welcome`)** — reduce from 3 wizard steps to 1 contextual screen:
-- Single screen: "Wie würdest du deinen Schreibstil aktuell einschätzen?" → 3 options (Anfänger / Fortgeschritten / Ich weiß schon, was ich tue)
-- Save to `user_settings.default_mode` according to mapping: novice → franklin, intermediate → free, advanced → free (stricter scoring)
-- The Franklin-Methode-Erklärung that currently fills wizard step 0 moves to a dismissible info banner in /train OR to a footer "Methode" link → standalone `/methode` page
-- The "Wir starten mit einem zufälligen Chunk" wizard step 2 is deleted — go directly to /train, where the first chunk is shown with a chip "Aktuell: Mansfield — ändern".
+**Welcome (`/welcome`)** — pure-info card, NO decision (revised 2026-05-15):
+- Heading "Willkommen bei The Franklin Method."
+- Body: 3-5 Sätze: Methode-Story auf /methode; auf /train gibt's drei Play-Modes (Anfänger / Fortgeschritten / Profi), die du jederzeit oben switchen kannst; Default ist Anfänger; Cloze als Warmup steht unter dem Text.
+- Einzelner Button "Training starten →" → routes to /train
+- DB on click: `user_settings.onboarded_at = NOW()`, `current_play_mode = 'anfaenger'`
 
-**Train (`/train`)** — new top-bar:
-- Logo → 2-option segmented control `[Franklin | Free]` → streak/score → settings cog. (Cloze accessible via secondary "Warmup" chip below the chunk-context, not in the top-bar — per §3.3.)
-- Below: chunk-context chip "Aktuell: Mansfield — change" (links to /books)
-- Mode switch mid-card preserves chunk + immediately re-renders
+**Train (`/train`)** — new top-bar (revised 2026-05-15):
+- Logo → 3-option segmented control `[Anfänger | Fortgeschritten | Profi]` → streak/score → settings cog
+- Below the chunk: chunk-context chip "Aktuell: Mansfield — ändern" (links to /buecher) + WarmupChip "Warmup vor dem Schreiben? Cloze →"
+- Mode switch mid-card writes `user_settings.current_play_mode`, immediately re-renders chunk with new format/scoring/min-words config. If current chunk doesn't meet new mode's min-words, inline notice + fetch next valid chunk.
 
 **Books (`/books`)** — public catalog (currently auth-gated, change to public for SEO):
 - 15 books, grid layout, each card links to `/buecher/[slug]`
@@ -255,7 +268,7 @@ Confirmed in brainstorm Q1. No further evidence needed. Drives the rest of the s
 | app/page.tsx (landing) | "AI-Powered Training for Literary Style Imitation" / "Spaced Repetition / Stylometric Analysis / AI Feedback (Detailed evaluation from Claude 3.5 Haiku)" — **all wrong: app is German UI, model is Gemini not Claude** | Per §3.6 landing hero + 3-feature grid in German, correct model attribution if mentioned at all (better: no model attribution on landing — implementation detail) |
 | README.md | Already fixed in Welle-1 (Gemini + Multi-Mode + FSRS + Render-spaCy) | OK as-is |
 | app/layout.tsx → metadata | `description`: "Trainiere deinen Schreibstil mit KI-Unterstützung." — generic | Replace with per-page generateMetadata, see §3.5 |
-| app/welcome/page.tsx | "Diese App lernt dir Schreibstil mit der Methode, die Benjamin Franklin vor 230 Jahren erfand…" — partially-broken German ("lernt dir" instead of "lehrt dich") and the 5-step ordered list belongs on /methode, not in onboarding | Single-screen self-assessment (per §3.6) + dismissible info banner in /train |
+| app/welcome/page.tsx | "Diese App lernt dir Schreibstil mit der Methode, die Benjamin Franklin vor 230 Jahren erfand…" — partially-broken German ("lernt dir" instead of "lehrt dich") and the 5-step ordered list belongs on /methode, not in onboarding | Single-screen info card with no decision (per §3.6); Play-Mode-Switch happens on /train |
 | app/page.tsx feature cards | "Anki-like algorithm for optimal long-term retention" (EN inside DE app) | German throughout, no English mixed in |
 
 **Tone guideline:** confident-but-honest. The product is "informed prototype, not validated protocol" (per pedagogy research). Marketing copy says "Eine Methode, die Franklin sich selbst beibrachte. Mit KI optimiert." not "Wissenschaftlich bewiesen." That keeps integrity.
@@ -263,15 +276,15 @@ Confirmed in brainstorm Q1. No further evidence needed. Drives the rest of the s
 ### 3.8 Onboarding (already covered in §3.6, summarized here)
 
 - Pre-auth: landing → `/demo` (zero friction, no email gate)
-- Post-signup: 1-screen self-assessment, then directly to `/train`
+- Post-signup: 1-screen info card (no decision), then directly to `/train`
 - No multi-step wizard
 - Franklin-method explanation moves to `/methode` (dedicated page) + dismissible banner on first /train visit
 
-### 3.9 Mode-switcher visibility (covered in §3.6, summarized here)
+### 3.9 Mode-switcher visibility (revised 2026-05-15)
 
-- Top-bar segmented control on `/train`, always visible (2 options: Franklin + Free)
-- Mid-card switching preserves state
-- Cloze accessible via secondary "Warmup-Chip" — NOT in main top-bar
+- Top-bar segmented control on `/train`, always visible, 3 options: **Anfänger | Fortgeschritten | Profi**
+- Mid-card switching writes `user_settings.current_play_mode`, immediately re-renders the chunk in the new mode + scoring config
+- Cloze accessible via secondary "Warmup-Chip" below the chunk-context — NOT in the main switcher
 
 ### 3.10 Lessons from Competitors (what to adopt + what to do better)
 
@@ -340,7 +353,7 @@ Suggested commit sequence inside that single PR (for review-readability):
 1. `chore(relaunch): copy + brand audit → "The Franklin Method"` — text-only changes, brand-rename in copy, no behavior
 2. `feat(relaunch): /methode + /demo public routes` — Franklin-story page + no-auth demo
 3. `feat(relaunch): public books + author pages with bios + style profiles, sitemap expansion` — SEO surface
-4. `feat(relaunch): onboarding 3-step → 1-screen self-assessment with skill routing` — UX + pedagogy
+4. `feat(relaunch): onboarding wizard → 1-screen info card + 3-play-mode segmented control on /train` — UX
 5. `feat(relaunch): /train 2-option segmented mode switcher + warmup chip + mid-card switch logic`
 6. `refactor(relaunch): chunk-size constraints + hint-length formula (clamp(2, sentence/3, 8))`
 7. `refactor(relaunch): route-scoped CSP nonces (landing/marketing static, app dynamic)`
@@ -403,11 +416,12 @@ Each commit testable independently. PR merges atomically.
 
 | # | Criterion | Target | How measured |
 |---|---|---|---|
-| L1 | Chunk-size validator rejects chunks with `word_count < 15` | yes | unit test or chunk-fetch trace |
-| L2 | Hint-length formula `clamp(2, floor(sentence_word_count / 3), 8)` is enforced (not hard-coded "4-8") | yes | code review |
-| L3 | Default mode for new users = `franklin` when self-assessment = "Anfänger" | yes | seed test user, complete onboarding, check `user_settings.default_mode` |
-| L4 | Default mode = `free` for `Fortgeschritten`/`Ich weiß schon` answers | yes | same as L3 |
-| L5 | Cloze accessible from /train via secondary "Warmup" chip, NOT in main top-bar segmented control | yes (per §3.3 + §3.6 final resolution) | code review + screenshot |
+| L1 | Chunk-size validator: respects per-play-mode minimum (Anfänger≥30, Fortgeschritten≥60, Profi≥100 words) | yes | code path + a chunk-fetch trace per mode |
+| L2 | Hint-length formula `clamp(2, floor(sentence_word_count / 3), 8)` is enforced for Anfänger-mode (Franklin-Reconstruction); other modes don't use hints | yes | code review |
+| L3 | 3-option segmented control [Anfänger \| Fortgeschritten \| Profi] visible on /train every page load | yes | screenshot |
+| L4 | Switching play-mode mid-card persists to `user_settings.current_play_mode` AND re-renders with new scoring config | yes | manual test: switch from Anfänger to Profi on the same chunk, observe re-render |
+| L5 | Cloze accessible from /train via secondary "Warmup" chip, NOT in main top-bar segmented control | yes | code review + screenshot |
+| L6 | Scoring strictness differs per mode: lenient (×18), standard (×25), strict (×32) — same Style-Distance gives 3 different scores | yes | with a fixed `style_distance` input, three modes produce three different `style_score` outputs |
 
 ### 5.6 Aggregate "done" criterion
 
@@ -433,7 +447,7 @@ The relaunch is complete when ALL of the following are true:
 | R4 | Programmatic /autoren/* + /buecher/* triggers Google "scaled content abuse" enforcement | low | medium | each page is unique-value (real stylistic data from real corpus, real author bios), well below the 70K-page threshold Zapier-class sites use; safe by current Google guidance |
 | R5 | Welcome-flow shorter to 1 screen but novice users get dropped into /train without context | medium | medium | dismissible info-banner in /train on first visit, persistent /methode footer link, demo round serves as zero-friction tutorial |
 | R6 | Cloze code-removal would be destructive; keeping it but demoting requires deliberate UI gating | low | low | UI-only change, no DB / RPC removal |
-| R7 | Existing user_settings rows have `default_mode='franklin'` and current users may not see the new self-assessment | low | low | only show self-assessment to users where `onboarded_at IS NULL`; existing users keep their default |
+| R7 | Existing user_settings rows have `default_mode='franklin'` and no `current_play_mode` column | low | low | Migration adds `current_play_mode` with default `'anfaenger'`; back-fill existing rows; old `default_mode` column kept as legacy unused (drop in a later cleanup commit) |
 
 ---
 
@@ -571,7 +585,7 @@ Domain stays `literary-forge.vercel.app` throughout (never bought a Franklin-dom
 **Deleted/removed:**
 - generic `<meta name="keywords">` in metadata
 - `Geist_Mono` import from root layout (move to /train where used)
-- 3-step wizard logic in welcome (replaced by 1-screen self-assessment)
+- 3-step wizard logic in welcome (replaced by 1-screen info card)
 
 **Untouched (out of scope):**
 - `lib/llm/gemini.ts`
@@ -598,7 +612,7 @@ This spec represents the brainstorm + research output. Per the brainstorming wor
 | # | Question | User decision |
 |---|---|---|
 | 1 | Brand identity | "The Franklin Method" (over recommendation — risks accepted, mitigations in §3.1, rollback in §7) |
-| 2 | Mode-default routing | Self-Assessment routing (novice → Franklin-Reconstruction, others → Free Writing) — §3.3 |
+| 2 | Mode-default routing | Three switchable Play-Modes on /train (Anfänger / Fortgeschritten / Profi) — replaces self-assessment per user re-decision 2026-05-15. Cf. §3.3 |
 | 3 | Cloze fate | Demote to Warmup-Chip, not in top-bar — §3.3 / §3.9 |
 | 4 | /demo no-auth path | In scope (assistant decision) — §3.6 |
 | 5 | SEO surface expansion (autoren/buecher) | In scope (assistant decision) — §3.5 |

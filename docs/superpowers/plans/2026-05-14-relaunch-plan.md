@@ -44,13 +44,13 @@
 |---|---|
 | `app/layout.tsx` | Becomes root-only layout (no Navbar/Footer — those move into route groups); drops `keywords` meta; drops `Geist_Mono` preload |
 | `app/page.tsx` | Removed (replaced by `app/(marketing)/page.tsx`) |
-| `app/welcome/page.tsx` | 3-step wizard → 1-screen self-assessment with skill routing |
+| `app/welcome/page.tsx` | 3-step wizard → 1-screen info card (no decision); users switch play-mode on /train |
 | `app/login/page.tsx` | Copy refinements only |
 | `app/train/page.tsx` | Wraps in `(app)` route group; integrates ModeSwitcher + WarmupChip |
 | `app/train/loading.tsx` | Theme-var colors (verified done in Welle 3 — confirm) |
 | `components/navigation/Navbar.tsx` | Becomes app-only Navbar; marketing routes use MarketingNav |
 | `components/navigation/Footer.tsx` | Add /methode link, add Franklin-Method® disclaimer chunk |
-| `components/training/TrainingInterface.tsx` | Reads default_mode from user_settings with self-assessment routing |
+| `components/training/TrainingInterface.tsx` | Reads `current_play_mode` from user_settings; maps to (format, scoring_factor, min_words) tuple |
 | `components/training/modes/FranklinEncodingPhase.tsx` | Hint-length formula: `clamp(2, floor(sentence_words/3), 8)` |
 | `middleware.ts` | Matcher narrowed: only auth/app routes get nonces; marketing routes get static CSP via next.config |
 | `next.config.ts` | Add static-route CSP block (sha256 for inline JSON-LD); add `optimizePackageImports: ['lucide-react']` |
@@ -1069,28 +1069,31 @@ EOF
 
 ---
 
-## Task 4: Onboarding 1-Screen Self-Assessment with Skill Routing
+## Task 4: Onboarding 1-Screen Info Card (no decision) + `current_play_mode` column
+
+REVISED 2026-05-15: dropped the self-assessment in favor of three play-modes user can switch on /train (Task 5). Welcome is now a pure-info card. No upfront decision.
 
 **Files:**
-- Modify: `app/welcome/page.tsx` — full rewrite (3 steps → 1 screen)
-- Modify: `components/training/TrainingInterface.tsx` — read default_mode + skill_level from user_settings
+- Create: `supabase/migrations/022_current_play_mode.sql`
+- Modify: `app/welcome/page.tsx` — full rewrite (3 wizard steps → 1 info card, no buttons except "Training starten")
 
-- [ ] **Step 4.1: Add `skill_level` column to user_settings**
+- [ ] **Step 4.1: Add `current_play_mode` column to user_settings**
 
-Create `supabase/migrations/022_skill_level.sql` (not yet 022 for custom-text-upload — that comes in Task 10; renumber as needed at commit time):
+Create `supabase/migrations/022_current_play_mode.sql`:
 
 ```sql
--- Migration 022: skill_level on user_settings
--- Date: 2026-05-14
--- Purpose: route onboarding to appropriate default mode (novice → franklin, advanced → free)
+-- Migration 022: current_play_mode on user_settings
+-- Date: 2026-05-15
+-- Purpose: persist the user's currently-active play-mode (Anfänger / Fortgeschritten / Profi).
+-- Replaces the earlier self-assessment skill_level concept. User switches freely on /train.
 
 ALTER TABLE user_settings
-ADD COLUMN IF NOT EXISTS skill_level TEXT
-CHECK (skill_level IN ('novice', 'intermediate', 'advanced'))
-DEFAULT 'novice';
+ADD COLUMN IF NOT EXISTS current_play_mode TEXT
+CHECK (current_play_mode IN ('anfaenger', 'fortgeschritten', 'profi'))
+DEFAULT 'anfaenger';
 
-COMMENT ON COLUMN user_settings.skill_level IS
-'Self-reported skill, captured at onboarding. Drives default mode: novice → franklin-reconstruction, intermediate/advanced → free-writing.';
+COMMENT ON COLUMN user_settings.current_play_mode IS
+'Active play-mode, user-switchable on /train via 3-segment control. Tuple-mapping in components/training/ModeSwitcher.tsx.';
 ```
 
 Note: this changes the migration numbering — if Task 10 also adds a migration, this becomes 022 and that becomes 023. Resolve at commit time.
@@ -1104,7 +1107,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 load_dotenv('.env.local')
 sb = create_client(os.environ['NEXT_PUBLIC_SUPABASE_URL'], os.environ['SUPABASE_SECRET_KEY'])
-with open('supabase/migrations/022_skill_level.sql') as f:
+with open('supabase/migrations/022_current_play_mode.sql') as f:
     sql = f.read()
 # supabase-py doesn't run DDL directly; user must paste in Dashboard SQL Editor.
 print('Run this SQL in Supabase Dashboard SQL Editor:')
@@ -1120,61 +1123,34 @@ import os; from dotenv import load_dotenv; from supabase import create_client
 load_dotenv('.env.local')
 sb = create_client(os.environ['NEXT_PUBLIC_SUPABASE_URL'], os.environ['SUPABASE_SECRET_KEY'])
 # Try to read the new column; will fail if migration not applied
-r = sb.table('user_settings').select('skill_level').limit(1).execute()
-print('skill_level column exists:', r is not None)
+r = sb.table('user_settings').select('current_play_mode').limit(1).execute()
+print('current_play_mode column exists:', r is not None)
 "
 ```
 
-- [ ] **Step 4.3: Rewrite `app/welcome/page.tsx`** to single-screen
+- [ ] **Step 4.3: Rewrite `app/welcome/page.tsx`** to 1-screen info card
 
 ```tsx
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-
-type Skill = 'novice' | 'intermediate' | 'advanced'
-
-const OPTIONS: Array<{ value: Skill; label: string; desc: string; defaultMode: 'franklin' | 'free' }> = [
-  {
-    value: 'novice',
-    label: 'Anfänger',
-    desc: 'Ich will Schreibstil systematisch lernen. Gib mir Gerüst und Schritt-für-Schritt.',
-    defaultMode: 'franklin',
-  },
-  {
-    value: 'intermediate',
-    label: 'Fortgeschritten',
-    desc: 'Ich schreibe regelmäßig und will Stil bewusster trainieren. Weniger Gerüst, mehr eigene Versuche.',
-    defaultMode: 'free',
-  },
-  {
-    value: 'advanced',
-    label: 'Ich weiß, was ich tue',
-    desc: 'Ich will direkt frei imitieren und harte Bewertung. Spar dir das Tutorial.',
-    defaultMode: 'free',
-  },
-]
 
 export default function WelcomePage() {
   const router = useRouter()
   const supabase = createClient()
-  const [selected, setSelected] = useState<Skill | null>(null)
   const [saving, setSaving] = useState(false)
 
-  async function finish() {
-    if (!selected) return
+  async function start() {
     setSaving(true)
-    const opt = OPTIONS.find((o) => o.value === selected)!
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
       await supabase.from('user_settings').upsert(
         {
           user_id: user.id,
-          skill_level: opt.value,
-          default_mode: opt.defaultMode,
+          current_play_mode: 'anfaenger',
           onboarded_at: new Date().toISOString(),
         },
         { onConflict: 'user_id' }
@@ -1188,55 +1164,58 @@ export default function WelcomePage() {
 
   return (
     <main className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4">
-      <div className="max-w-xl w-full bg-[var(--card)] border border-[var(--border)] rounded-lg p-8">
-        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-3">
-          Wie würdest du deinen Schreibstil aktuell einschätzen?
-        </h1>
-        <p className="text-[var(--muted)] mb-6 text-sm">
-          Eine Frage. Du kannst die Einstellung später jederzeit in /settings ändern.
+      <article className="max-w-xl w-full bg-[var(--card)] border border-[var(--border)] rounded-lg p-8">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-4">Willkommen bei The Franklin Method.</h1>
+        <p className="text-[var(--foreground)] leading-relaxed mb-3">
+          Was die Methode ist, steht auf <a href="/methode" className="underline">/methode</a> — kurz: Stilimitation
+          mit KI-optimiertem Franklin-Loop.
         </p>
-        <div className="space-y-3">
-          {OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setSelected(opt.value)}
-              className={`w-full text-left p-4 border-2 rounded-lg transition-colors ${
-                selected === opt.value
-                  ? 'border-[var(--foreground)] bg-[var(--card-hover)]'
-                  : 'border-[var(--border)] hover:border-[var(--muted)]'
-              }`}
-            >
-              <div className="font-semibold text-[var(--foreground)]">{opt.label}</div>
-              <div className="text-sm text-[var(--muted)] mt-1">{opt.desc}</div>
-            </button>
-          ))}
-        </div>
+        <p className="text-[var(--foreground)] leading-relaxed mb-3">
+          Auf der Training-Seite gibt&apos;s drei Modi, die du jederzeit oben switchen kannst:
+        </p>
+        <ul className="list-disc list-inside text-[var(--foreground)] leading-relaxed mb-3 space-y-1">
+          <li><strong>Anfänger</strong> — Franklin-Reconstruction mit AI-Hints, sanftes Scoring</li>
+          <li><strong>Fortgeschritten</strong> — freies Schreiben mit Style-Markern, Standard-Scoring</li>
+          <li><strong>Profi</strong> — freies Schreiben ohne Marker, längere Texte, strenges Scoring</li>
+        </ul>
+        <p className="text-[var(--muted)] text-sm mb-6">
+          Du startest in Anfänger. Switch sofort, wenn dir mehr Freiheit lieber ist.
+        </p>
         <button
-          onClick={finish}
-          disabled={!selected || saving}
-          className="w-full mt-6 px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
+          onClick={start}
+          disabled={saving}
+          className="w-full px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
         >
-          {saving ? 'Speichere…' : 'Training starten →'}
+          {saving ? 'Lade…' : 'Training starten →'}
         </button>
-      </div>
+      </article>
     </main>
   )
 }
 ```
 
-- [ ] **Step 4.4: Verify TrainingInterface reads default_mode correctly**
+- [ ] **Step 4.4: Verify TrainingInterface reads current_play_mode correctly**
 
-Open `components/training/TrainingInterface.tsx`. The prop `userDefaultMode` already exists (line 29). Verify the parent (`app/train/page.tsx`) passes `user_settings.default_mode` to it. If not, modify the parent:
+`app/train/page.tsx` must fetch `user_settings.current_play_mode` and pass to `<TrainingInterface>`. Modify:
 
 ```tsx
-// In app/train/page.tsx, after auth check, before render:
 const { data: settings } = await supabase
   .from('user_settings')
-  .select('default_mode')
+  .select('current_play_mode')
   .eq('user_id', user.id)
   .single()
-const userDefaultMode = (settings?.default_mode as 'franklin' | 'free') ?? 'franklin'
-// pass userDefaultMode prop to <TrainingInterface>
+const playMode = (settings?.current_play_mode as 'anfaenger' | 'fortgeschritten' | 'profi') ?? 'anfaenger'
+// pass playMode prop to <TrainingInterface>; component maps it to (format, scoring, min_words) tuple.
+```
+
+Inside `TrainingInterface.tsx`, define the mapping:
+
+```ts
+const PLAY_MODE_CONFIG = {
+  anfaenger:        { format: 'franklin', scoringFactor: 18, minWords: 30  },
+  fortgeschritten:  { format: 'free',     scoringFactor: 25, minWords: 60  },
+  profi:            { format: 'free',     scoringFactor: 32, minWords: 100 },
+} as const
 ```
 
 - [ ] **Step 4.5: Verify + commit**
@@ -1246,20 +1225,20 @@ cd ~/literary-forge && npx tsc --noEmit
 npx next build 2>&1 | tail -10
 ```
 
-Manual smoke test: in dev mode, register a new user, complete welcome (pick "Anfänger"), confirm DB has `user_settings.skill_level='novice'` and `default_mode='franklin'`. Repeat for "Fortgeschritten" → expect `default_mode='free'`.
+Manual smoke test: register a new user → /welcome shows info card with three modes listed → click "Training starten" → /train opens, top-bar segmented control shows 3 options, "Anfänger" highlighted, `user_settings.current_play_mode = 'anfaenger'` in DB.
 
 ```bash
 git add -A && git commit -m "$(cat <<'EOF'
-feat(relaunch-4): onboarding 3-step wizard → 1-screen self-assessment with skill routing
+feat(relaunch-4): onboarding 3-step wizard → 1-screen info card + current_play_mode column
 
-Single screen asks "Wie würdest du deinen Schreibstil aktuell einschätzen?"
-with 3 options: Anfänger (→ franklin), Fortgeschritten/Ich weiß was ich tue
-(→ free). Result written to user_settings.skill_level + default_mode.
+Welcome is now a pure info card with no decision required: lists the three
+play-modes (Anfänger, Fortgeschritten, Profi) and how to switch them on /train.
+Single CTA "Training starten" → /train with default current_play_mode='anfaenger'.
 
-Migration 022 adds skill_level column to user_settings.
+Migration 022 adds current_play_mode column to user_settings (replaces the
+earlier skill_level concept).
 
-Per spec §3.3 (worked-example effect for novices; expertise-reversal for
-advanced) + §3.6.
+Per spec §3.3 + §3.6 revised 2026-05-15: user empowerment over upfront commitment.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 EOF
@@ -1268,7 +1247,7 @@ EOF
 
 ---
 
-## Task 5: /train 2-option ModeSwitcher + WarmupChip
+## Task 5: /train 3-option ModeSwitcher (Anfänger | Fortgeschritten | Profi) + WarmupChip
 
 **Files:**
 - Create: `components/training/ModeSwitcher.tsx`
@@ -1276,42 +1255,40 @@ EOF
 - Modify: `components/training/TrainingInterface.tsx` — render ModeSwitcher on top
 - Modify: `app/train/page.tsx` — pass current chunk to ModeSwitcher
 
-- [ ] **Step 5.1: Create `components/training/ModeSwitcher.tsx`**
+- [ ] **Step 5.1: Create `components/training/ModeSwitcher.tsx`** (3 options)
 
 ```tsx
 'use client'
 
-import { PenLine, Sparkles } from 'lucide-react'
+import { GraduationCap, PenLine, Trophy } from 'lucide-react'
 
-type Mode = 'franklin' | 'free'
+export type PlayMode = 'anfaenger' | 'fortgeschritten' | 'profi'
 
-export function ModeSwitcher({ current, onChange }: { current: Mode; onChange: (m: Mode) => void }) {
+const OPTIONS: { value: PlayMode; label: string; Icon: typeof GraduationCap; title: string }[] = [
+  { value: 'anfaenger',       label: 'Anfänger',       Icon: GraduationCap, title: 'Franklin-Reconstruction mit AI-Hints, sanftes Scoring' },
+  { value: 'fortgeschritten', label: 'Fortgeschritten', Icon: PenLine,       title: 'Freies Schreiben mit Style-Markern, Standard-Scoring' },
+  { value: 'profi',           label: 'Profi',           Icon: Trophy,        title: 'Freies Schreiben ohne Marker, längere Texte, strenges Scoring' },
+]
+
+export function ModeSwitcher({ current, onChange }: { current: PlayMode; onChange: (m: PlayMode) => void }) {
   return (
-    <div role="group" aria-label="Übungs-Modus" className="inline-flex rounded-md border border-[var(--border)] overflow-hidden">
-      <button
-        type="button"
-        onClick={() => onChange('franklin')}
-        aria-pressed={current === 'franklin'}
-        className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-          current === 'franklin'
-            ? 'bg-[var(--foreground)] text-[var(--background)]'
-            : 'bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)]'
-        }`}
-      >
-        <PenLine size={16} /> Franklin
-      </button>
-      <button
-        type="button"
-        onClick={() => onChange('free')}
-        aria-pressed={current === 'free'}
-        className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-          current === 'free'
-            ? 'bg-[var(--foreground)] text-[var(--background)]'
-            : 'bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)]'
-        }`}
-      >
-        <Sparkles size={16} /> Free
-      </button>
+    <div role="group" aria-label="Spielmodus" className="inline-flex rounded-md border border-[var(--border)] overflow-hidden">
+      {OPTIONS.map(({ value, label, Icon, title }) => (
+        <button
+          key={value}
+          type="button"
+          onClick={() => onChange(value)}
+          aria-pressed={current === value}
+          title={title}
+          className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+            current === value
+              ? 'bg-[var(--foreground)] text-[var(--background)]'
+              : 'bg-[var(--card)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)]'
+          }`}
+        >
+          <Icon size={16} /> {label}
+        </button>
+      ))}
     </div>
   )
 }
@@ -1339,9 +1316,37 @@ export function WarmupChip({ chunkId }: { chunkId: string }) {
 
 - [ ] **Step 5.3: Wire into TrainingInterface**
 
-Modify `components/training/TrainingInterface.tsx` to render `<ModeSwitcher>` and `<WarmupChip>` above the mode-component. Mode switch mid-card needs to update both local state and persist to `user_progress.mode` for this card so server-side fetches match. Simplest: navigate with `?mode=franklin` / `?mode=free` query param; the parent `app/train/page.tsx` reads param + falls back to `user_settings.default_mode`.
+Modify `components/training/TrainingInterface.tsx` to render `<ModeSwitcher>` and `<WarmupChip>` above the mode-component. The dispatcher (currently mode='franklin'/'cloze'/'free' at line 35-50) needs to read `playMode` from props → `PLAY_MODE_CONFIG[playMode].format` to pick the right component, plus pass scoring/minWords downstream.
 
-(Implementation detail: keep current dispatcher logic; add URL-param read. The dispatcher already exists at line 35-50.)
+On switch:
+1. Update local state immediately for instant visual feedback
+2. POST to `/api/user/play-mode` (new tiny route, see Step 5.3a) to persist
+3. If new mode's `minWords` > current chunk's word count → show inline notice "Profi-Modus braucht längere Texte" + trigger chunk re-fetch
+
+URL also supports `?mode=anfaenger|fortgeschritten|profi` so the user can share a deep link.
+
+- [ ] **Step 5.3a: Create `app/api/user/play-mode/route.ts`**
+
+```ts
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { createClient } from '@/lib/supabase/server'
+
+const schema = z.object({ mode: z.enum(['anfaenger', 'fortgeschritten', 'profi']) })
+
+export async function POST(req: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { mode } = schema.parse(await req.json())
+  const { error } = await supabase.from('user_settings').upsert(
+    { user_id: user.id, current_play_mode: mode },
+    { onConflict: 'user_id' }
+  )
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ ok: true, current_play_mode: mode })
+}
+```
 
 - [ ] **Step 5.4: Create `/train/warmup/page.tsx`** (Cloze entry)
 
@@ -1358,14 +1363,20 @@ Smoke test in dev: visit /train logged in, observe ModeSwitcher top of page; cli
 
 ```bash
 git add -A && git commit -m "$(cat <<'EOF'
-feat(relaunch-5): /train ModeSwitcher (Franklin | Free) + WarmupChip (Cloze)
+feat(relaunch-5): /train 3-option ModeSwitcher (Anfänger | Fortgeschritten | Profi) + WarmupChip
 
-Top-bar segmented control on /train switches between Franklin-Reconstruction
-and Free Writing modes mid-card. State preserved via URL ?mode= param.
-Cloze accessible via dashed-border "Warmup-Chip" → /train/warmup (NOT in
-top-bar; per pedagogy that Cloze trains components, not gestalt).
+Top-bar segmented control on /train with three play-modes, each a tuple of
+(format, scoring_factor, min_words):
+  - Anfänger: franklin-reconstruction + factor 18 + min 30 words
+  - Fortgeschritten: free-writing + factor 25 + min 60 words
+  - Profi: free-writing (no markers) + factor 32 + min 100 words
 
-Per spec §3.3, §3.6, §3.9.
+Switch persists via POST /api/user/play-mode → user_settings.current_play_mode.
+URL ?mode= deep-link supported. Cloze accessible via dashed-border WarmupChip
+→ /train/warmup (NOT in top-bar; per pedagogy that Cloze trains components,
+not gestalt).
+
+Per spec §3.3, §3.6, §3.9 (revised 2026-05-15).
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 EOF

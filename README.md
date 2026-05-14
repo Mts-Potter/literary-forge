@@ -1,243 +1,147 @@
 # Literary Forge
 
-KI-gestütztes Training für stilistische Mimesis durch Spaced Repetition und linguistische Analyse.
+Schreibstil-Training auf Basis der Benjamin-Franklin-Methode mit Spaced Repetition, echter stilometrischer Analyse und LLM-Feedback.
 
-## 🎯 Überblick
+**Live:** https://literary-forge.vercel.app
 
-Literary Forge ist eine vollständig serverlose Web-Anwendung, die es Nutzern ermöglicht, die Schreibstile großer Autoren zu erlernen. Durch eine Kombination aus:
+## Tech-Stack
 
-- **Spaced Repetition (SM-2 Algorithmus)** für langfristiges Lernen
-- **Clientseitige NLP-Analyse** (UDPipe, Transformers.js)
-- **KI-Feedback** via Claude 3.5 Haiku
-- **0€ Fixkosten** dank Vercel & Supabase Free Tier
+| Schicht | Wahl | Begründung |
+|---|---|---|
+| Frontend | Next.js 15 (App Router) + TypeScript + Tailwind | – |
+| Auth + DB | Supabase (Postgres + pgvector) | Free-Tier |
+| LLM | Google Gemini 3.1 Flash-Lite | $0.25 / $1.50 per 1M Tokens, kein Fixkosten |
+| NLP | spaCy auf Render (Python+Flask, Microservice) | echte Stilometrie statt Browser-Mock |
+| Embeddings | Transformers.js (`Xenova/paraphrase-multilingual-MiniLM-L12-v2`) | clientseitig, mehrsprachig |
+| Scheduling | ts-fsrs (FSRS-V5) | wissenschaftlich validiert |
+| Hosting | Vercel | Free-Tier |
+| Mail | Resend | Free-Tier |
 
-## 🏗️ Architektur
+## Lernmodi
 
-### Tech Stack
-- **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS
-- **Backend**: Supabase (PostgreSQL + pgvector + Auth)
-- **LLM**: Claude 3.5 Haiku via **AWS Bedrock** (nicht direkte Anthropic API)
-- **NLP**: Mock-Implementierung (später: UDPipe WASM + Transformers.js)
-- **State Management**: Zustand mit localStorage-Persistenz
+Drei parallele Übungsarten, FSRS schedult über alle drei:
 
-### Besonderheiten
-- **Edge Runtime** für API-Routes (maximale Performance)
-- **Rate Limiting** über PostgreSQL (Token-Bucket-Algorithmus)
-- **Client-Side Computing** für NLP (keine Serverkosten)
-- **Local-First** Datenarchitektur (IndexedDB/localStorage)
+1. **Franklin-Loop** — Encoding (Lesen + Hint-Extraktion) → Inkubation → Retrieval (Rekonstruktion + Diff-View)
+2. **Cloze-Deletion** — vier Stufen (Funktionswörter → Verben → Adjektive → Satzgerüst)
+3. **Free-Writing** — Original-Lesephase mit Stilmarker, dann eigene Imitation mit Stilmetrik-Feedback
 
-## 📋 Setup-Anleitung
+## Scoring
 
-### 1. Supabase Projekt erstellen
+Primär deterministisch: 20 Stilfeatures pro Chunk (TTR, MTLD, Hapax-Ratio, Satzlängenvarianz, Punktuation, Funktionswort-Verteilung, POS-Ratios, Tempusverteilung, Komposita-Häufigkeit, Direkte-Rede-Anteil etc.), aggregiert zu Autor-Profilen (Mittel + Standardabweichung). User-Text bekommt `style_distance` als mittleren z-Score über alle Features (Burrows'-Δ-Variante), gemappt auf 0-100. LLM nur als qualitative Erklärung obendrauf, nicht als primärer Score.
 
-1. Gehe zu [supabase.com](https://supabase.com) und erstelle ein kostenloses Konto
-2. Erstelle ein neues Projekt:
-   - **Name**: `literary-forge`
-   - **Database Password**: Generiere ein sicheres Passwort (speichern!)
-   - **Region**: Europe West (Frankfurt)
-3. Warte ca. 2 Minuten bis das Projekt bereit ist
+## Setup
 
-### 2. pgvector Extension aktivieren
-
-1. Gehe im Supabase Dashboard zu: **Database → Extensions**
-2. Suche nach "vector"
-3. Klicke auf **Enable** bei `vector`
-
-### 3. Datenbank-Schema erstellen
-
-1. Gehe zu: **SQL Editor**
-2. Öffne die Datei `supabase/migrations/001_initial_schema.sql` in deinem Projekt
-3. Kopiere den kompletten SQL-Code
-4. Füge ihn im SQL Editor ein und klicke **RUN**
-
-Das Schema erstellt:
-- `source_texts` - Die Lerntexte mit Embeddings
-- `user_progress` - SRS-Status für jeden Nutzer
-- `user_quotas` / `ip_quotas` - Rate Limiting
-- `check_and_consume_quota()` - RPC-Funktion für sichere Quotenverwaltung
-
-### 4. API-Credentials extrahieren
-
-1. Gehe zu: **Settings → API**
-2. Kopiere folgende Werte:
-   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon public** → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-   - **service_role** → `SUPABASE_SECRET_KEY` ⚠️ GEHEIM!
-
-### 5. AWS Bedrock Credentials (statt direkter Anthropic API)
-
-⚠️ **Wichtig**: Dieses Projekt nutzt AWS Bedrock statt der direkten Anthropic API!
-
-1. Stelle sicher, dass du AWS Bedrock Zugriff auf Claude 3.5 Haiku hast
-2. Besorge deine AWS IAM Credentials (Access Key ID + Secret Access Key)
-3. Wähle die Region (empfohlen: `us-east-1`)
-
-### 6. Umgebungsvariablen konfigurieren
-
-Öffne `.env.local` und fülle alle Werte aus:
-
-```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJhbGc...
-SUPABASE_SECRET_KEY=eyJhbGc...
-
-# AWS Bedrock Configuration
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=us-east-1
-
-# Bedrock Modell-ID für Claude 3.5 Haiku
-BEDROCK_MODEL_ID=us.anthropic.claude-3-5-haiku-20241022-v1:0
-
-# Rate Limiting Configuration
-MAX_DAILY_ANALYSES_PER_USER=5
-```
-
-### 7. Development Server starten
+### 1. Supabase
 
 ```bash
+# Im Dashboard:
+# - Neues Projekt erstellen, EU-Frankfurt-Region
+# - Database → Extensions → "vector" aktivieren
+# - SQL Editor: supabase/migrations/*.sql in numerischer Reihenfolge ausführen
+```
+
+### 2. NLP-Microservice (Render)
+
+```bash
+cd nlp-service
+# Siehe nlp-service/README.md
+# Free-Web-Service auf Render, Python 3.12, spaCy de_core_news_sm + en_core_web_sm
+```
+
+### 3. Gemini API
+
+```bash
+# https://aistudio.google.com/app/apikey
+# In .env.local: GEMINI_API_KEY=...
+```
+
+### 4. Lokal starten
+
+```bash
+cp .env.local.example .env.local  # ausfüllen
+npm install
 npm run dev
 ```
 
-Öffne [http://localhost:3000](http://localhost:3000)
-
-### 8. Content Import (Optional)
-
-Um Bücher in die Datenbank zu importieren:
-
-1. Navigiere zu `/login` und erstelle einen Account
-2. Gehe zu `/admin/ingest` (oder klicke "📚 Admin Import" auf der Startseite)
-3. Wähle eine `.txt` Datei (siehe `test-books/` für Beispiele)
-4. Fülle Titel und Autor aus
-5. Klicke "Analysieren" und dann "Speichern"
-
-**Detaillierte Anleitung**: Siehe [BOOK_IMPORT_GUIDE.md](BOOK_IMPORT_GUIDE.md)
-
-**Wichtig**: Das Import-System nutzt dieselbe NLP-Pipeline (UDPipe + Transformers.js) wie das Training, um wissenschaftliche Konsistenz der Stilmetriken zu garantieren.
-
-## 📁 Projektstruktur
+## Projektstruktur
 
 ```
 literary-forge/
 ├── app/
-│   ├── page.tsx                    # Landing Page
-│   ├── layout.tsx                  # Root Layout
-│   └── api/
-│       └── analyze/route.ts        # LLM Edge Function
+│   ├── api/
+│   │   ├── analyze/             # LLM Style-Analyse (Edge)
+│   │   ├── generate-scene-description/  # Plot-Summary via Gemini
+│   │   ├── nlp/warm/            # Pre-Warm Render-Service
+│   │   └── train/submit/        # Hauptpfad: NLP + Style-Distance + LLM + FSRS-Persist
+│   ├── train/page.tsx           # Mode-Dispatcher
+│   ├── read/[bookId]/page.tsx   # Lesemodus
+│   ├── welcome/page.tsx         # Onboarding (Modus-Wahl)
+│   └── settings/data/page.tsx   # GDPR Export/Delete
 ├── components/
-│   └── editor/
-│       └── ZenEditor.tsx           # Typewriter-Editor
+│   └── training/
+│       ├── modes/               # Franklin/Cloze/FreeWriting
+│       └── shared/              # DiffView, StyleMarkerOverlay
 ├── lib/
-│   ├── supabase/
-│   │   ├── client.ts               # Browser Supabase Client
-│   │   ├── server.ts               # Server Supabase Client
-│   │   └── types.ts                # TypeScript Types
+│   ├── llm/gemini.ts            # Gemini-Wrapper
 │   ├── nlp/
-│   │   ├── parsing.ts              # UDPipe Parser (Mock)
-│   │   ├── embeddings.ts           # Embedding Generator (Mock)
-│   │   └── metrics.ts              # Stylometrische Berechnungen
-│   └── srs/
-│       └── sm2.ts                  # SM-2 Algorithmus
-└── supabase/
-    └── migrations/
-        └── 001_initial_schema.sql  # Datenbank-Schema
+│   │   ├── parser-client.ts     # Render-spaCy-Client (server-side)
+│   │   └── author-profile.ts    # Autor-Stilprofile laden
+│   ├── scoring/
+│   │   └── style-distance.ts    # Burrows'-Δ-Variante
+│   └── srs/fsrs.ts              # ts-fsrs-Wrapper
+├── nlp-service/                 # Eigenständiger Python+spaCy-Service für Render
+├── scripts/
+│   └── reprocess_chunks.py      # Lokales Re-Processing (~12.540 Chunks)
+└── supabase/migrations/         # 001-021
 ```
 
-## 🔒 Sicherheit
+## Reprocessing
 
-- **Row Level Security (RLS)** auf allen Tabellen
-- **Rate Limiting** via PostgreSQL mit `SECURITY DEFINER` und fixed `search_path`
-- **Edge-Only API Calls** - kein direkter Client-Zugriff auf RPC
-- **IP-Extraktion** mit CSV-Handling für `x-forwarded-for`
-
-## 💰 Kostenstruktur (Free Tier)
-
-### Limits
-- **Vercel**: 100 GB Bandwidth, 100 GB-Hours Edge
-- **Supabase**: 500 MB Datenbank, 2 GB Egress/Monat
-- **Anthropic**: Pay-as-you-go
-
-### Bei 100 aktiven Usern/Tag
-- **Vercel**: 0€ (innerhalb Free Tier)
-- **Supabase**: 0€ (Local-First hält DB klein)
-- **AWS Bedrock**: ~10-15€/Monat (5 Analysen/User × Claude 3.5 Haiku Preise auf Bedrock)
-
-**Skalierung**: Serverkosten wachsen nicht mit Nutzern, da NLP-Arbeit auf Clients läuft!
-
-## 🚀 Deployment
-
-### Vercel (empfohlen)
+Bei NLP-Pipeline-Änderungen alle Chunks neu mit aktuellem spaCy-Modell rechnen:
 
 ```bash
-# Mit Vercel CLI
-vercel
+pip install spacy supabase python-dotenv
+python -m spacy download de_core_news_sm
+python -m spacy download en_core_web_sm
 
-# Oder via GitHub Integration
-git push origin main
+python scripts/reprocess_chunks.py                 # alle Chunks + Autor-Profile
+python scripts/reprocess_chunks.py --profiles-only # nur Profile recomputen
+python scripts/reprocess_chunks.py --ids id1,id2   # einzelne Chunks
+python scripts/reprocess_chunks.py --dry-run       # ohne DB-Write
 ```
 
-Vergiss nicht die Environment Variables im Vercel Dashboard zu setzen!
+## Kostenstruktur
 
-## 🛣️ Roadmap
+- Vercel Hobby: 0 €
+- Supabase Free: 0 € (Keep-Alive-Cron schützt gegen 7-Tage-Pause)
+- Render Free Web Service: 0 € (15-min Idle-Sleep, Pre-Warm bei Page-Load)
+- Gemini Tier 1: Pay-per-Use, erwartet < 10 €/Monat bei Self-Use
+- Resend Free: 0 €
 
-### Phase 1: Foundation (✅ Erledigt)
-- [x] Next.js Setup mit TypeScript & Tailwind
-- [x] Supabase Integration
-- [x] NLP Mock-Implementierung
-- [x] API Route für LLM
-- [x] Zen Editor Component
+## Sicherheit
 
-### Phase 2: Echte NLP Integration
-- [ ] Transformers.js für Embeddings
-- [ ] UDPipe WASM für Dependency Parsing
-- [ ] Web Worker für Threading
+- RLS auf allen Tabellen (Migrations 002, 005, 014, 021)
+- Rate Limiting via `check_and_consume_quota` RPC (Migrations 001, 019)
+- CSP-Header + Zod-Validation (Migration 013, Phase-Hardening)
+- NLP-Microservice mit `NLP_SHARED_SECRET` geschützt
+- GDPR-Endpoints (Migration 020) + UI in `/settings/data`
 
-### Phase 3: UI/UX
-- [ ] Diff-Visualisierung (Phase 2 Feedback)
-- [ ] Dashboard für SRS-Fortschritt
-- [ ] Onboarding-Flow
-- [ ] Auth (Email/Password + Anonym)
+## Renovierungs-Stand (Mai 2026)
 
-### Phase 4: Content & Production
-- [ ] Erste 10-20 Source Texts laden
-- [ ] Production Deployment
-- [ ] Domain Setup
+Detaillierter Plan: `~/.claude/plans/enumerated-crafting-pnueli.md`.
 
-## 📚 Technische Details
+| Phase | Stand |
+|---|---|
+| 0 Stabilisierung | ✅ |
+| 1 Gemini-Migration | ✅ |
+| 2 Echte NLP-Pipeline | ✅ (12 540 Chunks reprocessed Mai 2026) |
+| 3 Score-System | ✅ |
+| 4 Multi-Mode | ✅ |
+| 5 FSRS-Echtbetrieb | ✅ |
+| 6 i18n / Theme / Login-Redesign | ⏳ offen |
+| 7 Sentry / AWS-Cleanup | ⏳ teils |
+| 8 lucide-Icons / EN-Rechtsseiten | ⏳ offen |
 
-### Stilmetriken (Vektor B)
-- **Dependency Distance**: Mittlere Distanz zwischen abhängigen Wörtern
-- **Adjektiv/Verb-Ratio**: Verhältnis von Adjektiven zu Verben
-- **Satzlängenvarianz**: Standardabweichung der Wortanzahl pro Satz
+## Lizenz
 
-### Spaced Repetition (SM-2)
-- **Fuzzy Grading**: Levenshtein-Distanz statt manueller Bewertung
-- **Intervalle**: 1 Tag → 6 Tage → n × EF-Faktor
-- **Easiness Factor**: 1.3 - 2.5 (dynamisch angepasst)
-
-### Rate Limiting
-- **Authenticated Users**: 5 LLM-Calls/Tag
-- **Anonymous Users**: 3 LLM-Calls/Tag (IP-basiert)
-- **Reset**: Täglich um Mitternacht (UTC)
-
-## 🤝 Contributing
-
-Aktuell ist dies ein privates Projekt. Bei Interesse an Zusammenarbeit bitte Kontakt aufnehmen.
-
-## 📄 Lizenz
-
-Noch nicht festgelegt.
-
-## 🙏 Danksagungen
-
-- AWS Bedrock für Claude 3.5 Haiku Zugang
-- Anthropic für das Claude-Modell
-- Vercel für generous Free Tier
-- Supabase für PostgreSQL + pgvector
-- Universal Dependencies für UDPipe
-
----
-
-**Status**: 🚧 In Entwicklung - Phase 1 abgeschlossen
-# Trigger redeploy with RESEND_API_KEY
+Privates Projekt — nicht festgelegt.

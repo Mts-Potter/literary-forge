@@ -119,14 +119,14 @@ export const sceneDescriptionSchema = z.object({
 
 /**
  * AI Response Validation Schemas
- * Used to validate responses from AWS Bedrock
+ * Used to validate responses from the LLM (Gemini 3.1 Flash-Lite).
  */
 
 /**
- * Bedrock Training Analysis Response
- * Expected format from /api/train/submit Bedrock call
+ * LLM Training Analysis Response
+ * Expected format from /api/train/submit LLM call.
  */
-export const bedrockAnalysisSchema = z.object({
+export const llmAnalysisSchema = z.object({
   feedback: z.string()
     .min(1, 'Feedback is required'),
 
@@ -147,10 +147,10 @@ export const bedrockAnalysisSchema = z.object({
 })
 
 /**
- * Bedrock Analysis Response
- * Expected format from /api/analyze Bedrock call
+ * LLM Analysis Metadata Response
+ * Expected format from /api/analyze LLM call.
  */
-export const bedrockMetadataSchema = z.object({
+export const llmMetadataSchema = z.object({
   dependencyDistance: z.number().min(0).max(100),
   adjVerbRatio: z.number().min(0).max(10),
   sentenceLengthVariance: z.number().min(0).max(1000),
@@ -190,6 +190,6 @@ export type IngestInput = z.infer<typeof ingestSchema>
 export type SubmitTrainingInput = z.infer<typeof submitTrainingSchema>
 export type AnalyzeInput = z.infer<typeof analyzeSchema>
 export type SceneDescriptionInput = z.infer<typeof sceneDescriptionSchema>
-export type BedrockAnalysis = z.infer<typeof bedrockAnalysisSchema>
-export type BedrockMetadata = z.infer<typeof bedrockMetadataSchema>
+export type LlmAnalysis = z.infer<typeof llmAnalysisSchema>
+export type LlmMetadata = z.infer<typeof llmMetadataSchema>
 export type SubmitReviewResult = z.infer<typeof submitReviewResultSchema>

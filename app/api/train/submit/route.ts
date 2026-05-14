@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { submitTrainingSchema, submitReviewResultSchema, bedrockAnalysisSchema } from '@/lib/validation/api-schemas'
+import { submitTrainingSchema, submitReviewResultSchema, llmAnalysisSchema } from '@/lib/validation/api-schemas'
 import { z } from 'zod'
 import { logError } from '@/lib/utils/error-logger'
 import { invokeGemini, GeminiError } from '@/lib/llm/gemini'
@@ -172,7 +172,7 @@ Output ONLY the JSON below, nothing else:
         jsonOutput: true
       })
       const rawAnalysis = JSON.parse(responseText)
-      analysis = bedrockAnalysisSchema.parse(rawAnalysis)
+      analysis = llmAnalysisSchema.parse(rawAnalysis)
     } catch (error) {
       logError('train/submit:gemini', error as Error)
       // Fallback: weiter ohne LLM-Feedback

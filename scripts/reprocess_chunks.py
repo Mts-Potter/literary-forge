@@ -81,8 +81,52 @@ def fetch_chunks(supabase: Client, offset: int, batch: int) -> list[dict[str, An
     return resp.data or []
 
 
+def fetch_chunks_by_ids(supabase: Client, ids: list[str]) -> list[dict[str, Any]]:
+    resp = (
+        supabase.table("source_texts")
+        .select("id, content, language")
+        .in_("id", ids)
+        .execute()
+    )
+    return resp.data or []
+
+
 def update_metrics(supabase: Client, chunk_id: str, metrics: dict[str, Any]) -> None:
     supabase.table("source_texts").update({"metrics": metrics}).eq("id", chunk_id).execute()
+
+
+def recompute_profiles_per_author(supabase: Client) -> tuple[int, int]:
+    """Pro-Autor-Recompute. Vermeidet den Statement-Timeout des Bulk-RPC.
+
+    Returns: (success_count, fail_count)
+    """
+    resp = (
+        supabase.table("source_texts")
+        .select("author_id")
+        .not_.is_("author_id", "null")
+        .execute()
+    )
+    author_ids = sorted({row["author_id"] for row in (resp.data or []) if row.get("author_id")})
+    print(f"  Found {len(author_ids)} distinct authors")
+
+    ok = 0
+    fail = 0
+    for author_id in author_ids:
+        try:
+            result = supabase.rpc(
+                "recompute_author_profile", {"p_author_id": author_id}
+            ).execute()
+            data = result.data or {}
+            if data.get("ok"):
+                ok += 1
+                print(f"  [OK] {author_id} — {data.get('chunk_count', 0)} chunks")
+            else:
+                fail += 1
+                print(f"  [SKIP] {author_id} — {data.get('reason', 'unknown')}")
+        except Exception as e:
+            fail += 1
+            print(f"  [FAIL] {author_id}: {e}")
+    return ok, fail
 
 
 def main() -> None:
@@ -90,10 +134,57 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="Compute but do not write")
     parser.add_argument("--limit", type=int, default=0, help="Stop after N chunks (0 = all)")
     parser.add_argument("--batch", type=int, default=50, help="Batch size for DB fetches")
+    parser.add_argument(
+        "--profiles-only",
+        action="store_true",
+        help="Skip chunk reprocessing, only recompute author profiles per-author",
+    )
+    parser.add_argument(
+        "--ids",
+        type=str,
+        default="",
+        help="Comma-separated chunk IDs to reprocess (instead of full run)",
+    )
     args = parser.parse_args()
 
     print("Connecting to Supabase ...")
     supabase = make_client()
+
+    if args.profiles_only:
+        print("Recomputing author profiles per-author (no chunk reprocessing) ...")
+        ok, fail = recompute_profiles_per_author(supabase)
+        print(f"\nProfiles done: ok={ok}, fail={fail}")
+        return
+
+    if args.ids:
+        ids = [s.strip() for s in args.ids.split(",") if s.strip()]
+        print(f"Reprocessing {len(ids)} specific chunk(s) ...")
+        chunks = fetch_chunks_by_ids(supabase, ids)
+        if not chunks:
+            print("ERROR: no chunks found for given IDs.")
+            sys.exit(1)
+        success = failed = 0
+        for chunk in chunks:
+            features = process_chunk(chunk)
+            if features is None:
+                print(f"  [SKIP] {chunk['id']}: unsupported language or too short")
+                continue
+            if args.dry_run:
+                success += 1
+                print(f"  [DRY] {chunk['id']}: computed")
+                continue
+            try:
+                update_metrics(supabase, chunk["id"], features)
+                success += 1
+                print(f"  [OK] {chunk['id']}")
+            except Exception as e:
+                failed += 1
+                print(f"  [FAIL] {chunk['id']}: {e}")
+        print(f"\nDone: ok={success}, fail={failed}")
+        if not args.dry_run and failed == 0:
+            print("\nRecomputing author profiles per-author ...")
+            recompute_profiles_per_author(supabase)
+        return
 
     total = (
         supabase.table("source_texts")
@@ -149,9 +240,9 @@ def main() -> None:
     print(f"  Failed:  {failed}")
 
     if not args.dry_run:
-        print("\nRecomputing all author profiles ...")
-        result = supabase.rpc("recompute_all_author_profiles").execute()
-        print(f"  RPC result: {result.data}")
+        print("\nRecomputing author profiles per-author (avoids bulk-RPC timeout) ...")
+        ok, fail = recompute_profiles_per_author(supabase)
+        print(f"  Profiles done: ok={ok}, fail={fail}")
     else:
         print("\nDry-run — author profiles not recomputed.")
 

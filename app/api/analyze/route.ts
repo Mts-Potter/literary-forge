@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 import { logError, getSafeErrorMessage } from '@/lib/utils/error-logger'
 import { invokeGemini } from '@/lib/llm/gemini'
+import { analyzeSchema } from '@/lib/validation/api-schemas'
 
 export const runtime = 'edge'
 
@@ -48,26 +49,9 @@ export async function POST(request: NextRequest) {
     // SECURITY M-1: Validate request body
     const body = await request.json()
 
-    // Create validation schema for this endpoint
-    const requestSchema = z.object({
-      type: z.enum(['destyle', 'feedback'] as const, {
-        message: 'Type must be "destyle" or "feedback"'
-      }),
-      text: z.string().min(10).max(100_000).optional(),
-      textId: z.string().uuid().optional(),
-      userText: z.string().min(10).max(10_000).optional(),
-      originalText: z.string().min(10).max(10_000).optional(),
-      styleMetrics: z.object({
-        userDD: z.number().min(0).max(100),
-        originalDD: z.number().min(0).max(100),
-        userAVR: z.number().min(0).max(10),
-        originalAVR: z.number().min(0).max(10)
-      }).optional()
-    })
-
     let validatedData
     try {
-      validatedData = requestSchema.parse(body)
+      validatedData = analyzeSchema.parse(body)
     } catch (err) {
       if (err instanceof z.ZodError) {
         return NextResponse.json(

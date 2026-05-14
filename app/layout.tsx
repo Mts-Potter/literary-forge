@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/navigation/Footer";
 import { Analytics } from "@vercel/analytics/next";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -132,7 +133,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="de">
+    <html lang="de" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -142,12 +143,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <Analytics />
+        <ThemeProvider>
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

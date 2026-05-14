@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
-/* Dark Mode als Standard - zweifarbiges Schema */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --border: #e5e5e5;
+  --card: #ffffff;
+  --card-hover: #f5f5f5;
+  --muted: #737373;
+}
+
+.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
   --border: #262626;
@@ -23,7 +33,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Entferne blaue Akzente - nur Schwarz/Weiß/Grau */
 * {
   border-color: var(--border);
 }

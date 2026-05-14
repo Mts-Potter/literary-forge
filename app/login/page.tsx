@@ -53,17 +53,19 @@ export default function LoginPage() {
     }
   }
 
+  const isSuccess = error.includes('Check your email')
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+    <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center p-4 bg-[var(--background)]">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-lg p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Literary Forge</h1>
-          <p className="text-gray-600">Anmelden oder Registrieren</p>
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">Literary Forge</h1>
+          <p className="text-[var(--muted)]">Anmelden oder Registrieren</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
               Email
             </label>
             <input
@@ -71,33 +73,40 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg
-                         focus:border-blue-500 focus:outline-none
-                         text-gray-900 placeholder:text-gray-400"
+              autoComplete="email"
+              className="w-full px-4 py-2 bg-[var(--background)] border-2 border-[var(--border)] rounded-lg
+                         focus:border-[var(--foreground)] focus:outline-none
+                         text-[var(--foreground)] placeholder:text-[var(--muted)]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Password
+            <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
+              Passwort
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg
-                         focus:border-blue-500 focus:outline-none
-                         text-gray-900 placeholder:text-gray-400"
+              autoComplete="current-password"
+              minLength={8}
+              className="w-full px-4 py-2 bg-[var(--background)] border-2 border-[var(--border)] rounded-lg
+                         focus:border-[var(--foreground)] focus:outline-none
+                         text-[var(--foreground)] placeholder:text-[var(--muted)]"
             />
+            <p className="mt-1 text-xs text-[var(--muted)]">Mindestens 8 Zeichen für neue Konten.</p>
           </div>
 
           {error && (
-            <div className={`p-3 rounded-lg text-sm ${
-              error.includes('Check your email')
-                ? 'bg-green-50 text-green-800'
-                : 'bg-red-50 text-red-800'
-            }`}>
+            <div
+              role="alert"
+              className={`p-3 rounded-lg text-sm border ${
+                isSuccess
+                  ? 'border-green-700/50 bg-green-900/20 text-green-300 dark:text-green-300'
+                  : 'border-red-700/50 bg-red-900/20 text-red-300 dark:text-red-300'
+              }`}
+            >
               {error}
             </div>
           )}
@@ -106,19 +115,17 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg
-                         hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
-                         transition-colors"
+              className="flex-1 px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg
+                         hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
-              {isLoading ? 'Loading...' : 'Login'}
+              {isLoading ? 'Lade…' : 'Login'}
             </button>
             <button
               type="button"
               onClick={handleSignUp}
               disabled={isLoading}
-              className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg
-                         hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50
-                         transition-colors"
+              className="flex-1 px-6 py-3 border-2 border-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg
+                         hover:bg-[var(--card-hover)] disabled:opacity-50 transition-colors"
             >
               Sign Up
             </button>
@@ -126,7 +133,7 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-blue-600 hover:text-blue-700">
+          <Link href="/" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
             ← Zurück zur Startseite
           </Link>
         </div>

@@ -72,38 +72,24 @@ export const submitTrainingSchema = z.object({
  * Text Analysis Schema
  * Used by: /api/analyze
  *
- * Hinweis: /api/analyze definiert sein eigenes Inline-Schema (mehr Felder).
- * Dieses Schema hier ist ein Subset/Alias und sollte in Phase 8 entweder
- * gemerged oder entfernt werden.
+ * Single Source of Truth für die /api/analyze Route.
  */
 export const analyzeSchema = z.object({
   type: z.enum(['destyle', 'feedback'] as const, {
-    message: 'Type must be "destyle" or "feedback"'
+    message: 'Type must be "destyle" or "feedback"',
   }),
-
-  userText: z.string()
-    .min(10, 'User text must be at least 10 characters')
-    .max(10_000, 'User text must be less than 10,000 characters')
+  text: z.string().min(10).max(100_000).optional(),
+  textId: z.string().uuid().optional(),
+  userText: z.string().min(10).max(10_000).optional(),
+  originalText: z.string().min(10).max(10_000).optional(),
+  styleMetrics: z
+    .object({
+      userDD: z.number().min(0).max(100),
+      originalDD: z.number().min(0).max(100),
+      userAVR: z.number().min(0).max(10),
+      originalAVR: z.number().min(0).max(10),
+    })
     .optional(),
-
-  originalText: z.string()
-    .min(10, 'Original text must be at least 10 characters')
-    .max(10_000, 'Original text must be less than 10,000 characters')
-    .optional(),
-
-  styleMetrics: z.object({
-    dependencyDistance: z.number()
-      .min(0, 'Dependency distance must be positive')
-      .max(100, 'Dependency distance too high'),
-
-    adjVerbRatio: z.number()
-      .min(0, 'Adj/verb ratio must be positive')
-      .max(10, 'Adj/verb ratio too high'),
-
-    sentenceLengthVariance: z.number()
-      .min(0, 'Sentence variance must be positive')
-      .max(1000, 'Sentence variance too high'),
-  }).optional(),
 })
 
 /**
@@ -147,17 +133,6 @@ export const llmAnalysisSchema = z.object({
 })
 
 /**
- * LLM Analysis Metadata Response
- * Expected format from /api/analyze LLM call.
- */
-export const llmMetadataSchema = z.object({
-  dependencyDistance: z.number().min(0).max(100),
-  adjVerbRatio: z.number().min(0).max(10),
-  sentenceLengthVariance: z.number().min(0).max(1000),
-  // Allow other fields but validate known ones
-}).passthrough()
-
-/**
  * Submit Review RPC Result Schema
  * Expected format from submit_review() database function
  */
@@ -191,5 +166,4 @@ export type SubmitTrainingInput = z.infer<typeof submitTrainingSchema>
 export type AnalyzeInput = z.infer<typeof analyzeSchema>
 export type SceneDescriptionInput = z.infer<typeof sceneDescriptionSchema>
 export type LlmAnalysis = z.infer<typeof llmAnalysisSchema>
-export type LlmMetadata = z.infer<typeof llmMetadataSchema>
 export type SubmitReviewResult = z.infer<typeof submitReviewResultSchema>

@@ -88,15 +88,30 @@ export default function MethodePage() {
 
       <p className="text-[var(--foreground)] leading-relaxed">
         Was Franklin nicht messen konnte, messen wir: pro Versuch rechnen wir
-        20 Stilmetriken (Satzlängen-Varianz, MTLD, Funktionswort-Verteilung,
-        Dependency-Distance, mehr) und vergleichen mit dem statistischen
-        Profil des Original-Autors. Der Stilabstand ist deine deterministische
-        Bewertung — keine LLM-Halluzination, sondern Burrows&apos;-Δ-Variante.
+        20 Stilmetriken (Satzlängen-Varianz,{" "}
+        <abbr title="Measure of Textual Lexical Diversity — bias-resistente Variante der Type-Token-Ratio, misst lexikalische Vielfalt." className="underline decoration-dotted cursor-help">
+          MTLD
+        </abbr>
+        , Funktionswort-Verteilung,{" "}
+        <abbr title="Mittlerer Abstand zwischen syntaktisch abhängigen Wörtern. Höher = komplexere Syntax." className="underline decoration-dotted cursor-help">
+          Dependency-Distance
+        </abbr>
+        , mehr) und vergleichen mit dem statistischen Profil des
+        Original-Autors. Der Stilabstand ist deine deterministische
+        Bewertung — keine LLM-Halluzination, sondern{" "}
+        <abbr title="Burrows' Delta — Standard-Stilometrie-Verfahren der Autorschafts-Attribution (Burrows 2002). Wir nutzen eine z-Score-basierte Variante über 20 Features." className="underline decoration-dotted cursor-help">
+          Burrows&apos;-Δ-Variante
+        </abbr>
+        .
       </p>
 
       <p className="text-[var(--foreground)] leading-relaxed">
-        Spaced Repetition (FSRS V5) plant die Wiederholungen so, dass du
-        Passagen in zunehmenden Abständen rekonstruierst.
+        Spaced Repetition (
+        <abbr title="Free Spaced Repetition Scheduler V5 — moderner Nachfolger von SM-2/Anki, lernt deine Vergessenskurve pro Karte." className="underline decoration-dotted cursor-help">
+          FSRS V5
+        </abbr>
+        ) plant die Wiederholungen so, dass du Passagen in zunehmenden
+        Abständen rekonstruierst.
       </p>
 
       <h2 className="text-2xl font-semibold text-[var(--foreground)] mt-10">

@@ -5,17 +5,30 @@ import { createClient } from "@/lib/supabase/server"
 import { getBioByAuthorId, slugifyTitle } from "@/data/authors-bios"
 import { bookSchema } from "@/lib/seo/structured-data"
 
+function cutAtSentence(text: string, target: number): string {
+  if (text.length <= target) return text
+  // Look for a sentence end within ±60 chars of target
+  const slice = text.slice(0, target + 60)
+  const lastBoundary = Math.max(
+    slice.lastIndexOf("."),
+    slice.lastIndexOf("!"),
+    slice.lastIndexOf("?")
+  )
+  if (lastBoundary >= target - 60 && lastBoundary >= 100) {
+    return text.slice(0, lastBoundary + 1) + "…"
+  }
+  return text.slice(0, target) + "…"
+}
+
 async function loadBookBySlug(slug: string) {
   const supabase = await createClient()
   const { data } = await supabase
     .from("source_texts")
-    .select("id, title, author_id, language, content, cefr_level, tags")
+    .select("id, title, author_id, language, content, cefr_level, tags, publication_year")
     .eq("is_pd_eu", true)
   const rows = data ?? []
-  // Find first chunk whose base-title matches the slug
   const matching = rows.filter((r) => slugifyTitle(r.title as string) === slug)
   if (matching.length === 0) return null
-  // Sort by " (Teil X)" suffix for stable display
   matching.sort((a, b) => {
     const an = parseInt((a.title.match(/Teil (\d+)/) ?? [])[1] ?? "0", 10)
     const bn = parseInt((b.title.match(/Teil (\d+)/) ?? [])[1] ?? "0", 10)
@@ -26,8 +39,30 @@ async function loadBookBySlug(slug: string) {
     base_title: base,
     author_id: matching[0].author_id as string,
     language: matching[0].language as string,
+    publication_year: (matching[0].publication_year as number) ?? null,
+    cefr_level: (matching[0].cefr_level as string) ?? null,
     chunks: matching,
   }
+}
+
+async function loadRelatedBooks(author_id: string, currentSlug: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("source_texts")
+    .select("title")
+    .eq("author_id", author_id)
+    .eq("is_pd_eu", true)
+  const seen = new Set<string>()
+  const related: { title: string; slug: string }[] = []
+  for (const r of data ?? []) {
+    const base = (r.title as string).split(" (Teil ")[0]
+    const ts = slugifyTitle(base)
+    if (ts !== currentSlug && !seen.has(ts)) {
+      seen.add(ts)
+      related.push({ title: base, slug: ts })
+    }
+  }
+  return related
 }
 
 export async function generateMetadata({
@@ -55,6 +90,13 @@ export default async function BuchPage({
   const book = await loadBookBySlug(slug)
   if (!book) notFound()
   const bio = getBioByAuthorId(book.author_id)
+  const related = await loadRelatedBooks(book.author_id, slug)
+
+  const metaParts = [
+    book.language.toUpperCase(),
+    book.publication_year ? String(book.publication_year) : null,
+    book.cefr_level ? book.cefr_level.toUpperCase() : null,
+  ].filter(Boolean) as string[]
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-12 space-y-6">
@@ -76,7 +118,7 @@ export default async function BuchPage({
           ) : (
             "Unbekannt"
           )}{" "}
-          · {book.language.toUpperCase()}
+          · {metaParts.join(" · ")}
         </p>
         <h1 className="text-4xl font-bold text-[var(--foreground)] mt-2">{book.base_title}</h1>
         <p className="text-sm text-[var(--muted)] mt-2">
@@ -89,8 +131,7 @@ export default async function BuchPage({
           <article key={c.id} className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
             <p className="text-xs text-[var(--muted)] mb-2">{c.title}</p>
             <p className="text-[var(--foreground)] leading-relaxed font-serif text-base">
-              {(c.content as string).slice(0, 600)}
-              {(c.content as string).length > 600 && "…"}
+              {cutAtSentence(c.content as string, 600)}
             </p>
           </article>
         ))}
@@ -120,6 +161,26 @@ export default async function BuchPage({
           </Link>
         </div>
       </div>
+
+      {related.length > 0 && bio && (
+        <section className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
+            Andere Werke von {bio.name.split(",")[0]}
+          </h2>
+          <ul className="space-y-2">
+            {related.map((r) => (
+              <li key={r.slug}>
+                <Link
+                  href={`/buecher/${r.slug}`}
+                  className="text-[var(--foreground)] underline hover:text-[var(--muted)]"
+                >
+                  {r.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <p className="text-center">
         <Link href="/buecher" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] underline">

@@ -1,5 +1,25 @@
 'use client'
 
+interface FeedbackPayload {
+  feedback: string
+  scores: {
+    structure: number
+    vocabulary: number
+    rhythm: number
+    tone: number
+  }
+  overall_accuracy: number
+  style_score?: number | null
+  style_distance?: number | null
+  deterministic?: boolean
+  schedule?: {
+    grade: number
+    next_review: string
+    interval_days: number
+    message: string
+  }
+}
+
 export function FeedbackView({
   original,
   user,
@@ -8,57 +28,79 @@ export function FeedbackView({
 }: {
   original: string
   user: string
-  feedback: any
+  feedback: FeedbackPayload
   onContinue: () => void
 }) {
-  const { scores, overall_accuracy, feedback: feedbackText, schedule } = feedback
+  const {
+    scores,
+    overall_accuracy,
+    feedback: feedbackText,
+    schedule,
+    style_score,
+    style_distance,
+    deterministic
+  } = feedback
 
-  // Calculate grade color
-  const getGradeColor = (score: number) => {
-    // All scores show in white on dark background
-    return 'text-white bg-[#0a0a0a]'
-  }
+  // Primärer Score: deterministisch wenn vorhanden, sonst LLM-Fallback
+  const primaryScore = style_score ?? overall_accuracy
 
   return (
     <div className="bg-[#0a0a0a] p-6">
       <div className="max-w-5xl mx-auto">
-        {/* Header with overall score */}
+        {/* Header */}
         <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold text-white">Review Feedback</h1>
-            <div className={`px-6 py-3 rounded-lg font-bold text-4xl ${getGradeColor(overall_accuracy)}`}>
-              {overall_accuracy.toFixed(0)}%
+            <div>
+              <h1 className="text-3xl font-bold text-white">Style Distance</h1>
+              <p className="text-sm text-gray-400 mt-1">
+                {deterministic
+                  ? 'Burrows-Delta z-score against author profile (deterministic)'
+                  : 'AI estimate (author profile not available — run reprocessing)'}
+              </p>
+            </div>
+            <div className="px-6 py-3 rounded-lg font-bold text-4xl text-white bg-[#0a0a0a] border border-[#262626]">
+              {primaryScore.toFixed(0)}%
             </div>
           </div>
 
+          {style_distance != null && (
+            <p className="text-sm text-gray-500">
+              raw style_distance = {style_distance.toFixed(2)} (lower = closer to author)
+            </p>
+          )}
+
           {/* FSRS Schedule Info */}
           {schedule && (
-            <div className="flex items-center gap-4 p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
+            <div className="mt-4 flex items-center gap-4 p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
               <div className="text-3xl">📅</div>
               <div>
                 <p className="font-semibold text-white text-base mb-1">{schedule.message}</p>
                 <p className="text-base text-gray-400">
-                  Grade: {schedule.grade}/4 • Next: {new Date(schedule.next_review).toLocaleDateString('en-US')}
-                  {schedule.interval_days > 0 && ` (in ${schedule.interval_days} ${schedule.interval_days === 1 ? 'day' : 'days'})`}
+                  Grade: {schedule.grade}/4 • Next:{' '}
+                  {new Date(schedule.next_review).toLocaleDateString('en-US')}
+                  {schedule.interval_days > 0 &&
+                    ` (in ${schedule.interval_days} ${schedule.interval_days === 1 ? 'day' : 'days'})`}
                 </p>
               </div>
             </div>
           )}
         </div>
 
-        {/* Detailed Scores */}
+        {/* LLM-Sub-Scores (qualitative impression, not the main number) */}
         {scores && (
           <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
-            <h2 className="text-xl font-semibold text-white mb-4">Detailed Analysis</h2>
+            <h2 className="text-xl font-semibold text-white mb-1">Qualitative Impression</h2>
+            <p className="text-sm text-gray-400 mb-4">
+              AI-estimated rubrics — secondary to the deterministic style score above.
+            </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(scores).map(([category, score]: [string, any]) => (
-                <div key={category} className="text-center p-4 bg-[#0a0a0a] rounded-lg border border-[#262626]">
-                  <p className="text-base text-gray-400 capitalize mb-2">
-                    {category.replace('_', ' ')}
-                  </p>
-                  <p className={`text-3xl font-bold ${getGradeColor(score)}`}>
-                    {score}%
-                  </p>
+              {(['structure', 'vocabulary', 'rhythm', 'tone'] as const).map(category => (
+                <div
+                  key={category}
+                  className="text-center p-4 bg-[#0a0a0a] rounded-lg border border-[#262626]"
+                >
+                  <p className="text-base text-gray-400 capitalize mb-2">{category}</p>
+                  <p className="text-3xl font-bold text-white">{scores[category]}%</p>
                 </div>
               ))}
             </div>
@@ -77,28 +119,21 @@ export function FeedbackView({
         <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
           <h2 className="text-xl font-semibold text-white mb-4">Text Comparison</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {/* Original */}
             <div>
               <h3 className="text-base font-semibold text-gray-400 mb-3">Original</h3>
               <div className="p-4 bg-[#0a0a0a] rounded-lg border border-[#262626]">
-                <p className="text-white text-lg leading-relaxed font-serif">
-                  {original}
-                </p>
+                <p className="text-white text-lg leading-relaxed font-serif">{original}</p>
               </div>
             </div>
-
-            {/* User Attempt */}
             <div>
               <h3 className="text-base font-semibold text-white mb-3">Your Attempt</h3>
               <div className="p-4 bg-[#0a0a0a] rounded-lg border border-[#262626]">
-                <p className="text-white text-lg leading-relaxed font-serif">
-                  {user}
-                </p>
+                <p className="text-white text-lg leading-relaxed font-serif">{user}</p>
               </div>
             </div>
           </div>
 
-          {/* Statistics */}
+          {/* Statistics — FIX: sentence split bug (was using \s+) */}
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-3 bg-[#0a0a0a] rounded-lg border border-[#262626]">
               <p className="text-base text-gray-400 mb-1">Original Words</p>
@@ -115,19 +150,18 @@ export function FeedbackView({
             <div className="text-center p-3 bg-[#0a0a0a] rounded-lg border border-[#262626]">
               <p className="text-base text-gray-400 mb-1">Original Sentences</p>
               <p className="text-2xl font-bold text-white">
-                {original.split(/[.!?]+/).filter(Boolean).length}
+                {original.split(/[.!?]+/).filter(s => s.trim().length > 0).length}
               </p>
             </div>
             <div className="text-center p-3 bg-[#0a0a0a] rounded-lg border border-[#262626]">
               <p className="text-base text-gray-400 mb-1">Your Sentences</p>
               <p className="text-2xl font-bold text-white">
-                {user.split(/\s+/).filter(Boolean).length}
+                {user.split(/[.!?]+/).filter(s => s.trim().length > 0).length}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-4">
           <button
             onClick={onContinue}

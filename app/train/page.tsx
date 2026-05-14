@@ -30,14 +30,15 @@ export default async function TrainPage({
     redirect('/login')
   }
 
-  // Fetch user settings (SRS toggle)
+  // Fetch user settings (SRS toggle + default mode)
   const { data: userSettings } = await supabase
     .from('user_settings')
-    .select('enable_srs')
+    .select('enable_srs, default_mode')
     .eq('user_id', user.id)
     .single()
 
   const enableSRS = userSettings?.enable_srs ?? true  // Default to SRS mode
+  const userDefaultMode = (userSettings?.default_mode ?? 'franklin') as 'franklin' | 'cloze' | 'free'
 
   // === SRS MODE: Anki-style scheduling ===
   if (enableSRS) {
@@ -51,6 +52,9 @@ export default async function TrainPage({
       reps,
       difficulty,
       stability,
+      mode,
+      phase,
+      cloze_level,
       source_texts (
         id,
         title,
@@ -102,7 +106,7 @@ export default async function TrainPage({
             </p>
           </div>
         )}
-        <TrainingInterface initialChunk={chunk} userId={user.id} />
+        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={userDefaultMode} />
       </>
     )
   }
@@ -179,7 +183,7 @@ export default async function TrainPage({
             </p>
           </div>
         )}
-        <TrainingInterface initialChunk={chunk} userId={user.id} />
+        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={userDefaultMode} />
       </>
     )
   }
@@ -300,7 +304,7 @@ export default async function TrainPage({
             </p>
           </div>
         )}
-        <TrainingInterface initialChunk={chunk} userId={user.id} />
+        <TrainingInterface initialChunk={chunk} userId={user.id} userDefaultMode={userDefaultMode} />
       </>
     )
   }

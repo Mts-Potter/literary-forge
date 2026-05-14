@@ -320,43 +320,13 @@ function splitIntoChunks(text: string, targetSize: number): string[] {
   return chunks.filter(chunk => chunk.length >= 50)
 }
 
-function generateTags(language: string, cefrLevel: string | null, authorName: string): string[] {
+function generateTags(language: string, cefrLevel: string | null, _authorName: string): string[] {
+  // Phase 8.5: hardcoded author-name heuristics removed. Tags should come from
+  // author_style_profiles + manual curation, not from string-matching author names.
   const tags: string[] = []
-
-  // Language tag
-  if (language === 'de') {
-    tags.push('deutsch')
-  } else if (language === 'en') {
-    tags.push('englisch')
-  }
-
-  // CEFR level tag
-  if (cefrLevel) {
-    tags.push(cefrLevel.toUpperCase())
-  }
-
-  // Author-based tags (optional genre inference)
-  const authorLower = authorName.toLowerCase()
-
-  // German authors
-  if (authorLower.includes('kafka')) {
-    tags.push('Moderne', 'Existentialismus')
-  } else if (authorLower.includes('goethe')) {
-    tags.push('Klassik', 'Weimarer Klassik')
-  } else if (authorLower.includes('schiller')) {
-    tags.push('Klassik', 'Drama')
-  } else if (authorLower.includes('brecht')) {
-    tags.push('Moderne', 'Episches Theater')
-  } else if (authorLower.includes('hesse')) {
-    tags.push('Moderne', 'Bildungsroman')
-  } else if (authorLower.includes('mann')) {
-    tags.push('Moderne', 'Literaturnobelpreis')
-  }
-
-  // If no specific tags, add generic "Literatur"
-  if (tags.length === 0 || (tags.length === 1 && (tags[0] === 'deutsch' || tags[0] === 'englisch'))) {
-    tags.push('Literatur')
-  }
-
+  if (language === 'de') tags.push('deutsch')
+  else if (language === 'en') tags.push('englisch')
+  if (cefrLevel) tags.push(cefrLevel.toUpperCase())
+  if (tags.length === 0) tags.push('Literatur')
   return tags
 }

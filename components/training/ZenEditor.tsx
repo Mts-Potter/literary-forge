@@ -17,32 +17,8 @@ export function ZenEditor({
   const [text, setText] = useLocalStorage('zen-editor-draft', '')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Typewriter scrolling: Keep cursor vertically centered
-  useEffect(() => {
-    if (!textareaRef.current) return
-
-    const handleScroll = () => {
-      const textarea = textareaRef.current!
-      const lineHeight = parseInt(getComputedStyle(textarea).lineHeight)
-      const cursorPosition = textarea.selectionStart
-      const textBeforeCursor = textarea.value.substring(0, cursorPosition)
-      const lines = textBeforeCursor.split('\n').length
-
-      const targetScroll = (lines * lineHeight) - (textarea.clientHeight / 2)
-      textarea.scrollTop = Math.max(0, targetScroll)
-    }
-
-    const textarea = textareaRef.current
-    textarea.addEventListener('input', handleScroll)
-    textarea.addEventListener('keydown', handleScroll)
-
-    return () => {
-      textarea.removeEventListener('input', handleScroll)
-      textarea.removeEventListener('keydown', handleScroll)
-    }
-  }, [])
-
   // Keyboard shortcut: Cmd+Enter (Mac) or Ctrl+Enter (Windows) to submit
+  // (Typewriter-Scroll-Effekt wurde Phase 6.7 entfernt — irritierte mehr als er half.)
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && text.trim()) {
       e.preventDefault()

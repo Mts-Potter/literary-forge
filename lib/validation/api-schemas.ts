@@ -71,15 +71,20 @@ export const submitTrainingSchema = z.object({
 /**
  * Text Analysis Schema
  * Used by: /api/analyze
+ *
+ * Hinweis: /api/analyze definiert sein eigenes Inline-Schema (mehr Felder).
+ * Dieses Schema hier ist ein Subset/Alias und sollte in Phase 8 entweder
+ * gemerged oder entfernt werden.
  */
 export const analyzeSchema = z.object({
-  type: z.enum(['destyle', 'style_mimic'] as const, {
-    message: 'Invalid analysis type'
+  type: z.enum(['destyle', 'feedback'] as const, {
+    message: 'Type must be "destyle" or "feedback"'
   }),
 
   userText: z.string()
     .min(10, 'User text must be at least 10 characters')
-    .max(10_000, 'User text must be less than 10,000 characters'),
+    .max(10_000, 'User text must be less than 10,000 characters')
+    .optional(),
 
   originalText: z.string()
     .min(10, 'Original text must be at least 10 characters')
@@ -106,9 +111,10 @@ export const analyzeSchema = z.object({
  * Used by: /api/generate-scene-description
  */
 export const sceneDescriptionSchema = z.object({
-  userText: z.string()
-    .min(10, 'User text must be at least 10 characters')
-    .max(5_000, 'User text must be less than 5,000 characters'),
+  text_id: z.string().uuid('Invalid text ID format'),
+  content: z.string()
+    .min(10, 'Content must be at least 10 characters')
+    .max(100_000, 'Content too long'),
 })
 
 /**

@@ -1,51 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { createClient } from '@/lib/supabase/server'
-import { analyzeSchema, bedrockMetadataSchema } from '@/lib/validation/api-schemas'
 import { z } from 'zod'
 import { logError, getSafeErrorMessage } from '@/lib/utils/error-logger'
+import { invokeGemini } from '@/lib/llm/gemini'
 
 export const runtime = 'edge'
-
-// AWS Bedrock Client Configuration
-const bedrockClient = new BedrockRuntimeClient({
-  region: process.env.AWS_REGION || 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-})
-
-/**
- * Wrapper für Bedrock Model Invocation
- * Nutzt direkt den BedrockRuntimeClient für Edge-Kompatibilität
- */
-async function invokeBedrockModel(prompt: string, maxTokens: number = 1024) {
-  const modelId = process.env.BEDROCK_MODEL_ID || 'us.anthropic.claude-4-5-haiku-20250110-v1:0'
-
-  const payload = {
-    anthropic_version: 'bedrock-2023-05-31',
-    max_tokens: maxTokens,
-    messages: [
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-  }
-
-  const command = new InvokeModelCommand({
-    modelId,
-    contentType: 'application/json',
-    accept: 'application/json',
-    body: JSON.stringify(payload),
-  })
-
-  const response = await bedrockClient.send(command)
-  const responseBody = JSON.parse(new TextDecoder().decode(response.body))
-
-  return responseBody
-}
 
 /**
  * POST /api/analyze
@@ -148,13 +107,10 @@ Antworte als JSON:
   "constraints": ["...", "..."]
 }`
 
-      const response = await invokeBedrockModel(prompt, 1024)
-
-      // Bedrock Response Format: { content: [{ text: "..." }] }
-      const contentText = response.content?.[0]?.text
-      if (!contentText) {
-        throw new Error('Unexpected Bedrock response format')
-      }
+      const contentText = await invokeGemini(prompt, {
+        maxTokens: 1024,
+        jsonOutput: true
+      })
 
       // Parse JSON aus Response
       const metadata = JSON.parse(contentText)
@@ -202,12 +158,7 @@ Gib konstruktives Feedback:
 
 Antworte auf Deutsch, freundlich aber präzise.`
 
-      const response = await invokeBedrockModel(prompt, 2048)
-
-      const contentText = response.content?.[0]?.text
-      if (!contentText) {
-        throw new Error('Unexpected Bedrock response format')
-      }
+      const contentText = await invokeGemini(prompt, { maxTokens: 2048 })
 
       return NextResponse.json({ feedback: contentText })
     }

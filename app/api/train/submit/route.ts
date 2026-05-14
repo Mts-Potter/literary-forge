@@ -1,17 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { submitTrainingSchema, bedrockAnalysisSchema, submitReviewResultSchema } from '@/lib/validation/api-schemas'
 import { z } from 'zod'
 import { logError, getSafeErrorMessage } from '@/lib/utils/error-logger'
-
-const bedrockClient = new BedrockRuntimeClient({
-  region: process.env.AWS_REGION!,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
-  }
-})
+import { invokeGemini, GeminiError } from '@/lib/llm/gemini'
 
 export async function POST(request: NextRequest) {
   try {
@@ -92,7 +84,21 @@ export async function POST(request: NextRequest) {
     const original_text = originalData.content
     const style_metrics = originalData.metrics
 
-    // Call Anthropic API to analyze style
+    // Style metrics tolerant lesen — alte Daten haben snake_case, neue camelCase
+    // (Phase 2 wird das auf einheitliches 20-Feature-Schema umstellen)
+    const m = style_metrics || {}
+    const dependencyDistance = m.dependencyDistance ?? m.dependency_distance ?? null
+    const adjVerbRatio = m.adjVerbRatio ?? m.adj_verb_ratio ?? null
+    const sentenceLengthVariance = m.sentenceLengthVariance ?? m.sentence_length_variance ?? null
+
+    const metricsBlock = (dependencyDistance != null || adjVerbRatio != null || sentenceLengthVariance != null)
+      ? `
+- Dependency Distance: ${dependencyDistance ?? 'N/A'}
+- Adj/Verb Ratio: ${adjVerbRatio ?? 'N/A'}
+- Sentence Length Variance: ${sentenceLengthVariance ?? 'N/A'}`
+      : 'No metrics available'
+
+    // Prompt für Gemini (Stil-Evaluation)
     const prompt = `You are a literary critic evaluating a stylistic imitation exercise.
 
 ORIGINAL TEXT:
@@ -102,12 +108,7 @@ USER ATTEMPT:
 ${user_text}
 
 TARGET STYLE METRICS:
-${style_metrics ? `
-- Avg Sentence Length: ${style_metrics.sentence_length_avg || 'N/A'}
-- Dependency Distance: ${style_metrics.dependency_distance || 'N/A'}
-- Adj/Verb Ratio: ${style_metrics.adj_verb_ratio || 'N/A'}
-- Sentence Variance: ${style_metrics.sentence_length_variance || 'N/A'}
-` : 'No metrics available'}
+${metricsBlock}
 
 Evaluate the user's attempt on these criteria (score each 0-100):
 1. **Structure**: Does the sentence rhythm and complexity match the original (parataxis vs. hypotaxis)?
@@ -131,48 +132,26 @@ Output JSON in this exact format:
   "overall_accuracy": 0-100
 }`
 
-    // Call AWS Bedrock with Claude 3.5 Haiku
-    const input = {
-      modelId: process.env.BEDROCK_MODEL_ID || 'us.anthropic.claude-3-5-haiku-20241022-v1:0',
-      contentType: 'application/json',
-      accept: 'application/json',
-      body: JSON.stringify({
-        anthropic_version: 'bedrock-2023-05-31',
-        max_tokens: 2048,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.3
-      })
-    }
-
-    const command = new InvokeModelCommand(input)
-    const response = await bedrockClient.send(command)
-
-    // Decode Bedrock response (Uint8Array → JSON)
-    const responseBody = JSON.parse(new TextDecoder().decode(response.body))
-
-    // Extract text from Bedrock response format
-    const content = responseBody.content?.[0]
-    if (!content || content.type !== 'text') {
-      throw new Error('Unexpected response type from Bedrock')
-    }
+    // Call Gemini for style evaluation
+    const responseText = await invokeGemini(prompt, {
+      maxTokens: 2048,
+      temperature: 0.3,
+      jsonOutput: true
+    })
 
     // SECURITY H-2: Parse and validate AI response with schema
     let analysis
     try {
-      const rawAnalysis = JSON.parse(content.text)
+      const rawAnalysis = JSON.parse(responseText)
+      // Note: bedrockAnalysisSchema name kept for compatibility, validates Gemini response too
       analysis = bedrockAnalysisSchema.parse(rawAnalysis)
     } catch (error) {
       if (error instanceof z.ZodError) {
         console.error('AI response validation failed:', error.issues)
-        console.error('Raw response:', content.text)
+        console.error('Raw response:', responseText)
         throw new Error('Invalid AI response format')
       }
-      console.error('Failed to parse Bedrock response:', content.text)
+      console.error('Failed to parse Gemini response:', responseText)
       throw new Error('Invalid response format from AI')
     }
 
@@ -238,7 +217,7 @@ Output JSON in this exact format:
       )
     }
 
-    if (errorMessage.includes('Bedrock') || errorMessage.includes('AI') || errorMessage.includes('response format')) {
+    if (errorMessage.includes('Gemini') || errorMessage.includes('AI') || errorMessage.includes('response format') || error instanceof GeminiError) {
       return NextResponse.json(
         { error: 'AI service temporarily unavailable. Your work is saved. Please try again.' },
         { status: 503 }

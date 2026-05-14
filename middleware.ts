@@ -48,9 +48,11 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      // Match all paths except API routes and static assets.
-      // Skip prefetch requests so cached document responses stay reusable.
-      source: '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|.*\\..*).*)',
+      // Route-scoped CSP nonces: ONLY apply to auth/app routes.
+      // Marketing routes (/, /methode, /demo, /autoren, /buecher, /login, legal pages)
+      // get a static CSP from next.config.ts and remain CDN-cacheable.
+      source:
+        '/(train|dashboard|settings|admin|read|welcome)(.*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

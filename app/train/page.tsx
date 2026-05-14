@@ -4,13 +4,19 @@ import { TrainingInterface } from '@/components/training/TrainingInterface'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Training | Literary Forge",
-  description: "Trainieren Sie Ihren literarischen Schreibstil mit KI-gestütztem Feedback.",
+  title: "Training | The Franklin Method",
+  description: "Trainiere deinen Schreibstil mit der Franklin-Methode + KI-Feedback.",
   robots: {
     index: false,
     follow: false,
   },
 };
+
+const MIN_CHUNK_WORDS = 15
+function hasEnoughWords(content: string | undefined | null): boolean {
+  if (!content) return false
+  return content.trim().split(/\s+/).filter(Boolean).length >= MIN_CHUNK_WORDS
+}
 
 export default async function TrainPage({
   searchParams
@@ -72,9 +78,11 @@ export default async function TrainPage({
 
   const { data: dueChunks } = await dueChunkQuery
 
-  // Filter out the excluded text_id and apply book filter
+  // Filter out the excluded text_id, apply book filter, and enforce chunk-size minimum
   const filteredDueChunks = dueChunks?.filter(chunk => {
     if (chunk.text_id === excludeTextId) return false
+    const content = (chunk.source_texts as any)?.content
+    if (!hasEnoughWords(content)) return false
 
     // Apply book filter if specified
     if (bookFilter && chunk.source_texts) {
@@ -150,11 +158,12 @@ export default async function TrainPage({
   }
 
   const { data: newChunks } = await newChunkQuery
+  const validNewChunks = newChunks?.filter(c => hasEnoughWords(c.content)) ?? []
 
-  if (newChunks && newChunks.length > 0) {
+  if (validNewChunks.length > 0) {
     // Select a random chunk from the candidates
-    const randomIndex = Math.floor(Math.random() * newChunks.length)
-    const selectedChunk = newChunks[randomIndex]
+    const randomIndex = Math.floor(Math.random() * validNewChunks.length)
+    const selectedChunk = validNewChunks[randomIndex]
 
     // Transform to match expected shape (simulate a "new card" in user_progress format)
     const chunk = {
@@ -271,11 +280,12 @@ export default async function TrainPage({
   }
 
   const { data: nextTexts } = await nextTextQuery
+  const validNextTexts = nextTexts?.filter(c => hasEnoughWords(c.content)) ?? []
 
-  if (nextTexts && nextTexts.length > 0) {
+  if (validNextTexts.length > 0) {
     // Select a random chunk from the candidates
-    const randomIndex = Math.floor(Math.random() * nextTexts.length)
-    const selectedChunk = nextTexts[randomIndex]
+    const randomIndex = Math.floor(Math.random() * validNextTexts.length)
+    const selectedChunk = validNextTexts[randomIndex]
 
     // Transform to match expected shape
     const chunk = {

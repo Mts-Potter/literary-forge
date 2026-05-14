@@ -79,7 +79,7 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
             <span className="text-xl font-bold text-[var(--foreground)]">
-              Literary Forge
+              The Franklin Method
             </span>
           </Link>
 

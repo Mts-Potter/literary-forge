@@ -20,12 +20,11 @@ const geistMono = Geist_Mono({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://literary-forge.vercel.app';
 
 export const metadata: Metadata = {
-  title: "Literary Forge - KI-gestütztes Training für Literarischen Stil",
-  description: "Trainiere deinen Schreibstil mit KI-Unterstützung. Literary Forge bietet stilistische Mimesis durch intelligentes Feedback und personalisiertes Training.",
-  keywords: ["KI Schreibtraining", "literarischer Stil", "stilistische Mimesis", "Creative Writing", "AI Writing", "Schreibstil verbessern", "Literatur Training"],
-  authors: [{ name: "Literary Forge" }],
-  creator: "Literary Forge",
-  publisher: "Literary Forge",
+  title: "The Franklin Method — Schreibstil lernen wie Franklin",
+  description: "Eine Methode, die Benjamin Franklin sich selbst beibrachte (1722). Mit KI-Feedback optimiert: messbarer Stilabstand, Wort-für-Wort-Diff, qualitatives Lektorat.",
+  authors: [{ name: "The Franklin Method" }],
+  creator: "The Franklin Method",
+  publisher: "The Franklin Method",
   metadataBase: new URL(siteUrl),
   alternates: {
     canonical: "/",
@@ -34,9 +33,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "de_DE",
     url: siteUrl,
-    siteName: "Literary Forge",
-    title: "Literary Forge - KI-gestütztes Training für Literarischen Stil",
-    description: "Trainiere deinen Schreibstil mit KI-Unterstützung. Literary Forge bietet stilistische Mimesis durch intelligentes Feedback und personalisiertes Training.",
+    siteName: "The Franklin Method",
+    title: "The Franklin Method — Schreibstil lernen wie Franklin",
+    description: "Eine Methode, die Benjamin Franklin sich selbst beibrachte (1722). Mit KI-Feedback optimiert: messbarer Stilabstand, Wort-für-Wort-Diff, qualitatives Lektorat.",
     images: [
       {
         url: `${siteUrl}/og-image.png`,
@@ -48,8 +47,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Literary Forge - KI-gestütztes Training für Literarischen Stil",
-    description: "Trainiere deinen Schreibstil mit KI-Unterstützung. Stilistische Mimesis durch intelligentes Feedback.",
+    title: "The Franklin Method — Schreibstil lernen wie Franklin",
+    description: "Eine Methode, die Benjamin Franklin sich selbst beibrachte. Mit KI-Feedback optimiert.",
     images: [`${siteUrl}/og-image.png`],
   },
   robots: {
@@ -81,8 +80,8 @@ export default async function RootLayout({
       {
         "@type": "WebApplication",
         "@id": `${siteUrl}/#webapp`,
-        "name": "Literary Forge",
-        "description": "KI-gestütztes Training für stilistische Mimesis und literarischen Schreibstil",
+        "name": "The Franklin Method",
+        "description": "Schreibstil-Training basierend auf Benjamin Franklins Selbstlern-Methode, mit KI-Feedback und Spaced Repetition",
         "url": siteUrl,
         "applicationCategory": "EducationalApplication",
         "operatingSystem": "Web Browser",
@@ -104,7 +103,7 @@ export default async function RootLayout({
       {
         "@type": "Organization",
         "@id": `${siteUrl}/#organization`,
-        "name": "Literary Forge",
+        "name": "The Franklin Method",
         "url": siteUrl,
         "logo": {
           "@type": "ImageObject",
@@ -121,8 +120,8 @@ export default async function RootLayout({
         "@type": "WebSite",
         "@id": `${siteUrl}/#website`,
         "url": siteUrl,
-        "name": "Literary Forge",
-        "description": "KI-gestütztes Training für stilistische Mimesis",
+        "name": "The Franklin Method",
+        "description": "Schreibstil-Training basierend auf Benjamin Franklins Selbstlern-Methode",
         "publisher": {
           "@id": `${siteUrl}/#organization`
         },

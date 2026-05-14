@@ -44,7 +44,18 @@ export function FranklinEncodingPhase({
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const allHintsFilled = hints.every(h => h.trim().length >= 3)
+  // Hint-length formula: relative to sentence length, not a static 4-8 range.
+  // target = clamp(2, floor(sentence_words / 3), 8); min = max(1, target-1); max = target + 2.
+  function hintRangeFor(sentence: string): { min: number; max: number } {
+    const words = sentence.trim().split(/\s+/).filter(Boolean).length
+    const target = Math.max(2, Math.min(8, Math.floor(words / 3)))
+    return { min: Math.max(1, target - 1), max: target + 2 }
+  }
+
+  const allHintsFilled = hints.every((h, idx) => {
+    const w = h.trim().split(/\s+/).filter(Boolean).length
+    return w >= hintRangeFor(sentences[idx]).min
+  })
 
   async function handleSave() {
     setIsSaving(true)
@@ -137,33 +148,36 @@ export function FranklinEncodingPhase({
         </h1>
         <p className="text-base text-[var(--muted)] mb-4">
           Schreib zu jedem Satz <strong className="text-[var(--foreground)]">EINEN kurzen Hinweis</strong>{' '}
-          (4-8 Worte) zum <em>Inhalt</em>, nicht zur Form. Diese Hints sind morgen deine
-          einzige Vorlage zum Rekonstruieren — der Stil muss aus deinem Gedächtnis kommen.
+          zum <em>Inhalt</em>, nicht zur Form. Hint-Länge passt sich der Satz-Länge an. Diese Hints
+          sind morgen deine einzige Vorlage zum Rekonstruieren — der Stil muss aus deinem Gedächtnis kommen.
         </p>
 
         <div className="space-y-4">
-          {sentences.map((sentence, idx) => (
-            <div key={idx} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-base text-[var(--foreground)] mb-2 font-serif italic">
-                "{sentence}"
-              </p>
-              <input
-                type="text"
-                value={hints[idx]}
-                onChange={e => {
-                  const next = [...hints]
-                  next[idx] = e.target.value
-                  setHints(next)
-                }}
-                placeholder="dein Hinweis (4-8 Worte)..."
-                disabled={isSaving}
-                className="w-full px-3 py-2 bg-[var(--card)] border border-[var(--border)]
-                           text-[var(--foreground)] placeholder-gray-500 rounded
-                           focus:border-gray-400 focus:outline-none
-                           disabled:opacity-50"
-              />
-            </div>
-          ))}
+          {sentences.map((sentence, idx) => {
+            const range = hintRangeFor(sentence)
+            return (
+              <div key={idx} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+                <p className="text-base text-[var(--foreground)] mb-2 font-serif italic">
+                  "{sentence}"
+                </p>
+                <input
+                  type="text"
+                  value={hints[idx]}
+                  onChange={e => {
+                    const next = [...hints]
+                    next[idx] = e.target.value
+                    setHints(next)
+                  }}
+                  placeholder={`dein Hinweis (${range.min}-${range.max} Worte)`}
+                  disabled={isSaving}
+                  className="w-full px-3 py-2 bg-[var(--card)] border border-[var(--border)]
+                             text-[var(--foreground)] placeholder-gray-500 rounded
+                             focus:border-gray-400 focus:outline-none
+                             disabled:opacity-50"
+                />
+              </div>
+            )
+          })}
         </div>
       </div>
 

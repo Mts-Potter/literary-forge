@@ -22,15 +22,15 @@ export const metadata: Metadata = {
 
 export default function DatenschutzPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-8">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-8">
           <h1 className="text-4xl font-bold mb-8">Datenschutzerklärung</h1>
 
-          <div className="space-y-8 text-gray-300 leading-relaxed">
+          <div className="space-y-8 text-[var(--foreground)] leading-relaxed">
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">1. Datenschutz auf einen Blick</h2>
-              <h3 className="text-xl font-semibold text-white mb-3">Allgemeine Hinweise</h3>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">1. Datenschutz auf einen Blick</h2>
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-3">Allgemeine Hinweise</h3>
               <p>
                 Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren
                 personenbezogenen Daten passiert, wenn Sie diese Website besuchen. Personenbezogene
@@ -39,7 +39,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">2. Verantwortlicher</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">2. Verantwortlicher</h2>
               <p>
                 Verantwortlich für die Datenverarbeitung auf dieser Website ist der Betreiber
                 dieser Anwendung. Die Kontaktdaten können Sie dem Impressum dieser Website entnehmen.
@@ -47,9 +47,9 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">3. Hosting und Datenverarbeitung</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">3. Hosting und Datenverarbeitung</h2>
 
-              <h3 className="text-xl font-semibold text-white mb-3">Vercel (Hosting)</h3>
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-3">Vercel (Hosting)</h3>
               <p className="mb-4">
                 Diese Website wird auf Servern von Vercel Inc. gehostet. Anbieter ist die
                 Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, USA.
@@ -71,7 +71,7 @@ export default function DatenschutzPage() {
                 </a>
               </p>
 
-              <h3 className="text-xl font-semibold text-white mb-3 mt-6">Supabase (Datenbank)</h3>
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-3 mt-6">Supabase (Datenbank)</h3>
               <p className="mb-4">
                 Wir nutzen Supabase für die Speicherung von Nutzerdaten und Inhalten.
                 Anbieter ist Supabase Inc., 970 Toa Payoh North #07-04, Singapore 318992.
@@ -93,9 +93,9 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">4. Web Analytics</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">4. Web Analytics</h2>
 
-              <h3 className="text-xl font-semibold text-white mb-3">Vercel Web Analytics</h3>
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-3">Vercel Web Analytics</h3>
               <p className="mb-4">
                 Wir nutzen Vercel Web Analytics zur Erfassung anonymisierter Besucherstatistiken
                 (Seitenaufrufe, Referrer, geografische Region).
@@ -129,7 +129,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">5. KI-Verarbeitung (AWS Bedrock)</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">5. KI-Verarbeitung (AWS Bedrock)</h2>
               <p className="mb-4">
                 Für die Analyse und Bewertung Ihrer Texte nutzen wir AWS Bedrock mit dem
                 Claude 3.5 Haiku Modell von Anthropic. Die Texte werden zur Verarbeitung
@@ -156,7 +156,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">6. Authentifizierung</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">6. Authentifizierung</h2>
               <p className="mb-4">
                 Die Nutzer-Authentifizierung erfolgt über Supabase Auth. Bei der Registrierung
                 werden Ihre Email-Adresse und ein verschlüsseltes Passwort gespeichert.
@@ -167,7 +167,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">7. Ihre Rechte</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">7. Ihre Rechte</h2>
               <p className="mb-4">
                 Sie haben jederzeit das Recht auf:
               </p>
@@ -183,14 +183,14 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">8. Kontakt</h2>
+              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">8. Kontakt</h2>
               <p>
                 Bei Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte können Sie
                 uns über das Feedback-Formular in der Navigation kontaktieren.
               </p>
             </section>
 
-            <section className="text-sm text-gray-500 pt-8 border-t border-[#262626]">
+            <section className="text-sm text-[var(--muted)] pt-8 border-t border-[var(--border)]">
               <p>Stand: Januar 2026</p>
             </section>
           </div>

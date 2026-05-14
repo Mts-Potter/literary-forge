@@ -39,8 +39,8 @@ export default async function ReadBookPage({
 
   if (!chunks || chunks.length === 0) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
-        <div className="text-center text-gray-300">
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4">
+        <div className="text-center text-[var(--foreground)]">
           <h1 className="text-2xl font-bold mb-3">Buch nicht gefunden</h1>
           <Link href="/books" className="underline">Zurück zur Bibliothek</Link>
         </div>
@@ -53,20 +53,20 @@ export default async function ReadBookPage({
   const author = Array.isArray(current.author) ? current.author[0]?.name : (current.author as any)?.name
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
+    <div className="min-h-screen bg-[var(--background)] py-8 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <Link href="/books" className="text-sm text-gray-400 hover:text-white">
+          <Link href="/books" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)]">
             ← Bibliothek
           </Link>
-          <div className="text-sm text-gray-400">
+          <div className="text-sm text-[var(--muted)]">
             {idx + 1} / {chunks.length}
           </div>
         </div>
 
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-4">
-          <h1 className="text-3xl font-bold text-white mb-1">{current.title}</h1>
-          <p className="text-gray-400 mb-6">{author}</p>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-1">{current.title}</h1>
+          <p className="text-[var(--muted)] mb-6">{author}</p>
           <StyleMarkerOverlay text={current.content} metrics={current.metrics} />
         </div>
 
@@ -74,7 +74,7 @@ export default async function ReadBookPage({
           {idx > 0 ? (
             <Link
               href={`/read/${encodeURIComponent(decodedTitle)}?chunk=${idx}`}
-              className="px-5 py-3 border border-[#262626] text-gray-300 rounded-lg hover:bg-[#1f1f1f]"
+              className="px-5 py-3 border border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--card-hover)]"
             >
               ← Vorheriger Abschnitt
             </Link>
@@ -83,14 +83,14 @@ export default async function ReadBookPage({
           {idx < chunks.length - 1 ? (
             <Link
               href={`/read/${encodeURIComponent(decodedTitle)}?chunk=${idx + 2}`}
-              className="px-5 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200"
+              className="px-5 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90"
             >
               Nächster Abschnitt →
             </Link>
           ) : (
             <Link
               href={`/train?book=${encodeURIComponent(decodedTitle)}`}
-              className="px-5 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200"
+              className="px-5 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90"
             >
               Mit diesem Buch trainieren →
             </Link>

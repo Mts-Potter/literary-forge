@@ -107,11 +107,11 @@ export function FranklinEncodingPhase({
   if (step === 'reading') {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-4">
-          <h1 className="text-2xl font-bold text-white mb-2">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
             Phase 1: Lesen + Stilmuster wahrnehmen
           </h1>
-          <p className="text-base text-gray-400 mb-4">
+          <p className="text-base text-[var(--muted)] mb-4">
             Lies das Original aufmerksam. Achte auf Satzbau, Wortwahl, Rhythmus —
             nicht auf die Handlung. Die Stilmarker unten zeigen objektive Eigenschaften.
           </p>
@@ -120,8 +120,8 @@ export function FranklinEncodingPhase({
 
         <button
           onClick={() => setStep('hinting')}
-          className="w-full px-6 py-3 bg-white text-black text-lg font-semibold rounded-lg
-                     hover:bg-gray-200 transition-colors"
+          className="w-full px-6 py-3 bg-[var(--foreground)] text-[var(--background)] text-lg font-semibold rounded-lg
+                     hover:opacity-90 transition-colors"
         >
           Weiter zur Hint-Phase →
         </button>
@@ -131,20 +131,20 @@ export function FranklinEncodingPhase({
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-4">
-        <h1 className="text-2xl font-bold text-white mb-2">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           Phase 2: Hints zu jedem Satz
         </h1>
-        <p className="text-base text-gray-400 mb-4">
-          Schreib zu jedem Satz <strong className="text-white">EINEN kurzen Hinweis</strong>{' '}
+        <p className="text-base text-[var(--muted)] mb-4">
+          Schreib zu jedem Satz <strong className="text-[var(--foreground)]">EINEN kurzen Hinweis</strong>{' '}
           (4-8 Worte) zum <em>Inhalt</em>, nicht zur Form. Diese Hints sind morgen deine
           einzige Vorlage zum Rekonstruieren — der Stil muss aus deinem Gedächtnis kommen.
         </p>
 
         <div className="space-y-4">
           {sentences.map((sentence, idx) => (
-            <div key={idx} className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4">
-              <p className="text-base text-gray-300 mb-2 font-serif italic">
+            <div key={idx} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+              <p className="text-base text-[var(--foreground)] mb-2 font-serif italic">
                 "{sentence}"
               </p>
               <input
@@ -157,8 +157,8 @@ export function FranklinEncodingPhase({
                 }}
                 placeholder="dein Hinweis (4-8 Worte)..."
                 disabled={isSaving}
-                className="w-full px-3 py-2 bg-[#171717] border border-[#262626]
-                           text-white placeholder-gray-500 rounded
+                className="w-full px-3 py-2 bg-[var(--card)] border border-[var(--border)]
+                           text-[var(--foreground)] placeholder-gray-500 rounded
                            focus:border-gray-400 focus:outline-none
                            disabled:opacity-50"
               />
@@ -177,16 +177,16 @@ export function FranklinEncodingPhase({
         <button
           onClick={() => setStep('reading')}
           disabled={isSaving}
-          className="px-6 py-3 border border-[#262626] text-gray-300 font-semibold rounded-lg
-                     hover:bg-[#1f1f1f] disabled:opacity-50"
+          className="px-6 py-3 border border-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg
+                     hover:bg-[var(--card-hover)] disabled:opacity-50"
         >
           ← Zurück zum Lesen
         </button>
         <button
           onClick={handleSave}
           disabled={!allHintsFilled || isSaving}
-          className="flex-1 px-6 py-3 bg-white text-black text-lg font-semibold rounded-lg
-                     hover:bg-gray-200 disabled:bg-[#262626] disabled:text-gray-500
+          className="flex-1 px-6 py-3 bg-[var(--foreground)] text-[var(--background)] text-lg font-semibold rounded-lg
+                     hover:opacity-90 disabled:bg-[var(--border)] disabled:text-[var(--muted)]
                      disabled:cursor-not-allowed"
         >
           {isSaving ? 'Speichere...' : 'Hints speichern + Inkubation starten'}

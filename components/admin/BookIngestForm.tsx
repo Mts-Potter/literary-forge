@@ -148,7 +148,7 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
 
       {/* Title */}
       <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">
+        <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
           Titel *
         </label>
         <input
@@ -157,8 +157,8 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
           onChange={(e) => setTitle(e.target.value)}
           required
           placeholder="z.B. Die Verwandlung"
-          className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                     text-white placeholder:text-gray-500
+          className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg
+                     text-[var(--foreground)] placeholder:text-[var(--muted)]
                      focus:border-gray-400 focus:outline-none"
         />
       </div>
@@ -166,7 +166,7 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
       {/* Author Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
+          <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
             Vorhandener Autor
           </label>
           <select
@@ -175,8 +175,8 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
               setAuthorId(e.target.value)
               if (e.target.value) setNewAuthorName('')
             }}
-            className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                       text-white focus:border-gray-400 focus:outline-none"
+            className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg
+                       text-[var(--foreground)] focus:border-gray-400 focus:outline-none"
           >
             <option value="">-- Autor wählen --</option>
             {authors.map((author) => (
@@ -188,7 +188,7 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
+          <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
             Oder neuer Autor
           </label>
           <input
@@ -199,8 +199,8 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
               if (e.target.value) setAuthorId('')
             }}
             placeholder="z.B. Franz Kafka"
-            className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                       text-white placeholder:text-gray-500
+            className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg
+                       text-[var(--foreground)] placeholder:text-[var(--muted)]
                        focus:border-gray-400 focus:outline-none"
           />
         </div>
@@ -209,15 +209,15 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
       {/* Language and CEFR Level */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
+          <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
             Sprache *
           </label>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
             required
-            className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                       text-white focus:border-gray-400 focus:outline-none"
+            className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg
+                       text-[var(--foreground)] focus:border-gray-400 focus:outline-none"
           >
             <option value="de">Deutsch</option>
             <option value="en">English</option>
@@ -225,14 +225,14 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-2">
+          <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
             CEFR Level (optional)
           </label>
           <select
             value={cefrLevel}
             onChange={(e) => setCefrLevel(e.target.value)}
-            className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                       text-white focus:border-gray-400 focus:outline-none"
+            className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg
+                       text-[var(--foreground)] focus:border-gray-400 focus:outline-none"
           >
             <option value="">-- Nicht angegeben --</option>
             <option value="A1">A1</option>
@@ -247,7 +247,7 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
 
       {/* Chunk Size */}
       <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">
+        <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
           Chunk-Größe (Zeichen): {chunkSize}
         </label>
         <input
@@ -259,14 +259,14 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
           onChange={(e) => setChunkSize(parseInt(e.target.value))}
           className="w-full"
         />
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-[var(--muted)] mt-1">
           Der Text wird in Abschnitte dieser Größe aufgeteilt
         </p>
       </div>
 
       {/* File Upload */}
       <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">
+        <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
           Textdatei hochladen *
         </label>
         <div className="relative">
@@ -275,11 +275,11 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
             accept=".txt"
             onChange={handleFileUpload}
             required={!content}
-            className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                       text-white file:mr-4 file:py-2 file:px-4
+            className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg
+                       text-[var(--foreground)] file:mr-4 file:py-2 file:px-4
                        file:rounded-lg file:border-0
                        file:text-sm file:font-semibold
-                       file:bg-white file:text-black
+                       file:bg-[var(--foreground)] file:text-[var(--background)]
                        hover:file:bg-gray-200
                        file:cursor-pointer
                        focus:border-gray-400 focus:outline-none"
@@ -291,7 +291,7 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
           </p>
         )}
         {!fileName && (
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[var(--muted)] mt-1">
             Nur .txt Dateien werden unterstützt
           </p>
         )}
@@ -301,8 +301,8 @@ export default function BookIngestForm({ authors, userId }: BookIngestFormProps)
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full px-6 py-3 bg-white text-black rounded-lg font-semibold
-                   hover:bg-gray-200 transition-colors
+        className="w-full px-6 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-lg font-semibold
+                   hover:opacity-90 transition-colors
                    disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? 'Wird importiert...' : '📚 Buch importieren'}

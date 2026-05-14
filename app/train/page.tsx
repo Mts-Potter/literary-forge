@@ -92,15 +92,15 @@ export default async function TrainPage({
     return (
       <>
         {bookFilter && (
-          <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
-            <p className="text-gray-300 text-sm">
-              📚 Filtered Training: <span className="font-semibold text-white">{bookFilter}</span>
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 mx-4 mt-4">
+            <p className="text-[var(--foreground)] text-sm">
+              📚 Filtered Training: <span className="font-semibold text-[var(--foreground)]">{bookFilter}</span>
               {' '}—{' '}
-              <a href="/train" className="underline hover:text-white">
+              <a href="/train" className="underline hover:text-[var(--foreground)]">
                 Remove Filter
               </a>
               {' '}|{' '}
-              <a href="/books" className="underline hover:text-white">
+              <a href="/books" className="underline hover:text-[var(--foreground)]">
                 Choose Different Book
               </a>
             </p>
@@ -169,15 +169,15 @@ export default async function TrainPage({
     return (
       <>
         {bookFilter && (
-          <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
-            <p className="text-gray-300 text-sm">
-              📚 Filtered Training: <span className="font-semibold text-white">{bookFilter}</span>
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 mx-4 mt-4">
+            <p className="text-[var(--foreground)] text-sm">
+              📚 Filtered Training: <span className="font-semibold text-[var(--foreground)]">{bookFilter}</span>
               {' '}—{' '}
-              <a href="/train" className="underline hover:text-white">
+              <a href="/train" className="underline hover:text-[var(--foreground)]">
                 Remove Filter
               </a>
               {' '}|{' '}
-              <a href="/books" className="underline hover:text-white">
+              <a href="/books" className="underline hover:text-[var(--foreground)]">
                 Choose Different Book
               </a>
             </p>
@@ -190,39 +190,39 @@ export default async function TrainPage({
 
     // 3. No due reviews AND no new chunks - user is truly caught up!
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
         <div className="text-center max-w-md px-4">
           <div className="text-6xl mb-6">🎉</div>
-          <h1 className="text-3xl font-bold text-white mb-4">
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-4">
             All Caught Up!
           </h1>
-          <p className="text-gray-400 mb-4">
+          <p className="text-[var(--muted)] mb-4">
             No reviews due right now. Great job staying on top of your training!
             Come back later or add more books to practice.
           </p>
-          <p className="text-sm text-gray-500 mb-8">
-            💡 Tip: You can also enable <strong className="text-white">Linear Mode</strong> in settings
+          <p className="text-sm text-[var(--muted)] mb-8">
+            💡 Tip: You can also enable <strong className="text-[var(--foreground)]">Linear Mode</strong> in settings
             to go through all texts without scheduling.
           </p>
           <div className="flex flex-col gap-3">
             <a
               href="/books"
-              className="px-6 py-3 bg-white text-black font-semibold rounded-lg
-                         hover:bg-gray-200 transition-colors"
+              className="px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg
+                         hover:opacity-90 transition-colors"
             >
               📚 Browse Books
             </a>
             <a
               href="/settings"
-              className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
-                         hover:bg-[#1f1f1f] transition-colors"
+              className="px-6 py-3 bg-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg
+                         hover:bg-[var(--card-hover)] transition-colors"
             >
               Go to Settings
             </a>
             <a
               href="/admin/ingest"
-              className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
-                         hover:bg-[#1f1f1f] transition-colors"
+              className="px-6 py-3 bg-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg
+                         hover:bg-[var(--card-hover)] transition-colors"
             >
               Add More Books
             </a>
@@ -290,15 +290,15 @@ export default async function TrainPage({
     return (
       <>
         {bookFilter && (
-          <div className="bg-[#171717] border border-[#262626] rounded-lg p-4 mx-4 mt-4">
-            <p className="text-gray-300 text-sm">
-              📚 Filtered Training: <span className="font-semibold text-white">{bookFilter}</span>
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 mx-4 mt-4">
+            <p className="text-[var(--foreground)] text-sm">
+              📚 Filtered Training: <span className="font-semibold text-[var(--foreground)]">{bookFilter}</span>
               {' '}—{' '}
-              <a href="/train" className="underline hover:text-white">
+              <a href="/train" className="underline hover:text-[var(--foreground)]">
                 Remove Filter
               </a>
               {' '}|{' '}
-              <a href="/books" className="underline hover:text-white">
+              <a href="/books" className="underline hover:text-[var(--foreground)]">
                 Choose Different Book
               </a>
             </p>
@@ -311,38 +311,38 @@ export default async function TrainPage({
 
   // All texts completed in linear mode
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
       <div className="text-center max-w-md px-4">
         <div className="text-6xl mb-6">✅</div>
-        <h1 className="text-3xl font-bold text-white mb-4">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-4">
           All Texts Completed!
         </h1>
-        <p className="text-gray-400 mb-4">
+        <p className="text-[var(--muted)] mb-4">
           You've seen all available texts in linear mode.
         </p>
-        <p className="text-sm text-gray-500 mb-8">
-          💡 Tip: Enable <strong className="text-white">Spaced Repetition</strong> in settings
+        <p className="text-sm text-[var(--muted)] mb-8">
+          💡 Tip: Enable <strong className="text-[var(--foreground)]">Spaced Repetition</strong> in settings
           to review texts based on your learning progress for long-term retention.
         </p>
         <div className="flex flex-col gap-3">
           <a
             href="/books"
-            className="px-6 py-3 bg-white text-black font-semibold rounded-lg
-                       hover:bg-gray-200 transition-colors"
+            className="px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg
+                       hover:opacity-90 transition-colors"
           >
             📚 Browse Books
           </a>
           <a
             href="/settings"
-            className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
-                       hover:bg-[#1f1f1f] transition-colors"
+            className="px-6 py-3 bg-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg
+                       hover:bg-[var(--card-hover)] transition-colors"
           >
             Go to Settings
           </a>
           <a
             href="/admin/ingest"
-            className="px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg
-                       hover:bg-[#1f1f1f] transition-colors"
+            className="px-6 py-3 bg-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg
+                       hover:bg-[var(--card-hover)] transition-colors"
           >
             Add More Books
           </a>

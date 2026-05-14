@@ -26,22 +26,22 @@ export function ClozeDeletion({
   const router = useRouter()
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-4">
-        <h1 className="text-2xl font-bold text-white mb-2">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           Cloze-Modus (in Arbeit)
         </h1>
-        <p className="text-gray-400 mb-4">
+        <p className="text-[var(--muted)] mb-4">
           Dieser Modus wird im nächsten Sub-Sprint implementiert. Stufe 1
           (Funktionswörter verdeckt) wird der MVP-Stand sein. Im Moment
           wechselst du am besten zurück zum Franklin- oder Free-Writing-Modus.
         </p>
-        <div className="p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg mb-4">
-          <p className="text-sm text-gray-400 mb-2">Aktuelle Karte:</p>
-          <p className="text-lg text-white font-serif">{initialChunk.source_texts.title}</p>
+        <div className="p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg mb-4">
+          <p className="text-sm text-[var(--muted)] mb-2">Aktuelle Karte:</p>
+          <p className="text-lg text-[var(--foreground)] font-serif">{initialChunk.source_texts.title}</p>
         </div>
         <button
           onClick={() => router.push('/settings')}
-          className="px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200"
+          className="px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90"
         >
           Modus in Settings ändern
         </button>

@@ -32,14 +32,14 @@ export default async function AdminIngestPage() {
     .order('name')
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
+    <div className="min-h-screen bg-[var(--background)] py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-[var(--foreground)] mb-2">
             📚 Bücher importieren
           </h1>
-          <p className="text-gray-400">
+          <p className="text-[var(--muted)]">
             Importiere neue literarische Texte für das Training.
           </p>
         </div>
@@ -52,7 +52,7 @@ export default async function AdminIngestPage() {
         </div>
 
         {/* Import Form */}
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-8">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-8">
           <BookIngestForm authors={authors || []} userId={user.id} />
         </div>
 
@@ -60,7 +60,7 @@ export default async function AdminIngestPage() {
         <div className="text-center">
           <Link
             href="/dashboard"
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           >
             ← Zurück zum Dashboard
           </Link>

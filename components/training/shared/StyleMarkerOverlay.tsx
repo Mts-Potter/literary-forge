@@ -41,8 +41,8 @@ export function StyleMarkerOverlay({
   return (
     <div className="space-y-4">
       {/* Original-Text mit gentlem Highlight */}
-      <div className="p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
-        <p className="text-white text-lg leading-relaxed font-serif">{text}</p>
+      <div className="p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg">
+        <p className="text-[var(--foreground)] text-lg leading-relaxed font-serif">{text}</p>
       </div>
 
       {/* Stilmarker als Mini-Dashboard */}
@@ -66,15 +66,15 @@ export function StyleMarkerOverlay({
       </div>
 
       {/* Satzlängen-Bar-Chart */}
-      <div className="p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
-        <p className="text-xs text-gray-400 mb-2 uppercase tracking-wide">
+      <div className="p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg">
+        <p className="text-xs text-[var(--muted)] mb-2 uppercase tracking-wide">
           Sentence-length pattern
         </p>
         <div className="flex items-end gap-1 h-20">
           {sentenceLengths.map((len, idx) => (
             <div
               key={idx}
-              className="flex-1 bg-white/30 rounded-t"
+              className="flex-1 bg-[var(--foreground)]/30 rounded-t"
               style={{ height: `${(len / maxLen) * 100}%` }}
               title={`Sentence ${idx + 1}: ${len} words`}
             />
@@ -83,7 +83,7 @@ export function StyleMarkerOverlay({
       </div>
 
       {!hasExtended && (
-        <p className="text-xs text-gray-500 italic">
+        <p className="text-xs text-[var(--muted)] italic">
           Extended style markers not yet computed for this chunk — run the reprocess script.
         </p>
       )}
@@ -93,9 +93,9 @@ export function StyleMarkerOverlay({
 
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="text-center p-3 bg-[#0a0a0a] rounded-lg border border-[#262626]">
-      <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-      <p className="text-lg font-bold text-white">{value}</p>
+    <div className="text-center p-3 bg-[var(--background)] rounded-lg border border-[var(--border)]">
+      <p className="text-xs text-[var(--muted)] uppercase tracking-wide mb-1">{label}</p>
+      <p className="text-lg font-bold text-[var(--foreground)]">{value}</p>
     </div>
   )
 }

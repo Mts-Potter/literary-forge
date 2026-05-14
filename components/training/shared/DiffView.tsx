@@ -54,7 +54,7 @@ export function DiffView({ original, attempt }: { original: string; attempt: str
     <div className="font-serif text-lg leading-relaxed whitespace-pre-wrap">
       {ops.map((op, idx) => {
         if (op.type === 'match') {
-          return <span key={idx} className="text-gray-300">{op.text}</span>
+          return <span key={idx} className="text-[var(--foreground)]">{op.text}</span>
         }
         if (op.type === 'missing') {
           return (

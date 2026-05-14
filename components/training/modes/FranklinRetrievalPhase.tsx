@@ -123,41 +123,41 @@ export function FranklinRetrievalPhase({
   if (feedback) {
     return (
       <div className="max-w-5xl mx-auto p-6 space-y-4">
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-white">Style Distance</h1>
-              <p className="text-sm text-gray-400 mt-1">
+              <h1 className="text-3xl font-bold text-[var(--foreground)]">Style Distance</h1>
+              <p className="text-sm text-[var(--muted)] mt-1">
                 {feedback.deterministic
                   ? 'Burrows-Delta z-score (deterministic)'
                   : 'AI estimate (no author profile yet)'}
               </p>
             </div>
-            <div className="text-4xl font-bold text-white">
+            <div className="text-4xl font-bold text-[var(--foreground)]">
               {(feedback.style_score ?? feedback.overall_accuracy).toFixed(0)}%
             </div>
           </div>
           {feedback.schedule && (
-            <p className="text-sm text-gray-400 mt-3">
+            <p className="text-sm text-[var(--muted)] mt-3">
               📅 {feedback.schedule.message}
             </p>
           )}
         </div>
 
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5">
-          <h2 className="text-xl font-semibold text-white mb-3">Word-Level Diff</h2>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">Word-Level Diff</h2>
           <DiffView original={initialChunk.source_texts.content} attempt={userText} />
         </div>
 
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5">
-          <h2 className="text-xl font-semibold text-white mb-3">Feedback</h2>
-          <p className="text-white whitespace-pre-wrap">{feedback.feedback}</p>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">Feedback</h2>
+          <p className="text-[var(--foreground)] whitespace-pre-wrap">{feedback.feedback}</p>
         </div>
 
         <button
           onClick={handleContinue}
-          className="w-full px-6 py-3 bg-white text-black text-lg font-semibold rounded-lg
-                     hover:bg-gray-200"
+          className="w-full px-6 py-3 bg-[var(--foreground)] text-[var(--background)] text-lg font-semibold rounded-lg
+                     hover:opacity-90"
         >
           Weiter zur nächsten Karte →
         </button>
@@ -168,22 +168,22 @@ export function FranklinRetrievalPhase({
   // Writing view (vor Submit)
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
-        <h1 className="text-2xl font-bold text-white mb-2">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-4">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           Phase 3: Rekonstruktion aus deinen Hints
         </h1>
-        <p className="text-base text-gray-400">
+        <p className="text-base text-[var(--muted)]">
           Nur deine Hints von neulich sind sichtbar. Schreib den Text neu,
           versuche Stil und Rhythmus aus dem Gedächtnis zu treffen.
         </p>
       </div>
 
       {hints && (
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
-          <h2 className="text-base font-semibold text-white mb-3 uppercase tracking-wide">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-4">
+          <h2 className="text-base font-semibold text-[var(--foreground)] mb-3 uppercase tracking-wide">
             Deine Hints
           </h2>
-          <ol className="space-y-2 list-decimal list-inside text-gray-300">
+          <ol className="space-y-2 list-decimal list-inside text-[var(--foreground)]">
             {hints.map((h, idx) => (
               <li key={idx} className="font-serif text-lg">{h.hint}</li>
             ))}
@@ -191,7 +191,7 @@ export function FranklinRetrievalPhase({
         </div>
       )}
 
-      <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-4">
         <textarea
           value={userText}
           onChange={e => setUserText(e.target.value)}
@@ -200,12 +200,12 @@ export function FranklinRetrievalPhase({
           rows={14}
           spellCheck={false}
           autoFocus
-          className="w-full p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg
-                     text-white text-lg leading-relaxed font-serif
+          className="w-full p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg
+                     text-[var(--foreground)] text-lg leading-relaxed font-serif
                      focus:border-gray-400 focus:outline-none
                      disabled:opacity-50"
         />
-        <div className="mt-3 flex justify-between items-center text-sm text-gray-400">
+        <div className="mt-3 flex justify-between items-center text-sm text-[var(--muted)]">
           <span>
             {userText.split(/\s+/).filter(Boolean).length} Wörter ·{' '}
             {userText.length} Zeichen
@@ -223,8 +223,8 @@ export function FranklinRetrievalPhase({
       <button
         onClick={handleSubmit}
         disabled={isSubmitting || !userText.trim() || !hints}
-        className="w-full px-6 py-3 bg-white text-black text-lg font-semibold rounded-lg
-                   hover:bg-gray-200 disabled:bg-[#262626] disabled:text-gray-500
+        className="w-full px-6 py-3 bg-[var(--foreground)] text-[var(--background)] text-lg font-semibold rounded-lg
+                   hover:opacity-90 disabled:bg-[var(--border)] disabled:text-[var(--muted)]
                    disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Analysiere...' : 'Absenden + Vergleichen'}

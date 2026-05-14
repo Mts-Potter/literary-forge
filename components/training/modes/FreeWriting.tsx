@@ -100,11 +100,11 @@ export function FreeWriting({
   if (phase === 'reading') {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-4">
-          <h1 className="text-2xl font-bold text-white mb-1">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">
             Lese-Phase
           </h1>
-          <p className="text-base text-gray-400 mb-4">
+          <p className="text-base text-[var(--muted)] mb-4">
             "{initialChunk.source_texts.title}" — {authorName || 'Unbekannt'}.
             Lies aufmerksam, dann schreibe deine Stil-Imitation.
           </p>
@@ -115,8 +115,8 @@ export function FreeWriting({
         </div>
         <button
           onClick={() => setPhase('writing')}
-          className="w-full px-6 py-3 bg-white text-black text-lg font-semibold rounded-lg
-                     hover:bg-gray-200"
+          className="w-full px-6 py-3 bg-[var(--foreground)] text-[var(--background)] text-lg font-semibold rounded-lg
+                     hover:opacity-90"
         >
           Weiter zur Schreib-Phase →
         </button>

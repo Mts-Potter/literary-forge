@@ -86,18 +86,18 @@ export default async function BooksPage() {
     return (
       <div className="container mx-auto p-8">
         <h1 className="text-2xl font-bold text-red-600">Fehler beim Laden der Bücher</h1>
-        <p className="text-gray-400 mt-4">Bitte versuche es später erneut.</p>
+        <p className="text-[var(--muted)] mt-4">Bitte versuche es später erneut.</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Available Books</h1>
-          <p className="text-gray-400">
+          <p className="text-[var(--muted)]">
             Select a book to practice with it specifically, or go to{' '}
             <Link href="/train" className="text-blue-400 hover:underline">
               /train
@@ -110,15 +110,15 @@ export default async function BooksPage() {
         {books.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">📚</div>
-            <h2 className="text-2xl font-semibold text-gray-400 mb-4">
+            <h2 className="text-2xl font-semibold text-[var(--muted)] mb-4">
               No Books Available
             </h2>
-            <p className="text-gray-500 mb-6">
+            <p className="text-[var(--muted)] mb-6">
               Add books through the admin interface.
             </p>
             <Link
               href="/admin/ingest"
-              className="inline-block px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors"
+              className="inline-block px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-colors"
             >
               Add Books
             </Link>
@@ -128,7 +128,7 @@ export default async function BooksPage() {
             {books.map((book) => (
               <div
                 key={book.title}
-                className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-6 hover:border-[#3a3a3a] transition-colors"
+                className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 hover:border-[var(--muted)] transition-colors"
               >
                 {/* Book Title */}
                 <h2 className="text-xl font-bold mb-2 line-clamp-2">
@@ -136,20 +136,20 @@ export default async function BooksPage() {
                 </h2>
 
                 {/* Author */}
-                <p className="text-gray-400 mb-4">{book.author}</p>
+                <p className="text-[var(--muted)] mb-4">{book.author}</p>
 
                 {/* Metadata */}
                 <div className="space-y-2 mb-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Language:</span>
-                    <span className="text-white">
+                    <span className="text-[var(--muted)]">Language:</span>
+                    <span className="text-[var(--foreground)]">
                       {book.language === 'de' ? '🇩🇪 German' : '🇬🇧 English'}
                     </span>
                   </div>
 
                   {book.cefr_level && (
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-500">CEFR:</span>
+                      <span className="text-[var(--muted)]">CEFR:</span>
                       <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 rounded text-xs font-semibold">
                         {book.cefr_level}
                       </span>
@@ -157,8 +157,8 @@ export default async function BooksPage() {
                   )}
 
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Chunks:</span>
-                    <span className="text-white">{book.chunkCount}</span>
+                    <span className="text-[var(--muted)]">Chunks:</span>
+                    <span className="text-[var(--foreground)]">{book.chunkCount}</span>
                   </div>
                 </div>
 
@@ -168,13 +168,13 @@ export default async function BooksPage() {
                     {book.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 bg-[#2a2a2a] text-gray-300 rounded text-xs"
+                        className="px-2 py-1 bg-[var(--border)] text-[var(--foreground)] rounded text-xs"
                       >
                         {tag}
                       </span>
                     ))}
                     {book.tags.length > 3 && (
-                      <span className="px-2 py-1 text-gray-500 text-xs">
+                      <span className="px-2 py-1 text-[var(--muted)] text-xs">
                         +{book.tags.length - 3} more
                       </span>
                     )}
@@ -185,7 +185,7 @@ export default async function BooksPage() {
                 <div className="flex gap-2">
                   <Link
                     href={`/train?book=${encodeURIComponent(book.title)}`}
-                    className="flex-1 px-4 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors text-center"
+                    className="flex-1 px-4 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-colors text-center"
                   >
                     Practice with this Book
                   </Link>
@@ -199,7 +199,7 @@ export default async function BooksPage() {
         <div className="mt-12 text-center">
           <Link
             href="/train"
-            className="inline-block px-6 py-3 bg-[#262626] text-white font-semibold rounded-lg hover:bg-[#1f1f1f] transition-colors"
+            className="inline-block px-6 py-3 bg-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg hover:bg-[var(--card-hover)] transition-colors"
           >
             ← Back to Training (Random)
           </Link>

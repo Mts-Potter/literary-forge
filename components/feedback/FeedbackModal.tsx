@@ -93,15 +93,15 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div
-          className="bg-[#171717] border border-[#262626] rounded-lg p-6 max-w-md w-full pointer-events-auto shadow-2xl"
+          className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 max-w-md w-full pointer-events-auto shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">💬 Feedback senden</h2>
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">💬 Feedback senden</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors p-1"
+              className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors p-1"
               aria-label="Schließen"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,14 +128,14 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-sm font-semibold text-gray-300 mb-2">
+              <label htmlFor="category" className="block text-sm font-semibold text-[var(--foreground)] mb-2">
                 Kategorie
               </label>
               <select
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg text-white focus:border-gray-400 focus:outline-none"
+                className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:border-gray-400 focus:outline-none"
                 required
               >
                 <option value="Bug/Problem">🐛 Bug/Problem</option>
@@ -146,7 +146,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-[var(--foreground)] mb-2">
                 Deine Email-Adresse
               </label>
               <input
@@ -155,14 +155,14 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="deine@email.de"
-                className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg text-white placeholder-gray-600 focus:border-gray-400 focus:outline-none"
+                className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder-gray-600 focus:border-gray-400 focus:outline-none"
                 required
               />
             </div>
 
             {/* Message */}
             <div>
-              <label htmlFor="message" className="block text-sm font-semibold text-gray-300 mb-2">
+              <label htmlFor="message" className="block text-sm font-semibold text-[var(--foreground)] mb-2">
                 Nachricht
               </label>
               <textarea
@@ -171,18 +171,18 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Beschreibe dein Anliegen..."
                 rows={6}
-                className="w-full px-4 py-2 bg-[#0a0a0a] border border-[#262626] rounded-lg text-white placeholder-gray-600 focus:border-gray-400 focus:outline-none resize-none"
+                className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] placeholder-gray-600 focus:border-gray-400 focus:outline-none resize-none"
                 required
                 minLength={10}
               />
-              <p className="text-xs text-gray-500 mt-1">Mindestens 10 Zeichen</p>
+              <p className="text-xs text-[var(--muted)] mt-1">Mindestens 10 Zeichen</p>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting || submitStatus === 'success'}
-              className="w-full px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-lg font-semibold hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">

@@ -59,40 +59,40 @@ export default function DataPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
+    <div className="min-h-screen bg-[var(--background)] py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        <Link href="/settings" className="text-sm text-gray-400 hover:text-white">
+        <Link href="/settings" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)]">
           ← Zurück zu Einstellungen
         </Link>
-        <h1 className="text-3xl font-bold text-white mt-3 mb-1">Meine Daten</h1>
-        <p className="text-sm text-gray-400 mb-6">
+        <h1 className="text-3xl font-bold text-[var(--foreground)] mt-3 mb-1">Meine Daten</h1>
+        <p className="text-sm text-[var(--muted)] mb-6">
           GDPR-konformer Export und Löschung deiner Daten.
         </p>
 
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
-          <h2 className="text-lg font-semibold text-white mb-2">Daten exportieren</h2>
-          <p className="text-sm text-gray-400 mb-4">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-2">Daten exportieren</h2>
+          <p className="text-sm text-[var(--muted)] mb-4">
             Alle gespeicherten Reviews, Hints, Settings und Fortschritte als JSON-Datei.
           </p>
           <button
             onClick={handleExport}
             disabled={busy}
-            className="px-5 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 disabled:opacity-50"
+            className="px-5 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
           >
             {busy ? 'Lade...' : 'Export als JSON'}
           </button>
         </div>
 
-        <div className="bg-[#171717] border border-red-900 rounded-lg p-5 mb-4">
+        <div className="bg-[var(--card)] border border-red-900 rounded-lg p-5 mb-4">
           <h2 className="text-lg font-semibold text-red-400 mb-2">Daten löschen</h2>
-          <p className="text-sm text-gray-400 mb-4">
+          <p className="text-sm text-[var(--muted)] mb-4">
             Löscht alle anwendungsbezogenen Daten. Auth-Account-Löschung erfolgt
             separat (Admin-Aktion).
           </p>
           <button
             onClick={handleDelete}
             disabled={busy}
-            className="px-5 py-2 bg-red-900 text-white font-semibold rounded-lg hover:bg-red-800 disabled:opacity-50"
+            className="px-5 py-2 bg-red-900 text-[var(--foreground)] font-semibold rounded-lg hover:bg-red-800 disabled:opacity-50"
           >
             {busy ? '...' : 'Alle Daten löschen'}
           </button>

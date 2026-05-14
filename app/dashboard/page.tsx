@@ -108,12 +108,12 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
+    <div className="min-h-screen bg-[var(--background)] py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white mb-1">Dashboard</h1>
-          <p className="text-gray-400 text-sm">
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-1">Dashboard</h1>
+          <p className="text-[var(--muted)] text-sm">
             Welcome back! Here's your learning overview.
           </p>
         </div>
@@ -121,51 +121,51 @@ export default async function DashboardPage() {
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Studied */}
-          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Chunks Studied</p>
-                <p className="text-3xl font-bold text-white">{totalStudied}</p>
+                <p className="text-sm text-[var(--muted)] mb-1">Chunks Studied</p>
+                <p className="text-3xl font-bold text-[var(--foreground)]">{totalStudied}</p>
               </div>
               <div className="text-4xl">📚</div>
             </div>
           </div>
 
           {/* Due Today */}
-          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Due Today</p>
-                <p className="text-3xl font-bold text-white">{dueToday}</p>
+                <p className="text-sm text-[var(--muted)] mb-1">Due Today</p>
+                <p className="text-3xl font-bold text-[var(--foreground)]">{dueToday}</p>
               </div>
               <div className="text-4xl">⏰</div>
             </div>
           </div>
 
           {/* Average Reps */}
-          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Avg. Repetitions</p>
-                <p className="text-3xl font-bold text-white">{avgReps}</p>
+                <p className="text-sm text-[var(--muted)] mb-1">Avg. Repetitions</p>
+                <p className="text-3xl font-bold text-[var(--foreground)]">{avgReps}</p>
               </div>
               <div className="text-4xl">🔄</div>
             </div>
           </div>
 
           {/* Current Streak */}
-          <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Current Streak</p>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-sm text-[var(--muted)] mb-1">Current Streak</p>
+                <p className="text-3xl font-bold text-[var(--foreground)]">
                   {currentStreak}
-                  <span className="text-lg text-gray-400 ml-1">
+                  <span className="text-lg text-[var(--muted)] ml-1">
                     {currentStreak === 1 ? 'day' : 'days'}
                   </span>
                 </p>
                 {longestStreak > currentStreak && (
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-[var(--muted)] mt-1">
                     Best: {longestStreak} {longestStreak === 1 ? 'day' : 'days'}
                   </p>
                 )}
@@ -178,20 +178,20 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Quick Start</h2>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Quick Start</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link
               href="/train"
-              className="px-6 py-4 bg-white text-black rounded-lg font-semibold
-                         hover:bg-gray-200 transition-colors text-center"
+              className="px-6 py-4 bg-[var(--foreground)] text-[var(--background)] rounded-lg font-semibold
+                         hover:opacity-90 transition-colors text-center"
             >
               {dueToday > 0 ? `Start ${dueToday} Reviews` : 'Learn New Chunks'}
             </Link>
             <Link
               href="/admin/ingest"
-              className="px-6 py-4 border-2 border-[#262626] text-gray-300 rounded-lg font-semibold
-                         hover:border-gray-400 hover:bg-[#1f1f1f] transition-colors text-center"
+              className="px-6 py-4 border-2 border-[var(--border)] text-[var(--foreground)] rounded-lg font-semibold
+                         hover:border-gray-400 hover:bg-[var(--card-hover)] transition-colors text-center"
             >
               📚 Import Books
             </Link>
@@ -199,16 +199,16 @@ export default async function DashboardPage() {
         </div>
 
         {/* Available Books */}
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Available Books</h2>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Available Books</h2>
 
           {books.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-[var(--muted)]">
               <p className="mb-4">No books imported yet.</p>
               <Link
                 href="/admin/ingest"
-                className="inline-block px-6 py-3 bg-white text-black rounded-lg font-semibold
-                           hover:bg-gray-200 transition-colors"
+                className="inline-block px-6 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-lg font-semibold
+                           hover:opacity-90 transition-colors"
               >
                 Import First Book
               </Link>
@@ -218,28 +218,28 @@ export default async function DashboardPage() {
               {books.map((book, idx) => (
                 <div
                   key={idx}
-                  className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-6 hover:border-[#3a3a3a] transition-colors"
+                  className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:border-[var(--muted)] transition-colors"
                 >
                   {/* Book Title */}
-                  <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                  <h3 className="text-xl font-bold text-[var(--foreground)] mb-2 line-clamp-2">
                     {book.title}
                   </h3>
 
                   {/* Author */}
-                  <p className="text-gray-400 mb-4">{book.author}</p>
+                  <p className="text-[var(--muted)] mb-4">{book.author}</p>
 
                   {/* Metadata */}
                   <div className="space-y-2 mb-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-500">Language:</span>
-                      <span className="text-white">
+                      <span className="text-[var(--muted)]">Language:</span>
+                      <span className="text-[var(--foreground)]">
                         {book.language === 'de' ? '🇩🇪 German' : '🇬🇧 English'}
                       </span>
                     </div>
 
                     {book.cefr_level && (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500">CEFR:</span>
+                        <span className="text-[var(--muted)]">CEFR:</span>
                         <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 rounded text-xs font-semibold">
                           {book.cefr_level}
                         </span>
@@ -247,8 +247,8 @@ export default async function DashboardPage() {
                     )}
 
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-500">Chunks:</span>
-                      <span className="text-white">{book.chunkCount}</span>
+                      <span className="text-[var(--muted)]">Chunks:</span>
+                      <span className="text-[var(--foreground)]">{book.chunkCount}</span>
                     </div>
                   </div>
 
@@ -258,13 +258,13 @@ export default async function DashboardPage() {
                       {book.tags.slice(0, 3).map((tag: string, i: number) => (
                         <span
                           key={i}
-                          className="px-2 py-1 bg-[#262626] text-gray-300 rounded text-xs"
+                          className="px-2 py-1 bg-[var(--border)] text-[var(--foreground)] rounded text-xs"
                         >
                           {tag}
                         </span>
                       ))}
                       {book.tags.length > 3 && (
-                        <span className="px-2 py-1 text-gray-500 text-xs">
+                        <span className="px-2 py-1 text-[var(--muted)] text-xs">
                           +{book.tags.length - 3} more
                         </span>
                       )}
@@ -274,7 +274,7 @@ export default async function DashboardPage() {
                   {/* Action Button */}
                   <Link
                     href={`/train?book=${encodeURIComponent(book.title)}`}
-                    className="block w-full px-4 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors text-center"
+                    className="block w-full px-4 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-colors text-center"
                   >
                     Practice with this Book
                   </Link>
@@ -288,7 +288,7 @@ export default async function DashboardPage() {
         <div className="mt-8 text-center">
           <Link
             href="/"
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           >
             ← Back to Home
           </Link>

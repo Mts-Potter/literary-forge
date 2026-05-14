@@ -105,44 +105,44 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
-        <div className="text-gray-400">Lädt Einstellungen...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+        <div className="text-[var(--muted)]">Lädt Einstellungen...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-6 px-4">
+    <div className="min-h-screen bg-[var(--background)] py-6 px-4">
       <div className="container mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-6">
           <Link
             href="/"
-            className="text-gray-400 hover:text-white transition-colors text-sm mb-3 inline-block"
+            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors text-sm mb-3 inline-block"
           >
             ← Zurück
           </Link>
-          <h1 className="text-3xl font-bold text-white">Einstellungen</h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <h1 className="text-3xl font-bold text-[var(--foreground)]">Einstellungen</h1>
+          <p className="text-[var(--muted)] text-sm mt-1">
             Passe dein Lernerlebnis an
           </p>
         </div>
 
         {/* SRS Settings Card */}
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5 mb-4">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-4">
           <div className="flex items-start justify-between gap-4 mb-3">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-base font-semibold text-white">
+                <h3 className="text-base font-semibold text-[var(--foreground)]">
                   🔄 Spaced Repetition System (SRS)
                 </h3>
                 {saving && (
-                  <span className="text-xs text-gray-500 italic">
+                  <span className="text-xs text-[var(--muted)] italic">
                     Speichert...
                   </span>
                 )}
               </div>
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <p className="text-sm text-[var(--muted)] leading-relaxed">
                 Anki-ähnlicher Algorithmus für optimales Langzeitlernen.
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function SettingsPage() {
               className={`
                 relative inline-flex h-6 w-11 items-center rounded-full
                 transition-colors focus:outline-none
-                ${enableSRS ? 'bg-white' : 'bg-[#262626]'}
+                ${enableSRS ? 'bg-[var(--foreground)]' : 'bg-[var(--border)]'}
                 ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
               aria-label="Toggle Spaced Repetition"
@@ -168,19 +168,19 @@ export default function SettingsPage() {
           </div>
 
           {/* Mode Description */}
-          <div className="text-xs text-gray-400 bg-[#0a0a0a] border-l-2 border-white p-3 rounded">
+          <div className="text-xs text-[var(--muted)] bg-[var(--background)] border-l-2 border-white p-3 rounded">
             {enableSRS ? (
               <div>
-                <p className="font-semibold text-white mb-1">✅ SRS Modus aktiv</p>
-                <p className="text-gray-400">
+                <p className="font-semibold text-[var(--foreground)] mb-1">✅ SRS Modus aktiv</p>
+                <p className="text-[var(--muted)]">
                   Texte erscheinen basierend auf Lernintervallen (10 Min → 6h → 1 Tag → 4 Tage...).
                   Optimiert für langfristige Retention.
                 </p>
               </div>
             ) : (
               <div>
-                <p className="font-semibold text-white mb-1">📚 Linearer Modus aktiv</p>
-                <p className="text-gray-400">
+                <p className="font-semibold text-[var(--foreground)] mb-1">📚 Linearer Modus aktiv</p>
+                <p className="text-[var(--muted)]">
                   Texte werden der Reihe nach durchgegangen. Ideal zum "Durchpowern" neuer Bücher.
                 </p>
               </div>
@@ -189,28 +189,28 @@ export default function SettingsPage() {
         </div>
 
         {/* Account Settings Card */}
-        <div className="bg-[#171717] border border-[#262626] rounded-lg p-5">
-          <h3 className="text-base font-semibold text-white mb-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
+          <h3 className="text-base font-semibold text-[var(--foreground)] mb-3">
             👤 Konto
           </h3>
 
           <div className="space-y-3">
             {/* Email */}
             <div>
-              <label className="text-xs text-gray-400 block mb-1">
+              <label className="text-xs text-[var(--muted)] block mb-1">
                 Email-Adresse
               </label>
-              <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-sm text-white">
+              <div className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)]">
                 {userEmail}
               </div>
             </div>
 
             {/* User ID */}
             <div>
-              <label className="text-xs text-gray-400 block mb-1">
+              <label className="text-xs text-[var(--muted)] block mb-1">
                 Benutzer-ID
               </label>
-              <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-xs text-gray-500 font-mono">
+              <div className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-xs text-[var(--muted)] font-mono">
                 {userId}
               </div>
             </div>
@@ -218,10 +218,10 @@ export default function SettingsPage() {
             {/* Account created */}
             {createdAt && (
               <div>
-                <label className="text-xs text-gray-400 block mb-1">
+                <label className="text-xs text-[var(--muted)] block mb-1">
                   Konto erstellt am
                 </label>
-                <div className="px-3 py-2 bg-[#0a0a0a] border border-[#262626] rounded text-sm text-white">
+                <div className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded text-sm text-[var(--foreground)]">
                   {new Date(createdAt).toLocaleDateString('de-DE', {
                     year: 'numeric',
                     month: 'long',
@@ -235,8 +235,8 @@ export default function SettingsPage() {
             <button
               onClick={handleSignOut}
               disabled={signingOut}
-              className="w-full mt-2 px-4 py-2 bg-[#262626] text-white rounded-lg text-sm font-semibold
-                         hover:bg-[#1f1f1f] transition-colors
+              className="w-full mt-2 px-4 py-2 bg-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-semibold
+                         hover:bg-[var(--card-hover)] transition-colors
                          disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {signingOut ? 'Wird abgemeldet...' : 'Abmelden'}

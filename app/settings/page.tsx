@@ -5,8 +5,11 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
+type TrainMode = 'franklin' | 'cloze' | 'free'
+
 export default function SettingsPage() {
   const [enableSRS, setEnableSRS] = useState(true)
+  const [defaultMode, setDefaultMode] = useState<TrainMode>('franklin')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
@@ -33,10 +36,10 @@ export default function SettingsPage() {
       setUserId(user.id)
       setCreatedAt(user.created_at || '')
 
-      // Load SRS setting
+      // Load SRS + Mode setting
       const { data, error } = await supabase
         .from('user_settings')
-        .select('enable_srs')
+        .select('enable_srs, default_mode')
         .eq('user_id', user.id)
         .single()
 
@@ -46,6 +49,10 @@ export default function SettingsPage() {
 
       if (data) {
         setEnableSRS(data.enable_srs)
+        const m = (data as { default_mode?: string }).default_mode
+        if (m === 'franklin' || m === 'cloze' || m === 'free') {
+          setDefaultMode(m)
+        }
       }
     } catch (error) {
       console.error('Failed to load settings:', error)
@@ -89,6 +96,25 @@ export default function SettingsPage() {
     }
   }
 
+  async function changeMode(next: TrainMode) {
+    const prev = defaultMode
+    setDefaultMode(next)
+    setSaving(true)
+    try {
+      const res = await fetch('/api/user/mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: next }),
+      })
+      if (!res.ok) throw new Error('save failed')
+    } catch {
+      setDefaultMode(prev)
+      alert('Fehler beim Speichern des Modus')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   async function handleSignOut() {
     setSigningOut(true)
     try {
@@ -117,14 +143,43 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="mb-6">
           <Link
-            href="/"
+            href="/dashboard"
             className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors text-sm mb-3 inline-block"
           >
-            ← Zurück
+            ← Dashboard
           </Link>
           <h1 className="text-3xl font-bold text-[var(--foreground)]">Einstellungen</h1>
           <p className="text-[var(--muted)] text-sm mt-1">
             Passe dein Lernerlebnis an
+          </p>
+        </div>
+
+        {/* Default-Mode Card */}
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-4">
+          <h3 className="text-base font-semibold text-[var(--foreground)] mb-1">
+            Standard-Trainings-Modus
+          </h3>
+          <p className="text-sm text-[var(--muted)] mb-3">
+            Wird beim Öffnen von /train verwendet. Du kannst auch direkt aus dem Dashboard in einen Modus starten oder im Training per Button wechseln.
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {(['franklin', 'cloze', 'free'] as const).map(m => (
+              <button
+                key={m}
+                onClick={() => changeMode(m)}
+                disabled={saving}
+                className={`px-3 py-2 rounded-lg border text-sm font-semibold transition-colors
+                  ${defaultMode === m
+                    ? 'bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]'
+                    : 'bg-[var(--background)] text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--card-hover)]'}
+                  disabled:opacity-50`}
+              >
+                {m === 'franklin' ? 'Franklin' : m === 'cloze' ? 'Cloze' : 'Free'}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-[var(--muted)] mt-2">
+            Franklin: Lesen → Hints → Rekonstruktion · Cloze: Lückentext (in Arbeit) · Free: lesen, dann frei imitieren
           </p>
         </div>
 
@@ -134,7 +189,7 @@ export default function SettingsPage() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="text-base font-semibold text-[var(--foreground)]">
-                  🔄 Spaced Repetition System (SRS)
+                  🔄 Verteiltes Wiederholen (SRS)
                 </h3>
                 {saving && (
                   <span className="text-xs text-[var(--muted)] italic">
@@ -241,6 +296,14 @@ export default function SettingsPage() {
             >
               {signingOut ? 'Wird abgemeldet...' : 'Abmelden'}
             </button>
+
+            {/* GDPR Data Page Link */}
+            <Link
+              href="/settings/data"
+              className="block text-center w-full mt-2 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-semibold hover:bg-[var(--card-hover)] transition-colors"
+            >
+              Daten exportieren oder löschen
+            </Link>
           </div>
         </div>
       </div>

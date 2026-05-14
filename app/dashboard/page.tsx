@@ -114,7 +114,7 @@ export default async function DashboardPage() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-[var(--foreground)] mb-1">Dashboard</h1>
           <p className="text-[var(--muted)] text-sm">
-            Welcome back! Here's your learning overview.
+            Willkommen zurück. Dein aktueller Lernstand auf einen Blick.
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export default async function DashboardPage() {
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--muted)] mb-1">Chunks Studied</p>
+                <p className="text-sm text-[var(--muted)] mb-1">Trainierte Chunks</p>
                 <p className="text-3xl font-bold text-[var(--foreground)]">{totalStudied}</p>
               </div>
               <div className="text-4xl">📚</div>
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--muted)] mb-1">Due Today</p>
+                <p className="text-sm text-[var(--muted)] mb-1">Heute fällig</p>
                 <p className="text-3xl font-bold text-[var(--foreground)]">{dueToday}</p>
               </div>
               <div className="text-4xl">⏰</div>
@@ -146,7 +146,7 @@ export default async function DashboardPage() {
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--muted)] mb-1">Avg. Repetitions</p>
+                <p className="text-sm text-[var(--muted)] mb-1">⌀ Wiederholungen</p>
                 <p className="text-3xl font-bold text-[var(--foreground)]">{avgReps}</p>
               </div>
               <div className="text-4xl">🔄</div>
@@ -157,16 +157,16 @@ export default async function DashboardPage() {
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--muted)] mb-1">Current Streak</p>
+                <p className="text-sm text-[var(--muted)] mb-1">Aktuelle Serie</p>
                 <p className="text-3xl font-bold text-[var(--foreground)]">
                   {currentStreak}
                   <span className="text-lg text-[var(--muted)] ml-1">
-                    {currentStreak === 1 ? 'day' : 'days'}
+                    {currentStreak === 1 ? 'Tag' : 'Tage'}
                   </span>
                 </p>
                 {longestStreak > currentStreak && (
                   <p className="text-xs text-[var(--muted)] mt-1">
-                    Best: {longestStreak} {longestStreak === 1 ? 'day' : 'days'}
+                    Bestwert: {longestStreak} {longestStreak === 1 ? 'Tag' : 'Tage'}
                   </p>
                 )}
               </div>
@@ -179,38 +179,38 @@ export default async function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Quick Start</h2>
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Schnellstart</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link
               href="/train"
               className="px-6 py-4 bg-[var(--foreground)] text-[var(--background)] rounded-lg font-semibold
                          hover:opacity-90 transition-colors text-center"
             >
-              {dueToday > 0 ? `Start ${dueToday} Reviews` : 'Learn New Chunks'}
+              {dueToday > 0 ? `${dueToday} Wiederholung${dueToday === 1 ? '' : 'en'} starten` : 'Neue Chunks lernen'}
             </Link>
             <Link
               href="/admin/ingest"
               className="px-6 py-4 border-2 border-[var(--border)] text-[var(--foreground)] rounded-lg font-semibold
                          hover:border-gray-400 hover:bg-[var(--card-hover)] transition-colors text-center"
             >
-              📚 Import Books
+              📚 Bücher importieren
             </Link>
           </div>
         </div>
 
         {/* Available Books */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Available Books</h2>
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Verfügbare Bücher</h2>
 
           {books.length === 0 ? (
             <div className="text-center py-8 text-[var(--muted)]">
-              <p className="mb-4">No books imported yet.</p>
+              <p className="mb-4">Noch keine Bücher importiert.</p>
               <Link
                 href="/admin/ingest"
                 className="inline-block px-6 py-3 bg-[var(--foreground)] text-[var(--background)] rounded-lg font-semibold
                            hover:opacity-90 transition-colors"
               >
-                Import First Book
+                Erstes Buch importieren
               </Link>
             </div>
           ) : (
@@ -231,9 +231,9 @@ export default async function DashboardPage() {
                   {/* Metadata */}
                   <div className="space-y-2 mb-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <span className="text-[var(--muted)]">Language:</span>
+                      <span className="text-[var(--muted)]">Sprache:</span>
                       <span className="text-[var(--foreground)]">
-                        {book.language === 'de' ? '🇩🇪 German' : '🇬🇧 English'}
+                        {book.language === 'de' ? '🇩🇪 Deutsch' : '🇬🇧 Englisch'}
                       </span>
                     </div>
 
@@ -265,7 +265,7 @@ export default async function DashboardPage() {
                       ))}
                       {book.tags.length > 3 && (
                         <span className="px-2 py-1 text-[var(--muted)] text-xs">
-                          +{book.tags.length - 3} more
+                          +{book.tags.length - 3} weitere
                         </span>
                       )}
                     </div>
@@ -276,7 +276,7 @@ export default async function DashboardPage() {
                     href={`/train?book=${encodeURIComponent(book.title)}`}
                     className="block w-full px-4 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-colors text-center"
                   >
-                    Practice with this Book
+                    Mit diesem Buch üben
                   </Link>
                 </div>
               ))}
@@ -290,7 +290,7 @@ export default async function DashboardPage() {
             href="/"
             className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           >
-            ← Back to Home
+            ← Zur Startseite
           </Link>
         </div>
       </div>

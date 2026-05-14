@@ -5,7 +5,7 @@ import { StyleMarkerOverlay } from '@/components/training/shared/StyleMarkerOver
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Lesen | Literary Forge',
+  title: 'Lesen | The Franklin Method',
   robots: { index: false, follow: false }
 }
 
@@ -42,7 +42,7 @@ export default async function ReadBookPage({
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4">
         <div className="text-center text-[var(--foreground)]">
           <h1 className="text-2xl font-bold mb-3">Buch nicht gefunden</h1>
-          <Link href="/books" className="underline">Zurück zur Bibliothek</Link>
+          <Link href="/dashboard" className="underline">Zurück zum Dashboard</Link>
         </div>
       </div>
     )
@@ -56,8 +56,8 @@ export default async function ReadBookPage({
     <div className="min-h-screen bg-[var(--background)] py-8 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <Link href="/books" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)]">
-            ← Bibliothek
+          <Link href="/dashboard" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)]">
+            ← Dashboard
           </Link>
           <div className="text-sm text-[var(--muted)]">
             {idx + 1} / {chunks.length}

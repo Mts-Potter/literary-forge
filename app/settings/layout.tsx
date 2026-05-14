@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Einstellungen | Literary Forge",
-  description: "Verwalten Sie Ihre Literary Forge Einstellungen und Präferenzen.",
+  title: "Einstellungen | The Franklin Method",
+  description: "Verwalte deine Einstellungen für The Franklin Method.",
   robots: {
     index: false,
     follow: false,

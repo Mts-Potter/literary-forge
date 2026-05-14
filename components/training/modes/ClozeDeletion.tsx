@@ -9,8 +9,6 @@
  * - Bewertung: exakter Wort-Match pro Lücke
  */
 
-import { useRouter } from 'next/navigation'
-
 interface Chunk {
   text_id: string
   source_texts: { title: string; content: string }
@@ -23,28 +21,27 @@ export function ClozeDeletion({
   initialChunk: Chunk
   userId: string
 }) {
-  const router = useRouter()
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
-        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
-          Cloze-Modus (in Arbeit)
-        </h1>
-        <p className="text-[var(--muted)] mb-4">
-          Dieser Modus wird im nächsten Sub-Sprint implementiert. Stufe 1
-          (Funktionswörter verdeckt) wird der MVP-Stand sein. Im Moment
-          wechselst du am besten zurück zum Franklin- oder Free-Writing-Modus.
+        <div className="flex items-center gap-2 mb-3">
+          <span className="px-2 py-0.5 text-xs font-semibold bg-yellow-500/20 text-yellow-300 rounded">
+            IN ARBEIT
+          </span>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">
+            Cloze-Modus (Vorschau)
+          </h1>
+        </div>
+        <p className="text-[var(--foreground)] mb-4">
+          Der Cloze-Modus (Lückentext, gestuft) ist noch nicht fertig implementiert. Aktuell siehst du nur die Karten-Info ohne Übungs-Interaktion. Wechsle mit dem Modus-Button unten zurück zu Franklin oder Free, um zu trainieren.
         </p>
         <div className="p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg mb-4">
-          <p className="text-sm text-[var(--muted)] mb-2">Aktuelle Karte:</p>
+          <p className="text-sm text-[var(--muted)] mb-1">Aktuelle Karte:</p>
           <p className="text-lg text-[var(--foreground)] font-serif">{initialChunk.source_texts.title}</p>
         </div>
-        <button
-          onClick={() => router.push('/settings')}
-          className="px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90"
-        >
-          Modus in Settings ändern
-        </button>
+        <p className="text-sm text-[var(--muted)]">
+          Tipp: Mit dem Modus-Button unten wechselst du nahtlos — die Karte bleibt erhalten.
+        </p>
       </div>
     </div>
   )

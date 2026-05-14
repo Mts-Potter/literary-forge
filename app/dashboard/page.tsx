@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { groupBooksByTitle, type GroupedBook } from '@/lib/utils/books'
 import { fetchLast7Days } from '@/lib/dashboard/streak-calendar'
+import { NlpPreWarm } from '@/components/training/NlpPreWarm'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -23,13 +24,29 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  // Fetch user progress statistics
-  const { data: progressData } = await supabase
-    .from('user_progress')
-    .select('text_id, next_review, reps, difficulty')
-    .eq('user_id', user.id)
+  // Alle DB-Calls parallel (Phase qol-F: ~5x sequenziell → 1x parallel)
+  const [
+    progressDataResult,
+    streakResult,
+    userSettingsResult,
+    last7,
+    progressByChunkResult,
+    groupedBooksResult,
+  ] = await Promise.all([
+    supabase.from('user_progress').select('text_id, next_review, reps, difficulty').eq('user_id', user.id),
+    supabase.rpc('calculate_user_streaks', { p_user_id: user.id }),
+    supabase.from('user_settings').select('default_mode').eq('user_id', user.id).single(),
+    fetchLast7Days(supabase, user.id),
+    supabase.from('user_progress').select('text_id, source_texts!inner(title)').eq('user_id', user.id),
+    supabase.rpc('get_grouped_books'),
+  ])
 
-  // Count statistics
+  const progressData = progressDataResult.data
+  const streakData = streakResult.data as { current_streak?: number; longest_streak?: number } | null
+  const userSettings = userSettingsResult.data
+  const progressByChunk = progressByChunkResult.data
+
+  // Stats
   const totalStudied = progressData?.length || 0
   const dueToday = progressData?.filter(p =>
     new Date(p.next_review) <= new Date()
@@ -38,33 +55,15 @@ export default async function DashboardPage() {
     ? Math.round(progressData.reduce((sum, p) => sum + p.reps, 0) / progressData.length)
     : 0
 
-  // Fetch streak data
-  const { data: streakData } = await supabase.rpc('calculate_user_streaks', {
-    p_user_id: user.id
-  })
-
   const currentStreak = streakData?.current_streak || 0
   const longestStreak = streakData?.longest_streak || 0
 
-  // User-Settings für Default-Mode (wird im Quick-Start hervorgehoben)
-  const { data: userSettings } = await supabase
-    .from('user_settings')
-    .select('default_mode')
-    .eq('user_id', user.id)
-    .single()
   const userDefaultMode = ((userSettings?.default_mode ?? 'franklin') as 'franklin' | 'cloze' | 'free')
   const modeLabel = userDefaultMode === 'franklin' ? 'Franklin' : userDefaultMode === 'cloze' ? 'Cloze' : 'Free'
 
-  // 7-Tage-Aktivität aus review_history
-  const last7 = await fetchLast7Days(supabase, user.id)
   const last7Max = Math.max(...last7.map(d => d.reviews), 1)
 
   // Trainierte Chunks pro Buch (Base-Title-Aggregation)
-  const { data: progressByChunk } = await supabase
-    .from('user_progress')
-    .select('text_id, source_texts!inner(title)')
-    .eq('user_id', user.id)
-
   const trainedByTitle = new Map<string, number>()
   for (const row of progressByChunk ?? []) {
     const title = (row as { source_texts?: { title?: string } | { title?: string }[] }).source_texts
@@ -74,70 +73,50 @@ export default async function DashboardPage() {
     trainedByTitle.set(baseTitle, (trainedByTitle.get(baseTitle) ?? 0) + 1)
   }
 
-  // Fetch available books using database-side grouping to avoid 1000-row limit
-  // Try RPC function first, fall back to client-side grouping if not available
+  // Bücher: bevorzugt RPC-Ergebnis, sonst client-side Fallback
   let books: GroupedBook[] = []
-
-  try {
-    const { data: groupedBooks, error: rpcError } = await supabase
-      .rpc('get_grouped_books')
-
-    if (rpcError) {
-      console.log('RPC function not available, falling back to client-side grouping')
-
-      // Fallback: Fetch all chunks in batches
-      const allChunks: any[] = []
-      const batchSize = 1000
-      let offset = 0
-      let hasMore = true
-
-      while (hasMore) {
-        const { data: batch, error: batchError } = await supabase
-          .from('source_texts')
-          .select(`
-            id,
-            title,
-            author:authors(name),
-            cefr_level,
-            tags,
-            language
-          `)
-          .order('title')
-          .range(offset, offset + batchSize - 1)
-
-        if (batchError) {
-          console.error('Failed to fetch books batch:', batchError)
-          break
-        }
-
-        if (batch && batch.length > 0) {
-          allChunks.push(...batch)
-          offset += batchSize
-          hasMore = batch.length === batchSize
-        } else {
-          hasMore = false
-        }
+  if (!groupedBooksResult.error && groupedBooksResult.data) {
+    books = (groupedBooksResult.data as Array<{
+      title: string; author: string; cefr_level: string | null;
+      tags: string[] | null; language: string; chunk_count: number
+    }>).map((book): GroupedBook => ({
+      title: book.title,
+      author: book.author,
+      cefr_level: book.cefr_level,
+      tags: book.tags || [],
+      language: book.language,
+      chunkCount: Number(book.chunk_count)
+    }))
+  } else {
+    console.log('RPC not available — fallback to client-side grouping')
+    const allChunks: Array<{ id: string; title: string; author: { name: string }[]; cefr_level: string | null; tags: string[] | null; language: string }> = []
+    const batchSize = 1000
+    let offset = 0
+    let hasMore = true
+    while (hasMore) {
+      const { data: batch, error: batchError } = await supabase
+        .from('source_texts')
+        .select('id, title, author:authors(name), cefr_level, tags, language')
+        .order('title')
+        .range(offset, offset + batchSize - 1)
+      if (batchError) {
+        console.error('Failed to fetch books batch:', batchError)
+        break
       }
-
-      // Group chunks by base title
-      books = groupBooksByTitle(allChunks)
-    } else {
-      // Use RPC result (already grouped)
-      books = (groupedBooks || []).map((book: any): GroupedBook => ({
-        title: book.title,
-        author: book.author,
-        cefr_level: book.cefr_level,
-        tags: book.tags || [],
-        language: book.language,
-        chunkCount: Number(book.chunk_count)
-      }))
+      if (batch && batch.length > 0) {
+        allChunks.push(...(batch as typeof allChunks))
+        offset += batchSize
+        hasMore = batch.length === batchSize
+      } else {
+        hasMore = false
+      }
     }
-  } catch (error) {
-    console.error('Error fetching books:', error)
+    books = groupBooksByTitle(allChunks)
   }
 
   return (
     <div className="min-h-screen bg-[var(--background)] py-8 px-4">
+      <NlpPreWarm />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">

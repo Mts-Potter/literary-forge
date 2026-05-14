@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { StyleMarkerOverlay } from '../shared/StyleMarkerOverlay'
+import { NlpPreWarm } from '../NlpPreWarm'
 
 /**
  * Franklin Encoding Phase (Tag 0)
@@ -137,6 +138,7 @@ export function FranklinEncodingPhase({
   if (step === 'reading') {
     return (
       <div className="max-w-4xl mx-auto p-6">
+        <NlpPreWarm />
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
           <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
             Phase 1: Lesen + Stilmuster wahrnehmen
@@ -161,6 +163,7 @@ export function FranklinEncodingPhase({
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      <NlpPreWarm />
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 mb-4">
         <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           Phase 2: Hints zu jedem Satz

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
 import { FranklinEncodingPhase } from './modes/FranklinEncodingPhase'
 import { FranklinRetrievalPhase } from './modes/FranklinRetrievalPhase'
 import { ClozeDeletion } from './modes/ClozeDeletion'
@@ -27,7 +26,6 @@ export function TrainingInterface({
   userId: string
   userDefaultMode?: TrainMode
 }) {
-  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [mode, setMode] = useState<TrainMode>(
     initialChunk.mode ?? userDefaultMode
@@ -37,6 +35,9 @@ export function TrainingInterface({
     initialChunk.phase ?? (mode === 'franklin' ? 'encoding' : 'retrieval')
 
   function handleModeChange(next: TrainMode) {
+    // Lokaler State sofort, Persist asynchron. KEIN router.refresh() — der
+    // würde einen neuen Chunk aus der SRS-Queue ziehen und die aktuelle
+    // Karte verschieben. Default-Mode landet beim nächsten /train-Open.
     setMode(next)
     startTransition(async () => {
       try {
@@ -46,9 +47,8 @@ export function TrainingInterface({
           body: JSON.stringify({ mode: next }),
         })
       } catch {
-        // best-effort; the new mode is already shown locally
+        // best-effort
       }
-      router.refresh()
     })
   }
 

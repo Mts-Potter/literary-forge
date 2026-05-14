@@ -6,14 +6,20 @@ export default function DashboardLoading() {
           {/* Header Skeleton */}
           <div className="h-10 bg-[var(--card)] rounded w-1/3 mb-8"></div>
 
-          {/* Stats Grid Skeleton */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            {[1, 2, 3].map((i) => (
+          {/* Stats Grid Skeleton — 4 Cards matcht echte Render */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
                 <div className="h-4 bg-[var(--border)] rounded w-1/2 mb-4"></div>
                 <div className="h-8 bg-[var(--border)] rounded w-1/3"></div>
               </div>
             ))}
+          </div>
+
+          {/* 7-Tage-Strip Skeleton */}
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 mb-8">
+            <div className="h-4 bg-[var(--border)] rounded w-1/4 mb-3"></div>
+            <div className="h-16 bg-[var(--border)] rounded"></div>
           </div>
 
           {/* Books Grid Skeleton */}

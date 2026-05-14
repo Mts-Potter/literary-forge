@@ -5,8 +5,8 @@ import { groupBooksByTitle, type GroupedBook } from '@/lib/utils/books'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Dashboard | Literary Forge",
-  description: "Ihr persönliches Schreibtraining Dashboard. Verfolgen Sie Ihren Fortschritt und starten Sie neue Trainingseinheiten.",
+  title: "Dashboard | The Franklin Method",
+  description: "Dein Trainings-Dashboard. Fortschritt, fällige Reviews und Streak im Blick.",
   robots: {
     index: false,
     follow: false,

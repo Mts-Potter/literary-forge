@@ -119,17 +119,32 @@ export function DemoClient({ chunk }: { chunk: Chunk }) {
           <p className="text-[var(--foreground)] whitespace-pre-wrap leading-relaxed">{feedback.llm_feedback}</p>
         </div>
       )}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-        <p className="text-sm text-[var(--muted)] uppercase tracking-wide mb-2">Weiter?</p>
-        <p className="text-[var(--foreground)] mb-4">
-          Mit eigener Bibliothek + gespeichertem Fortschritt — kostenlos, kein Spam.
-        </p>
-        <Link
-          href="/login"
-          className="inline-block px-5 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded hover:opacity-90"
-        >
-          Konto anlegen →
-        </Link>
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+        <div className="flex-1">
+          <p className="text-sm text-[var(--muted)] uppercase tracking-wide mb-1">Weiter?</p>
+          <p className="text-[var(--foreground)] text-sm">
+            Konto anlegen für Bibliothek + gespeicherten Fortschritt — kostenlos.
+          </p>
+        </div>
+        <div className="flex gap-2 flex-shrink-0">
+          <button
+            onClick={() => {
+              setUserText('')
+              setFeedback(null)
+              setError(null)
+              setStep('read')
+            }}
+            className="px-5 py-2 border border-[var(--border)] text-[var(--foreground)] font-semibold rounded hover:bg-[var(--card-hover)] transition-colors"
+          >
+            ↻ Nochmal
+          </button>
+          <Link
+            href="/login"
+            className="inline-flex items-center px-5 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded hover:opacity-90"
+          >
+            Konto anlegen →
+          </Link>
+        </div>
       </div>
     </div>
   )

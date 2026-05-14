@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Die Methode | The Franklin Method",
@@ -114,6 +115,26 @@ export default function MethodePage() {
         Was wir versprechen: messbare, transparente Rückmeldung auf das, was
         du schreibst. Kritik kommt nach der Submission — nicht währenddessen.
       </p>
+
+      <div className="mt-10 p-6 bg-[var(--card)] border border-[var(--border)] rounded-lg flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <p className="text-[var(--foreground)] text-base">
+          Bereit für eine Runde? Kein Konto nötig.
+        </p>
+        <div className="flex gap-3 flex-shrink-0">
+          <Link
+            href="/demo"
+            className="px-5 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Demo starten →
+          </Link>
+          <Link
+            href="/login"
+            className="px-5 py-2 border border-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg hover:bg-[var(--card-hover)] transition-colors"
+          >
+            Anmelden
+          </Link>
+        </div>
+      </div>
     </article>
   )
 }

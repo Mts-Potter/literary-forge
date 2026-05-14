@@ -101,6 +101,26 @@ export default async function BuchPage({
         )}
       </section>
 
+      <div className="mt-6 p-6 bg-[var(--card)] border border-[var(--border)] rounded-lg flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <p className="text-[var(--foreground)] text-base">
+          {book.base_title} imitieren? Direkt starten.
+        </p>
+        <div className="flex gap-3 flex-shrink-0">
+          <Link
+            href={`/login?next=${encodeURIComponent('/train?book=' + book.base_title)}`}
+            className="px-5 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Mit diesem Werk trainieren →
+          </Link>
+          <Link
+            href="/demo"
+            className="px-5 py-2 border border-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg hover:bg-[var(--card-hover)] transition-colors"
+          >
+            Erst Demo
+          </Link>
+        </div>
+      </div>
+
       <p className="text-center">
         <Link href="/buecher" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] underline">
           ← Alle Bücher

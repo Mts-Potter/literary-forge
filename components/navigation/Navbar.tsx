@@ -15,6 +15,10 @@ import {
   MessageSquare,
   Menu,
   X,
+  BookOpen,
+  Library,
+  Sparkles,
+  LogIn,
 } from 'lucide-react'
 
 type LucideIcon = ComponentType<{ size?: number; className?: string }>
@@ -65,13 +69,23 @@ export function Navbar() {
     return () => subscription.unsubscribe()
   }, [supabase])
 
-  const navLinks: NavLink[] = [
+  const publicLinks: NavLink[] = [
     { href: '/', label: 'Home', Icon: Home },
+    { href: '/methode', label: 'Methode', Icon: BookOpen },
+    { href: '/buecher', label: 'Bücher', Icon: Library },
+    { href: '/demo', label: 'Demo', Icon: Sparkles },
+  ]
+
+  const authLinks: NavLink[] = [
     { href: '/train', label: 'Training', Icon: PenLine },
     { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
     { href: '/settings', label: 'Einstellungen', Icon: Settings },
     ...(isAdmin ? [{ href: '/admin/ingest', label: 'Admin', Icon: Lock }] : []),
   ]
+
+  const navLinks: NavLink[] = isAuthenticated
+    ? [{ href: '/', label: 'Home', Icon: Home }, ...authLinks]
+    : publicLinks
 
   return (
     <nav className="bg-[var(--card)] border-b border-[var(--border)] sticky top-0 z-50">
@@ -100,14 +114,27 @@ export function Navbar() {
               </Link>
             ))}
 
-            <button
-              onClick={() => setFeedbackModalOpen(true)}
-              title="Feedback senden"
-              aria-label="Feedback senden"
-              className="inline-flex items-center justify-center w-10 h-10 rounded-md text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] transition-colors"
-            >
-              <MessageSquare size={20} />
-            </button>
+            {isAuthenticated && (
+              <button
+                onClick={() => setFeedbackModalOpen(true)}
+                title="Feedback senden"
+                aria-label="Feedback senden"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-md text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <MessageSquare size={20} />
+              </button>
+            )}
+
+            {!isAuthenticated && (
+              <Link
+                href="/login"
+                title="Anmelden"
+                aria-label="Anmelden"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-md text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <LogIn size={20} />
+              </Link>
+            )}
 
             <ThemeToggle />
           </div>
@@ -142,16 +169,29 @@ export function Navbar() {
               </Link>
             ))}
 
-            <button
-              onClick={() => {
-                setFeedbackModalOpen(true)
-                setMobileMenuOpen(false)
-              }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-md font-medium text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] transition-colors"
-            >
-              <MessageSquare size={20} />
-              <span>Feedback senden</span>
-            </button>
+            {isAuthenticated && (
+              <button
+                onClick={() => {
+                  setFeedbackModalOpen(true)
+                  setMobileMenuOpen(false)
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-md font-medium text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <MessageSquare size={20} />
+                <span>Feedback senden</span>
+              </button>
+            )}
+
+            {!isAuthenticated && (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-md font-medium text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] transition-colors"
+              >
+                <LogIn size={20} />
+                <span>Anmelden</span>
+              </Link>
+            )}
           </div>
         )}
       </div>

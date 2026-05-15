@@ -1,4 +1,4 @@
-# Current State — 2026-05-15
+# Current State — 2026-05-15 (post jobs-design-public)
 
 Hand-off note for future sessions / future Claude. Read this first when picking up the project.
 
@@ -49,22 +49,34 @@ Switcher: `components/training/ModeCycleButton.tsx` — a single button position
 - `8e5f1f7` feat(relaunch-A): brand audit + welcome 1-screen + mode cycle button + /methode + /demo + chunk-size + route-scoped CSP
 - `67575d6` feat(relaunch-B): /autoren + /buecher with bios + style profiles + sitemap
 
-**QoL (Bezos-Lens, 2026-05-15):**
+**QoL Public-Lens (Bezos, 2026-05-15):**
 - `e2cdbbf` feat(qol-A): navbar auth-conditional + FeedbackView fully German + 3 CTA-blocks + demo retry
 - `d468471` feat(qol-B): stylometry sigma-bars vs corpus + meta on cards + glossary tooltips + book polish
-- `7cc2df3` perf(qol-C): static marketing routes (root layout headers-free) — `/`, `/methode`, `/demo`, `/login`, `/welcome` now CDN-cached
+- `7cc2df3` perf(qol-C): static marketing routes (root layout headers-free) — `/`, `/methode`, `/demo`, `/login`, `/welcome` CDN-cached
 
-## Live performance (verified 2026-05-15 post-deploy)
+**Auth-Surface QoL (Bezos, 2026-05-15):**
+- `7743984` feat(qol-D): Konsistenz — DE-Sprache hinter Login, `/books` gelöscht, Brand-Titles, Settings Mode-Picker, ClozeDeletion-Banner
+- `56275f8` feat(qol-E): Insights — Dashboard 3-Mode-Quick-Start, 7-Tage-Streak-Strip, Pro-Buch-Progress, Author-Header, Hint-History, FeedbackView-Verlaufschart
+- `27ad27d` perf(qol-F): Latenz — Dashboard Promise.all, ModeCycle ohne router.refresh, /settings Server-Component, NLP-PreWarm
 
-| Route | Warm TTFB | Cache |
-|---|---|---|
-| `/` | 261ms | HIT |
-| `/demo` | **103ms** | HIT |
-| `/methode` | 232ms | HIT |
-| `/login` | 104ms | HIT |
-| `/welcome` | 136ms | HIT |
+**Steve-Jobs-Public-Pass (2026-05-15):**
+- `3944388` feat(jobs-A): Foundation — Fraunces serif + warm-neutral palette (`#faf7f0`/`#1a1612`) + Akzent `#b69876`
+- `a4dcbe3` feat(jobs-B): Reduction — Emojis weg, 3-Card-Grid weg, Card-Wrapper auf /buecher+/autoren weg, glitzy CTA → schmale Underline
+- `989d115` feat(jobs-C): Layout — Editorial-Restructure: Eyebrow + Display-Headline + italic Sub + Body + Underline-CTA + Fraunces-Italic-Footnote. Navbar-Logo Fraunces light, Active-State Underline statt Filled-Block. Brand-Migration manifest/not-found/login/layout.
 
-Before qol-C: every route MISS, 270-600ms.
+## Live performance (verified 2026-05-15 post jobs-C)
+
+| Route | Warm TTFB | Cache | Bemerkung |
+|---|---|---|---|
+| `/` | 244-247ms | HIT | ~130ms langsamer als qol-C wegen Fraunces-Font-Subset (Trade-off) |
+| `/methode` | 102-227ms | HIT | ✓ |
+| `/demo` | 114-115ms | HIT | ✓ |
+| `/autoren` | 256-272ms | MISS | dyn-Supabase-Fetch |
+| `/buecher` | 322-328ms | MISS | dyn-Supabase-Fetch |
+| `/login` | 118-189ms | HIT | ✓ |
+| `/dashboard` | 246ms warm | MISS | per-user dyn ✓ |
+| `/settings` | 132-192ms | HIT | server-component, kein "Lädt…"-Flash mehr |
+| `/train` | 234-253ms | MISS | per-user dyn ✓ |
 
 ## Public routes (indexable, in sitemap.xml)
 
@@ -85,10 +97,11 @@ Before qol-C: every route MISS, 270-600ms.
 ## Known gaps + intentional non-goals
 
 **Open but deferred:**
-- Auth-Surface QoL (the public audit only covered `/`, `/methode`, `/demo`, `/autoren`, `/buecher`. `/train`, `/dashboard`, `/settings` were explicitly left for a follow-up session — they're where the user spends 90% of time.)
 - Sentry monitoring (needs account+DSN from Mats, self-use → low priority)
 - Supabase manual backup (Dashboard click by Mats)
 - AWS IAM Console: deactivate key `AKIASJIFO7CEOTQEU6RR` if still active
+- TTFB-regression `/` warm 244ms vs spec target <200ms — Fraunces-font-subset cost. Reduzierbar wenn nötig via weight: ["400"] ohne italic.
+- Auth-Surface bleibt funktionsorientiert (Bezos-densified) — KEIN Steve-Jobs-Pass auf Auth, das wäre Konflikt mit qol-E.
 
 **Explicitly NOT in scope (do not propose):**
 - i18n / EN-translations / `[locale]/` routing → killed during brainstorm 2026-05-14, Mats is German-native

@@ -40,7 +40,7 @@ export default function NotFound() {
         <div className="mt-12 pt-8 border-t border-[var(--border)]">
           <p className="text-[var(--muted)] text-sm">
             Wenn Sie glauben, dass dies ein Fehler ist, kontaktieren Sie uns unter{' '}
-            <Link href="/kontakt" className="text-blue-400 hover:underline">
+            <Link href="/kontakt" className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors">
               /kontakt
             </Link>
           </p>

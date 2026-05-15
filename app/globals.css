@@ -3,34 +3,38 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #fafafa;
-  --foreground: #0a0a0a;
-  --border: #e5e5e5;
-  --card: #ffffff;
-  --card-hover: #f5f5f5;
-  --muted: #737373;
+  --background: #faf7f0;
+  --foreground: #1a1612;
+  --border: #e8e2d6;
+  --card: #fbf9f3;
+  --card-hover: #f0ebe0;
+  --muted: #756c5d;
+  --accent: #b69876;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --border: #262626;
-  --card: #171717;
-  --card-hover: #1f1f1f;
-  --muted: #525252;
+  --background: #1a1612;
+  --foreground: #f4f1eb;
+  --border: #2e2922;
+  --card: #221d18;
+  --card-hover: #2a241e;
+  --muted: #a39989;
+  --accent: #b69876;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 * {

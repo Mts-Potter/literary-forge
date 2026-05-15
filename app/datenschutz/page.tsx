@@ -65,7 +65,7 @@ export default function DatenschutzPage() {
                   href="https://vercel.com/legal/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline ml-1"
+                  className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors ml-1"
                 >
                   https://vercel.com/legal/privacy-policy
                 </a>
@@ -85,7 +85,7 @@ export default function DatenschutzPage() {
                   href="https://supabase.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline ml-1"
+                  className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors ml-1"
                 >
                   https://supabase.com/privacy
                 </a>
@@ -121,7 +121,7 @@ export default function DatenschutzPage() {
                   href="https://vercel.com/docs/analytics/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline ml-1"
+                  className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors ml-1"
                 >
                   https://vercel.com/docs/analytics/privacy-policy
                 </a>
@@ -148,7 +148,7 @@ export default function DatenschutzPage() {
                   href="https://aws.amazon.com/de/privacy/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline ml-1"
+                  className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors ml-1"
                 >
                   https://aws.amazon.com/de/privacy/
                 </a>

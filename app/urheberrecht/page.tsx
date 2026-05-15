@@ -72,7 +72,7 @@ export default function UrheberrechtPage() {
               </p>
               <a
                 href="mailto:mtsmmiv@gmail.com"
-                className="text-blue-400 hover:text-blue-300 underline"
+                className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors"
               >
                 mtsmmiv@gmail.com
               </a>

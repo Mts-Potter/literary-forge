@@ -41,7 +41,7 @@ export default function KontaktPage() {
                     <h3 className="text-lg font-semibold mb-2">E-Mail</h3>
                     <a
                       href="mailto:mtsmmiv@gmail.com"
-                      className="text-blue-400 hover:text-blue-300 underline"
+                      className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors"
                     >
                       mtsmmiv@gmail.com
                     </a>
@@ -62,7 +62,7 @@ export default function KontaktPage() {
               <h2 className="text-2xl font-semibold mb-4">Datenschutz</h2>
               <p className="text-[var(--foreground)] text-sm">
                 Ihre Daten werden vertraulich behandelt. Weitere Informationen finden Sie in unserer{' '}
-                <a href="/datenschutz" className="text-blue-400 hover:text-blue-300 underline">
+                <a href="/datenschutz" className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors">
                   Datenschutzerklärung
                 </a>.
               </p>

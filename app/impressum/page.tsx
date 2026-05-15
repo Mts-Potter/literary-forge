@@ -41,7 +41,7 @@ export default function ImpressumPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">Kontakt</h2>
               <div className="text-[var(--foreground)]">
-                <p>E-Mail: <a href="mailto:mtsmmiv@gmail.com" className="text-blue-400 hover:text-blue-300 underline">mtsmmiv@gmail.com</a></p>
+                <p>E-Mail: <a href="mailto:mtsmmiv@gmail.com" className="text-[var(--muted)] hover:text-[var(--accent)] underline transition-colors">mtsmmiv@gmail.com</a></p>
               </div>
             </section>
 

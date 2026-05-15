@@ -47,62 +47,31 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="max-w-2xl space-y-6 text-lg text-[var(--muted)] leading-relaxed">
+        <div className="max-w-xl text-base text-[var(--muted)] leading-relaxed">
           <p>
-            Lerne den Stil großer Autoren zu imitieren — mit der Methode, die <strong className="text-[var(--foreground)]">Benjamin Franklin 1722</strong> erfand. Heute mit KI-Feedback optimiert: <strong className="text-[var(--foreground)]">Spaced Repetition</strong>, <strong className="text-[var(--foreground)]">Stilometrie</strong>, <strong className="text-[var(--foreground)]">qualitatives Lektorat</strong>.
-          </p>
-          <p className="text-base">
-            Trainiere mit Passagen von Kafka, Mann, Austen, Fitzgerald — bekomme nach jedem Versuch konkrete Rückmeldung zu Satzbau, Rhythmus, Wortwahl und Ton.
+            Eine alte Methode, ein neues Medium. Du übst mit Passagen aus Kafka, Mann, Austen, Fitzgerald — schreibst sie aus dem Gedächtnis, und bekommst eine ehrliche Rückmeldung zu Satzbau, Rhythmus, Wortwahl und Ton.
           </p>
         </div>
 
         <div className="flex flex-col gap-4 items-center">
           <Link
             href="/demo"
-            className="px-12 py-5 bg-[var(--foreground)] text-[var(--background)] text-xl font-bold rounded-xl
-                       hover:opacity-90 hover:scale-105 transition-all shadow-2xl"
+            className="inline-flex items-center gap-3 pb-2 text-[15px] font-medium text-[var(--foreground)] border-b border-[var(--foreground)] hover:gap-4 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all duration-200"
           >
-            Eine Runde probieren — ohne Anmeldung
+            Demo ansehen
+            <span aria-hidden>→</span>
           </Link>
 
-          <div className="flex gap-3 text-sm">
-            <Link href="/methode" className="text-[var(--muted)] hover:text-[var(--foreground)] underline">
-              Die Methode
+          <div className="flex gap-7 text-[13px] text-[var(--muted)]">
+            <Link href="/methode" className="hover:text-[var(--foreground)] transition-colors">
+              Methode
             </Link>
-            <span className="text-[var(--muted)]">·</span>
-            <Link href="/buecher" className="text-[var(--muted)] hover:text-[var(--foreground)] underline">
+            <Link href="/buecher" className="hover:text-[var(--foreground)] transition-colors">
               Bücher
             </Link>
-            <span className="text-[var(--muted)]">·</span>
-            <Link href="/login" className="text-[var(--muted)] hover:text-[var(--foreground)] underline">
+            <Link href="/login" className="hover:text-[var(--foreground)] transition-colors">
               Anmelden
             </Link>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 w-full">
-          <div className="p-6 bg-[var(--card)] border border-[var(--border)] rounded-lg hover:bg-[var(--card-hover)] transition-colors">
-            <div className="text-4xl mb-3">🔄</div>
-            <h3 className="font-semibold text-[var(--foreground)] mb-2">Spaced Repetition</h3>
-            <p className="text-sm text-[var(--muted)]">
-              FSRS V5 — optimiert für langfristige Behaltensleistung.
-            </p>
-          </div>
-
-          <div className="p-6 bg-[var(--card)] border border-[var(--border)] rounded-lg hover:bg-[var(--card-hover)] transition-colors">
-            <div className="text-4xl mb-3">📊</div>
-            <h3 className="font-semibold text-[var(--foreground)] mb-2">Stilometrie</h3>
-            <p className="text-sm text-[var(--muted)]">
-              20 messbare Features pro Chunk: Satzlänge, Funktionswörter, Komma-Dichte, mehr.
-            </p>
-          </div>
-
-          <div className="p-6 bg-[var(--card)] border border-[var(--border)] rounded-lg hover:bg-[var(--card-hover)] transition-colors">
-            <div className="text-4xl mb-3">🤖</div>
-            <h3 className="font-semibold text-[var(--foreground)] mb-2">KI-Feedback</h3>
-            <p className="text-sm text-[var(--muted)]">
-              Qualitatives Lektorat nach jedem Versuch — nicht während du schreibst.
-            </p>
           </div>
         </div>
       </main>

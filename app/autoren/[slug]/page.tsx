@@ -133,20 +133,20 @@ export default async function AutorPage({
         <h1 className="text-4xl font-bold text-[var(--foreground)] mt-2">{bio.name}</h1>
       </header>
 
-      <section className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-        <p className="text-[var(--foreground)] leading-relaxed">{bio.bio_de}</p>
+      <section className="pt-4 max-w-2xl">
+        <p className="text-[var(--foreground)] leading-relaxed font-[family-name:var(--font-fraunces)] text-lg">{bio.bio_de}</p>
       </section>
 
       {profile && Object.keys(featureMeans).length > 0 && (
-        <section className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-1">Stilprofil</h2>
-          <p className="text-xs text-[var(--muted)] mb-5">
-            Aggregiert aus {profile.chunk_count ?? "?"} Textstellen. Balken
-            zeigt die Abweichung vom Korpus-Mittel (0 = Mittel, +3 = drei
-            Standardabweichungen drüber).
+        <section className="pt-8">
+          <p className="font-[family-name:var(--font-fraunces)] italic text-[var(--muted)] mb-2">
+            — Stilprofil
+          </p>
+          <p className="text-xs text-[var(--muted)] mb-6 max-w-xl">
+            Aggregiert aus {profile.chunk_count ?? "?"} Textstellen. Balken zeigt die Abweichung vom Korpus-Mittel (0 = Mittel, +3 = drei Standardabweichungen drüber).
           </p>
 
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-2xl">
             {FEATURE_DISPLAY_ORDER.filter(
               (key) => featureMeans[key] !== undefined && corpusStats[key]
             )
@@ -188,22 +188,26 @@ export default async function AutorPage({
       )}
 
       {titles.length > 0 && (
-        <section className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">Im Korpus</h2>
-          <ul className="space-y-2">
+        <section className="pt-8">
+          <p className="font-[family-name:var(--font-fraunces)] italic text-[var(--muted)] mb-4">
+            — Im Korpus
+          </p>
+          <ul className="divide-y divide-[var(--border)] max-w-2xl">
             {titles.map(([t, count]) => {
               const ts = slugifyTitle(t)
               return (
-                <li key={t} className="flex items-baseline justify-between gap-3">
+                <li key={t}>
                   <Link
                     href={`/buecher/${ts}`}
-                    className="text-[var(--foreground)] underline hover:text-[var(--muted)]"
+                    className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-3 group"
                   >
-                    {t}
+                    <span className="font-[family-name:var(--font-fraunces)] text-lg text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors">
+                      {t}
+                    </span>
+                    <span className="text-xs text-[var(--muted)] font-mono whitespace-nowrap">
+                      {count} {count === 1 ? "Stelle" : "Stellen"}
+                    </span>
                   </Link>
-                  <span className="text-xs text-[var(--muted)] font-mono">
-                    {count} {count === 1 ? "Textstelle" : "Textstellen"}
-                  </span>
                 </li>
               )
             })}
@@ -211,28 +215,18 @@ export default async function AutorPage({
         </section>
       )}
 
-      <div className="mt-10 p-6 bg-[var(--card)] border border-[var(--border)] rounded-lg flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <p className="text-[var(--foreground)] text-base">
-          {bio.name} imitieren? Direkt starten.
-        </p>
-        <div className="flex gap-3 flex-shrink-0">
-          <Link
-            href={`/login?next=${encodeURIComponent("/train?author=" + bio.slug)}`}
-            className="px-5 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Mit {bio.name.split(",")[0]} trainieren →
-          </Link>
-          <Link
-            href="/demo"
-            className="px-5 py-2 border border-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg hover:bg-[var(--card-hover)] transition-colors"
-          >
-            Erst Demo
-          </Link>
-        </div>
+      <div className="pt-12">
+        <Link
+          href={`/login?next=${encodeURIComponent("/train?author=" + bio.slug)}`}
+          className="inline-flex items-center gap-3 pb-2 text-[15px] font-medium text-[var(--foreground)] border-b border-[var(--foreground)] hover:gap-4 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all duration-200"
+        >
+          Mit {bio.name.split(",")[0]} trainieren
+          <span aria-hidden>→</span>
+        </Link>
       </div>
 
-      <p className="text-center">
-        <Link href="/autoren" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] underline">
+      <p className="pt-12">
+        <Link href="/autoren" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
           ← Alle Autoren
         </Link>
       </p>

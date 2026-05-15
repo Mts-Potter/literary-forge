@@ -51,7 +51,7 @@ export default function KontaktPage() {
                     <h3 className="text-lg font-semibold mb-2">Feedback-Formular</h3>
                     <p className="text-[var(--muted)] text-sm">
                       Sie können uns auch über das Feedback-Formular in der Navigation erreichen.
-                      Klicken Sie auf das 💬 Symbol in der Kopfzeile.
+                      Klicken Sie auf das Nachrichten-Symbol in der Kopfzeile.
                     </p>
                   </div>
                 </div>

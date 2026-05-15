@@ -46,36 +46,45 @@ export default async function BuecherIndex() {
   const books = Array.from(map.values()).sort((a, b) => a.title.localeCompare(b.title))
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-12">
-      <h1 className="text-4xl font-bold text-[var(--foreground)] mb-2">Bücher</h1>
-      <p className="text-[var(--muted)] mb-8">
-        {books.length} Werke aus dem Trainings-Korpus.
+    <main className="max-w-3xl mx-auto px-6 md:px-8 py-20">
+      <h1 className="font-[family-name:var(--font-fraunces)] font-light text-5xl md:text-6xl tracking-tight text-[var(--foreground)] mb-3">
+        Bücher
+      </h1>
+      <p className="font-[family-name:var(--font-fraunces)] italic text-[var(--muted)] mb-16">
+        {books.length} gemeinfreie Werke, in Chunks geschnitten und stilometrisch vermessen.
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <ul className="divide-y divide-[var(--border)]">
         {books.map((b) => {
           const bio = getBioByAuthorId(b.author_id)
           const ts = slugifyTitle(b.title)
           const metaParts = [
             bio?.name ?? "Unbekannt",
-            b.language?.toUpperCase(),
             b.publication_year ? String(b.publication_year) : null,
+            b.language === "de" ? "Deutsch" : "Englisch",
             b.cefr_level ? b.cefr_level.toUpperCase() : null,
           ].filter(Boolean) as string[]
           return (
-            <Link
-              key={ts}
-              href={`/buecher/${ts}`}
-              className="block bg-[var(--card)] border border-[var(--border)] rounded-lg p-5 hover:bg-[var(--card-hover)] transition-colors"
-            >
-              <p className="text-xs text-[var(--muted)]">{metaParts.join(" · ")}</p>
-              <h2 className="text-lg font-semibold text-[var(--foreground)] mt-1">{b.title}</h2>
-              <p className="text-xs text-[var(--muted)] mt-2 font-mono">
-                {b.chunk_count} Textstellen
-              </p>
-            </Link>
+            <li key={ts}>
+              <Link
+                href={`/buecher/${ts}`}
+                className="grid grid-cols-[1fr_auto] items-baseline gap-6 py-6 group"
+              >
+                <div>
+                  <h2 className="font-[family-name:var(--font-fraunces)] font-light text-2xl text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors">
+                    {b.title}
+                  </h2>
+                  <p className="text-sm text-[var(--muted)] mt-1">
+                    {metaParts.join(" · ")}
+                  </p>
+                </div>
+                <span className="text-xs text-[var(--muted)] font-mono whitespace-nowrap">
+                  {b.chunk_count} Stellen
+                </span>
+              </Link>
+            </li>
           )
         })}
-      </div>
+      </ul>
     </main>
   )
 }

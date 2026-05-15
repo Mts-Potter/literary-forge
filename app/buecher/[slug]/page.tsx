@@ -126,53 +126,43 @@ export default async function BuchPage({
         </p>
       </header>
 
-      <section className="space-y-4">
+      <section className="space-y-12 pt-4">
         {book.chunks.slice(0, 5).map((c) => (
-          <article key={c.id} className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-5">
-            <p className="text-xs text-[var(--muted)] mb-2">{c.title}</p>
-            <p className="text-[var(--foreground)] leading-relaxed font-serif text-base">
+          <article key={c.id}>
+            <p className="text-xs text-[var(--muted)] mb-3 uppercase tracking-wider">{c.title}</p>
+            <p className="text-[var(--foreground)] leading-[1.75] font-[family-name:var(--font-fraunces)] text-lg">
               {cutAtSentence(c.content as string, 600)}
             </p>
           </article>
         ))}
         {book.chunks.length > 5 && (
-          <p className="text-sm text-[var(--muted)] text-center">
-            + {book.chunks.length - 5} weitere Textstellen — komplett im Training.
+          <p className="text-sm text-[var(--muted)] italic font-[family-name:var(--font-fraunces)]">
+            — und {book.chunks.length - 5} weitere Textstellen im Training.
           </p>
         )}
       </section>
 
-      <div className="mt-6 p-6 bg-[var(--card)] border border-[var(--border)] rounded-lg flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <p className="text-[var(--foreground)] text-base">
-          {book.base_title} imitieren? Direkt starten.
-        </p>
-        <div className="flex gap-3 flex-shrink-0">
-          <Link
-            href={`/login?next=${encodeURIComponent('/train?book=' + book.base_title)}`}
-            className="px-5 py-2 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Mit diesem Werk trainieren →
-          </Link>
-          <Link
-            href="/demo"
-            className="px-5 py-2 border border-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg hover:bg-[var(--card-hover)] transition-colors"
-          >
-            Erst Demo
-          </Link>
-        </div>
+      <div className="pt-12">
+        <Link
+          href={`/login?next=${encodeURIComponent('/train?book=' + book.base_title)}`}
+          className="inline-flex items-center gap-3 pb-2 text-[15px] font-medium text-[var(--foreground)] border-b border-[var(--foreground)] hover:gap-4 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all duration-200"
+        >
+          Mit diesem Werk trainieren
+          <span aria-hidden>→</span>
+        </Link>
       </div>
 
       {related.length > 0 && bio && (
-        <section className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
-            Andere Werke von {bio.name.split(",")[0]}
-          </h2>
-          <ul className="space-y-2">
+        <section className="pt-12">
+          <p className="font-[family-name:var(--font-fraunces)] italic text-[var(--muted)] mb-4">
+            — Andere Werke von {bio.name.split(",")[0]}
+          </p>
+          <ul className="space-y-2 text-sm">
             {related.map((r) => (
               <li key={r.slug}>
                 <Link
                   href={`/buecher/${r.slug}`}
-                  className="text-[var(--foreground)] underline hover:text-[var(--muted)]"
+                  className="text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
                 >
                   {r.title}
                 </Link>
@@ -182,8 +172,8 @@ export default async function BuchPage({
         </section>
       )}
 
-      <p className="text-center">
-        <Link href="/buecher" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] underline">
+      <p className="pt-12">
+        <Link href="/buecher" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
           ← Alle Bücher
         </Link>
       </p>

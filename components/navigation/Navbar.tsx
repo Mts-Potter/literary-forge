@@ -92,7 +92,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <span className="text-xl font-bold text-[var(--foreground)]">
+            <span className="font-[family-name:var(--font-fraunces)] text-xl font-light text-[var(--foreground)] tracking-tight">
               The Franklin Method
             </span>
           </Link>
@@ -104,10 +104,10 @@ export function Navbar() {
                 href={href}
                 title={label}
                 aria-label={label}
-                className={`inline-flex items-center justify-center w-10 h-10 rounded-md transition-colors ${
+                className={`inline-flex items-center justify-center w-10 h-10 transition-colors relative ${
                   pathname === href
-                    ? 'bg-[var(--foreground)] text-[var(--background)]'
-                    : 'text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]'
+                    ? 'text-[var(--foreground)] after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-[var(--foreground)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
                 }`}
               >
                 <Icon size={20} />

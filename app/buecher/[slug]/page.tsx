@@ -99,7 +99,7 @@ export default async function BuchPage({
   ].filter(Boolean) as string[]
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-12 space-y-6">
+    <main className="max-w-3xl mx-auto px-6 md:px-8 py-20 space-y-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -110,9 +110,9 @@ export default async function BuchPage({
       />
 
       <header>
-        <p className="text-sm text-[var(--muted)] uppercase tracking-wide">
+        <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted)]">
           {bio ? (
-            <Link href={`/autoren/${bio.slug}`} className="underline hover:text-[var(--foreground)]">
+            <Link href={`/autoren/${bio.slug}`} className="hover:text-[var(--foreground)] transition-colors">
               {bio.name}
             </Link>
           ) : (
@@ -120,9 +120,11 @@ export default async function BuchPage({
           )}{" "}
           · {metaParts.join(" · ")}
         </p>
-        <h1 className="text-4xl font-bold text-[var(--foreground)] mt-2">{book.base_title}</h1>
-        <p className="text-sm text-[var(--muted)] mt-2">
-          {book.chunks.length} Textstellen im Korpus
+        <h1 className="font-[family-name:var(--font-fraunces)] font-light text-[clamp(40px,6vw,72px)] leading-[1.02] tracking-[-0.015em] text-[var(--foreground)] mt-4">
+          {book.base_title}
+        </h1>
+        <p className="font-[family-name:var(--font-fraunces)] italic text-sm text-[var(--muted)] mt-3">
+          — {book.chunks.length} Textstellen im Korpus
         </p>
       </header>
 

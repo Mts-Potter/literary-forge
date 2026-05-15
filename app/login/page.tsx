@@ -57,15 +57,19 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center p-4 bg-[var(--background)]">
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-lg p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">Literary Forge</h1>
-          <p className="text-[var(--muted)]">Anmelden oder Registrieren</p>
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-md p-10 w-full max-w-md">
+        <div className="text-center mb-10">
+          <h1 className="font-[family-name:var(--font-fraunces)] font-light text-4xl text-[var(--foreground)] mb-1 tracking-tight">
+            The Franklin Method
+          </h1>
+          <p className="font-[family-name:var(--font-fraunces)] italic text-sm text-[var(--muted)]">
+            Anmelden oder Konto anlegen
+          </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
+            <label className="block text-xs uppercase tracking-wider text-[var(--muted)] mb-2">
               Email
             </label>
             <input
@@ -74,14 +78,14 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="w-full px-4 py-2 bg-[var(--background)] border-2 border-[var(--border)] rounded-lg
-                         focus:border-[var(--foreground)] focus:outline-none
-                         text-[var(--foreground)] placeholder:text-[var(--muted)]"
+              className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-md
+                         focus:border-[var(--accent)] focus:outline-none
+                         text-[var(--foreground)] placeholder:text-[var(--muted)] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
+            <label className="block text-xs uppercase tracking-wider text-[var(--muted)] mb-2">
               Passwort
             </label>
             <input
@@ -91,46 +95,50 @@ export default function LoginPage() {
               required
               autoComplete="current-password"
               minLength={8}
-              className="w-full px-4 py-2 bg-[var(--background)] border-2 border-[var(--border)] rounded-lg
-                         focus:border-[var(--foreground)] focus:outline-none
-                         text-[var(--foreground)] placeholder:text-[var(--muted)]"
+              className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--border)] rounded-md
+                         focus:border-[var(--accent)] focus:outline-none
+                         text-[var(--foreground)] placeholder:text-[var(--muted)] transition-colors"
             />
-            <p className="mt-1 text-xs text-[var(--muted)]">Mindestens 8 Zeichen für neue Konten.</p>
+            <p className="mt-2 text-xs text-[var(--muted)]">Mindestens 8 Zeichen für neue Konten.</p>
           </div>
 
           {error && (
             <div
               role="alert"
-              className={`p-3 rounded-lg text-sm border ${
+              className={`px-3 py-2 rounded-md text-sm border ${
                 isSuccess
-                  ? 'border-green-700/50 bg-green-900/20 text-green-300 dark:text-green-300'
-                  : 'border-red-700/50 bg-red-900/20 text-red-300 dark:text-red-300'
+                  ? 'border-[var(--accent)] bg-[var(--card-hover)] text-[var(--foreground)]'
+                  : 'border-red-700/40 bg-red-900/10 text-red-300/90'
               }`}
             >
               {error}
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-semibold rounded-lg
+              className="flex-1 px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-medium rounded-md
                          hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
-              {isLoading ? 'Lade…' : 'Login'}
+              {isLoading ? 'Lade…' : 'Anmelden'}
             </button>
             <button
               type="button"
               onClick={handleSignUp}
               disabled={isLoading}
-              className="flex-1 px-6 py-3 border-2 border-[var(--border)] text-[var(--foreground)] font-semibold rounded-lg
-                         hover:bg-[var(--card-hover)] disabled:opacity-50 transition-colors"
+              className="flex-1 px-6 py-3 border border-[var(--border)] text-[var(--foreground)] font-medium rounded-md
+                         hover:bg-[var(--card-hover)] hover:border-[var(--accent)] disabled:opacity-50 transition-colors"
             >
-              Sign Up
+              Registrieren
             </button>
           </div>
         </form>
+
+        <p className="font-[family-name:var(--font-fraunces)] italic text-xs text-[var(--muted)] text-center mt-8">
+          Eine Anmeldung genügt für alle drei Modi.
+        </p>
 
         <div className="mt-6 text-center">
           <Link href="/" className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">

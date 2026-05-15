@@ -31,29 +31,33 @@ const HOME_JSON_LD = {
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+    <main className="min-h-screen bg-[var(--background)] flex flex-col">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_JSON_LD) }}
       />
-      <main className="flex flex-col items-center gap-12 px-8 py-16 max-w-3xl text-center">
-
-        <div className="space-y-6">
-          <h1 className="text-7xl font-bold tracking-tight text-[var(--foreground)]">
-            The Franklin Method
-          </h1>
-          <p className="text-2xl text-[var(--foreground)] font-medium">
-            Schreibstil lernen — wie Franklin sich selbst beibrachte.
-          </p>
+      <div className="flex-1 flex flex-col justify-center max-w-2xl px-8 md:px-16 py-24">
+        <div className="text-[10px] uppercase tracking-[0.32em] text-[var(--muted)] mb-14">
+          est. 1722 · benjamin franklin
         </div>
 
-        <div className="max-w-xl text-base text-[var(--muted)] leading-relaxed">
-          <p>
-            Eine alte Methode, ein neues Medium. Du übst mit Passagen aus Kafka, Mann, Austen, Fitzgerald — schreibst sie aus dem Gedächtnis, und bekommst eine ehrliche Rückmeldung zu Satzbau, Rhythmus, Wortwahl und Ton.
-          </p>
-        </div>
+        <h1 className="font-[family-name:var(--font-fraunces)] font-light text-[clamp(48px,7.5vw,96px)] leading-[0.98] tracking-[-0.018em] text-[var(--foreground)]">
+          Schreibstil lernen,
+          <br />
+          <em className="font-light italic">
+            wie Franklin sich&nbsp;selbst&nbsp;beibrachte.
+          </em>
+        </h1>
 
-        <div className="flex flex-col gap-4 items-center">
+        <p className="font-[family-name:var(--font-fraunces)] italic font-light text-xl text-[var(--muted)] leading-snug mt-6 max-w-xl">
+          Eine alte Methode, ein neues Medium. Lesen, vergessen, rekonstruieren — und nach jedem Versuch eine ehrliche Rückmeldung.
+        </p>
+
+        <p className="text-base text-[var(--muted)] leading-relaxed mt-16 max-w-xl">
+          Du übst mit Passagen aus Kafka, Mann, Austen, Fitzgerald. Du schreibst sie aus dem Gedächtnis. Was dabei herauskommt, wird zeilenweise mit dem Original verglichen — Satzbau, Rhythmus, Wortwahl, Ton.
+        </p>
+
+        <div className="flex items-center gap-8 flex-wrap mt-14">
           <Link
             href="/demo"
             className="inline-flex items-center gap-3 pb-2 text-[15px] font-medium text-[var(--foreground)] border-b border-[var(--foreground)] hover:gap-4 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all duration-200"
@@ -61,20 +65,17 @@ export default function Home() {
             Demo ansehen
             <span aria-hidden>→</span>
           </Link>
-
           <div className="flex gap-7 text-[13px] text-[var(--muted)]">
-            <Link href="/methode" className="hover:text-[var(--foreground)] transition-colors">
-              Methode
-            </Link>
-            <Link href="/buecher" className="hover:text-[var(--foreground)] transition-colors">
-              Bücher
-            </Link>
-            <Link href="/login" className="hover:text-[var(--foreground)] transition-colors">
-              Anmelden
-            </Link>
+            <Link href="/methode" className="hover:text-[var(--foreground)] transition-colors">Methode</Link>
+            <Link href="/buecher" className="hover:text-[var(--foreground)] transition-colors">Bücher</Link>
+            <Link href="/login" className="hover:text-[var(--foreground)] transition-colors">Anmelden</Link>
           </div>
         </div>
-      </main>
-    </div>
+
+        <p className="font-[family-name:var(--font-fraunces)] italic text-[13px] text-[var(--muted)] leading-relaxed mt-auto pt-20 max-w-md">
+          — Spaced Repetition, Stilometrie, qualitatives Lektorat. Die Maschinerie steht im Hintergrund. Auf der Bühne stehen die Texte.
+        </p>
+      </div>
+    </main>
   )
 }

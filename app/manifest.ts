@@ -2,13 +2,13 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Literary Forge - KI Schreibtraining',
-    short_name: 'LitForge',
-    description: 'KI-gestütztes Training für stilistische Mimesis und literarischen Schreibstil',
+    name: 'The Franklin Method',
+    short_name: 'Franklin Method',
+    description: 'Schreibstil-Training nach Benjamin Franklins Methode, mit KI-Feedback.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#0a0a0a',
-    theme_color: '#0a0a0a',
+    background_color: '#faf7f0',
+    theme_color: '#1a1612',
     icons: [
       {
         src: '/icon-192.png',

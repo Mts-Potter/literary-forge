@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Login | Literary Forge",
-  description: "Melden Sie sich bei Literary Forge an, um auf Ihr personalisiertes Schreibtraining zuzugreifen.",
+  title: "Anmelden | The Franklin Method",
+  description: "Melde dich bei The Franklin Method an, um dein personalisiertes Schreibtraining fortzusetzen.",
   robots: {
     index: false,
     follow: false,

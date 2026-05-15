@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "404 - Seite nicht gefunden | Literary Forge",
+  title: "404 — Seite nicht gefunden | The Franklin Method",
   description: "Die angeforderte Seite konnte nicht gefunden werden.",
   robots: {
     index: false,

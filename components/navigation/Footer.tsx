@@ -40,9 +40,9 @@ export function Footer() {
             © {currentYear} The Franklin Method. Alle Rechte vorbehalten.
           </div>
         </div>
-        <div className="max-w-2xl mx-auto text-center text-[10px] leading-relaxed text-[var(--muted)]">
+        <div className="max-w-2xl mx-auto text-center font-[family-name:var(--font-fraunces)] italic text-[11px] leading-relaxed text-[var(--muted)]">
           „The Franklin Method" (diese Seite) ist nicht verbunden mit der Franklin Method® von Eric Franklin
-          (<a href="https://franklinmethod.com" rel="nofollow noopener" target="_blank" className="underline">franklinmethod.com</a>),
+          (<a href="https://franklinmethod.com" rel="nofollow noopener" target="_blank" className="underline hover:text-[var(--accent)] transition-colors">franklinmethod.com</a>),
           einer Methode für somatische Bewegungsbildung. Die beiden Produkte arbeiten in unterschiedlichen Feldern.
         </div>
       </div>

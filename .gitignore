@@ -56,6 +56,9 @@ config/secrets.yml
 # vercel
 .vercel
 
+# superpowers brainstorm artifacts (mockups, state)
+.superpowers/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
